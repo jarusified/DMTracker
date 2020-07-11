@@ -1,0 +1,9 @@
+ 
+- repo: local
+  hooks:
+    - id: git-ignore-elf
+      name:  git-ignore-elf
+      entry: sh utils/git_ignore_elf.sh
+      language: system
+      types: [bash]
+      pass_filenames: false

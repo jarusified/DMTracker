@@ -1,0 +1,3 @@
+*.o
+*.txt
+experiments/vector_addition/vector_addition
