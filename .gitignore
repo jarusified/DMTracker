@@ -1,3 +1,9 @@
 *.o
 *.txt
 experiments/vector_addition/vector_addition
+*.qdrep
+*.json
+*.sqlite
+*.zip
+*.deb
+*.cali

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <iostream>
 
 // Size of array
 #define N 1048576
