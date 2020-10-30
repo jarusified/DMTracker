@@ -17,3 +17,9 @@ cleanall:
 
 profile_all: 
 	nv-nsight-cu-cli --metrics "regex:.*" ./vector_addition >> ./all_metrics.txt
+
+generate-qdrep:
+	nsys launch ./vector_addition
+
+convert-qdrep:
+	nsys export -t hdf filename.qdrep
