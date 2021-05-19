@@ -54,7 +54,7 @@ int main(void) {
 	for (int i = 0; i < N; i++) {
 		maxError = fmax(maxError, fabs(C[i] - 3.0f));
 
-		if(C[i] != 3){ 
+		if(C[i] != 3.0f){ 
 			std::cout << A[i] << B[i] << C[i] << std::endl;
 			printf("\nError: value of C[%d] = %f instead of 3\n\n", i, C[i]);
 			exit(-1);
