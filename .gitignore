@@ -7,3 +7,8 @@ experiments/vector_addition/vector_addition
 *.zip
 *.deb
 *.cali
+*.h5
+
+timemory*
+tracer*
+softwares/*
