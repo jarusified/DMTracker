@@ -1,0 +1,486 @@
+[
+    {
+        "name": "cudaGetDeviceCount",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653004859898503,
+        "dur": 21789,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaSetDevice",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653004859987931,
+        "dur": 67634,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaMalloc",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653004860109569,
+        "dur": 295277427,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaMalloc",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005155388879,
+        "dur": 164626,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaMalloc",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005155554337,
+        "dur": 163188,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaMalloc",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005155718229,
+        "dur": 160535,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaMalloc",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005155879592,
+        "dur": 159640,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaMalloc",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005156039871,
+        "dur": 160303,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaStreamCreate",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005156225584,
+        "dur": 32315,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaStreamCreate",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005156258554,
+        "dur": 23175,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaMemcpyAsync",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005156320453,
+        "dur": 2769608,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaMemcpyAsync",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005159090983,
+        "dur": 2642536,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaConfigureCall",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005161734678,
+        "dur": 2331,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaSetupArgument",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005161737747,
+        "dur": 4361,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaSetupArgument",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005161742399,
+        "dur": 655,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaSetupArgument",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005161743311,
+        "dur": 863,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaSetupArgument",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005161744419,
+        "dur": 557,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaLaunch",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005161745871,
+        "dur": 99895,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaMemcpyAsync",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005161846592,
+        "dur": 10969956,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaMemcpyAsync",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005172817859,
+        "dur": 2647709,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaMemcpyAsync",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005175466299,
+        "dur": 2632160,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaConfigureCall",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005178099230,
+        "dur": 1165,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaSetupArgument",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005178100785,
+        "dur": 774,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaSetupArgument",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005178101830,
+        "dur": 418,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaSetupArgument",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005178102515,
+        "dur": 456,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaSetupArgument",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005178103210,
+        "dur": 454,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaLaunch",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005178104490,
+        "dur": 25202,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaMemcpyAsync",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005178130410,
+        "dur": 11004095,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaDeviceSynchronize",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005189169709,
+        "dur": 35140,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaFree",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005190312534,
+        "dur": 176086,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaFree",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005190489435,
+        "dur": 107017,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaFree",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005190597173,
+        "dur": 104079,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaFree",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005190701807,
+        "dur": 102072,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaFree",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005190804427,
+        "dur": 102474,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaFree",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005190907457,
+        "dur": 102783,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "cudaDeviceReset",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005193855580,
+        "dur": 157109684,
+        "tid": "Thread -1388484896: Runtime API",
+        "pid": "[27579] Process",
+        "args": {}
+    },
+    {
+        "name": "Memcpy HtoD [async]",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005157044262,
+        "dur": 2220582,
+        "tid": "MemCpy (HtoD)",
+        "pid": "[0:1] Overview",
+        "args": {
+            "Size": "4.2MB"
+        }
+    },
+    {
+        "name": "Memcpy HtoD [async]",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005159764589,
+        "dur": 2147238,
+        "tid": "MemCpy (HtoD)",
+        "pid": "[0:1] Overview",
+        "args": {
+            "Size": "4.2MB"
+        }
+    },
+    {
+        "name": "Memcpy DtoH [async]",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005164416922,
+        "dur": 4455532,
+        "tid": "MemCpy (DtoH)",
+        "pid": "[0:1] Overview",
+        "args": {
+            "Size": "4.2MB"
+        }
+    },
+    {
+        "name": "Memcpy HtoD [async]",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005173494130,
+        "dur": 2148870,
+        "tid": "MemCpy (HtoD)",
+        "pid": "[0:1] Overview",
+        "args": {
+            "Size": "4.2MB"
+        }
+    },
+    {
+        "name": "Memcpy HtoD [async]",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005176133625,
+        "dur": 2143494,
+        "tid": "MemCpy (HtoD)",
+        "pid": "[0:1] Overview",
+        "args": {
+            "Size": "4.2MB"
+        }
+    },
+    {
+        "name": "Memcpy DtoH [async]",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005180779462,
+        "dur": 4429644,
+        "tid": "MemCpy (DtoH)",
+        "pid": "[0:1] Overview",
+        "args": {
+            "Size": "4.2MB"
+        }
+    },
+    {
+        "name": "VecAdd(int const*, int const*, int*, int)",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005161920915,
+        "dur": 2490951,
+        "tid": "Compute",
+        "pid": "[0:1] Overview",
+        "args": {
+            "Grid size": "[ 4, 1, 1 ]",
+            "Block size": "[ 256, 1, 1 ]"
+        }
+    },
+    {
+        "name": "VecAdd(int const*, int const*, int*, int)",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005161920915,
+        "dur": 2490951,
+        "tid": "VecAdd(int const*, int const*, int*, int)",
+        "pid": "[0:1] Compute",
+        "args": {
+            "Grid size": "[ 4, 1, 1 ]",
+            "Block size": "[ 256, 1, 1 ]"
+        }
+    },
+    {
+        "name": "VecAdd(int const*, int const*, int*, int)",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005178281983,
+        "dur": 2489511,
+        "tid": "Compute",
+        "pid": "[0:1] Overview",
+        "args": {
+            "Grid size": "[ 4, 1, 1 ]",
+            "Block size": "[ 256, 1, 1 ]"
+        }
+    },
+    {
+        "name": "VecAdd(int const*, int const*, int*, int)",
+        "ph": "X",
+        "cat": "cuda",
+        "ts": 1509653005178281983,
+        "dur": 2489511,
+        "tid": "VecAdd(int const*, int const*, int*, int)",
+        "pid": "[0:1] Compute",
+        "args": {
+            "Grid size": "[ 4, 1, 1 ]",
+            "Block size": "[ 256, 1, 1 ]"
+        }
+    }
+]

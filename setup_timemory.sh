@@ -19,7 +19,8 @@ source ${SPACK_HOME}/share/spack/setup-env.sh
 spack compiler find
 spack external find
 spack install boost~shared+pic dyninst@10.2.1%gcc
-spack load boost dyninst
+spack install papi
+spack load -r boost dyninst arch=`spack arch`
 
 PYTHON_VERSION=3.8
 
