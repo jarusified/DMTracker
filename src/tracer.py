@@ -27,8 +27,13 @@ class Tracer:
         self.gpu_trace_file = os.path.join(self.output_dir, "gpu_trace.csv")
         
         # Run app with Metric Trace
-        self.metrics = ["nvlink_user_data_received", "nvlink_user_data_transmitted", "sysmem_read_bytes", "sysmem_write_bytes"]
+        # self.metrics = ["nvlink_user_data_received", "nvlink_user_data_transmitted", "sysmem_read_bytes", "sysmem_write_bytes"]
+        self.metrics = ["crop__busy_cycles_avg"]
         self.metric_trace_file = os.path.join(self.output_dir, "metric_trace.csv")
+        
+        self.runtime_metrics_file = os.path.join(self.output_dir, "runtime_metrics.csv")
+        self.nsys_trace_qdrep_file = os.path.join(self.output_dir, "nsys_trace.qdrep")
+        self.nsys_trace_json_file = os.path.join(self.output_dir, "nsys_trace.json")
 
         create_dir_after_check(self.output_dir)
         
@@ -44,11 +49,23 @@ class Tracer:
         #     subprocess.run([nccl_cmd], shell=True)
 
     def start(self):
+        """
+        TODO: Run all the commands in parallel.
+        """
         gpu_trace_cmd = f'nvprof --print-gpu-trace --csv --log-file {self.gpu_trace_file} {self.cmd}'
         subprocess.run([gpu_trace_cmd], shell=True)
 
         metric_trace_cmd = f'nvprof --print-gpu-trace --metrics {",".join(self.metrics)} --csv --log-file {self.metric_trace_file} {self.cmd}'
         subprocess.run([metric_trace_cmd], shell=True)
+
+        runtime_metrics_cmd = f'{self.cmd} -m  {self.runtime_metrics_file}'
+        subprocess.run([runtime_metrics_cmd], shell=True)
+
+        nsys_metrics_cmd = f'nsys profile --trace=cuda,nvtx -d 20 --sample=none -o {self.nsys_trace_qdrep_file} {self.cmd}'
+        subprocess.run([nsys_metrics_cmd], shell=True)
+        
+        nsys_convert_to_json_cmd = f'nsys export {self.nsys_trace_qdrep_file} -o {self.nsys_trace_json_file} -t json'
+        subprocess.run([nsys_convert_to_json_cmd], shell=True)
 
     @staticmethod
     def merge_matrices(matrix1, matrix2):
