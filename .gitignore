@@ -8,7 +8,14 @@ experiments/vector_addition/vector_addition
 *.deb
 *.cali
 *.h5
+.metadata/*
 
 timemory*
 tracer*
 softwares/*
+
+experiments/rodinia_3.1/*
+data/*
+
+*/__pycache__/*
+*.pyc
