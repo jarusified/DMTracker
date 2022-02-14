@@ -1,24 +1,36 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import {
     Grid, Paper, Typography,
-    FormControl, InputLabel, FormHelperText,
+    FormControl, InputLabel, FormHelperText, Button,
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
+import useCollapse from 'react-collapsed';
+
 
 function ControlWrapper() {
+    const { getCollapseProps, getToggleProps, isExpanded } = useCollapse();
+
     return (
         <Fragment>
-            <Paper className='content-container-fit'>
-                <Grid item>
-                    <Typography variant='overline' style={{ fontWeight: 'bold' }}>Settings</Typography>
-                </Grid>
-                <Grid container item direction='column' spacing={2}>
-                    <Controller />
-                </Grid>
-                <Grid container item direction='column' spacing={2}>
-                </Grid>
-
-            </Paper>
+            <div className="collapsible content-container-fit" {...getToggleProps()}>
+                <Button justifyContent="flex-end">
+                    <Typography variant='overline' style={{ fontWeight: 'bold' }}>
+                        Settings
+                    </Typography>
+                </Button>
+                {isExpanded ? (
+                    <Paper className='content-container-fit' elevation={3}>
+                        <Grid container item direction='column' spacing={2}>
+                            <Controller />
+                        </Grid>
+                        <Grid container item direction='column' spacing={2}>
+                        </Grid>
+                    </Paper>
+                ): (
+                    <div {...getCollapseProps()}>
+                    </div>
+                )}
+            </div>
         </Fragment>
     )
 }
