@@ -3,7 +3,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
 
 import ControlWrapper from './components/Control';
-
+import CommWrapper from './components/CommWrapper';
+import CCTWrapper from './components/CCTWrapper';
+import ReuseWrapper from './components/ReuseWrapper';
+import MetricsWrapper from './components/MetricsWrapper';
+import TimelineWrapper from './components/TimelineWrapper';
 const useStyles = makeStyles((theme) => ({
     contentContainer: {
         padding: theme.spacing(1),
@@ -19,12 +23,19 @@ export default function DashboardLayoutWrapper() {
     
     return (
         <Fragment>
-            <Grid container className={classes.contentContainer} spacing={1}>
-                <Grid container item sm={8} md={8} lg={9} xl={9}>
-                </Grid>
-                <Grid container item sm md lg xl direction='column' spacing={2}>
-                    <Grid container item sm md lg xl>
-                        <ControlWrapper />
+            <Grid container className={classes.contentContainer}>
+                {/* <ControlWrapper /> */}
+                <Grid container item direction='column'>
+                    <Grid container item sm md lg xl spacing={1}>
+                        <CommWrapper />
+                        <CCTWrapper />
+                    </Grid>
+                    <Grid container item sm md lg xl spacing={1}>
+                        <ReuseWrapper />
+                        <MetricsWrapper />
+                    </Grid>
+                    <Grid container item sm md lg xl spacing={1}>
+                        <TimelineWrapper />
                     </Grid>
                 </Grid>
             </Grid>

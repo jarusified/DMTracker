@@ -13,7 +13,7 @@ function ControlWrapper() {
     return (
         <Fragment>
             <div className="collapsible content-container-fit" {...getToggleProps()}>
-                <Button justifyContent="flex-end">
+                <Button>
                     <Typography variant='overline' style={{ fontWeight: 'bold' }}>
                         Settings
                     </Typography>
