@@ -6,9 +6,6 @@ from flask_cors import CORS, cross_origin
 
 from logger import get_logger
 
-from autotm_views import readData, remapTarget
-from cachedarrays_views import CachedArrayViews
-
 # Globals
 FOLDER_PATH = os.path.abspath(os.path.dirname(__file__))
 STATIC_FOLDER_PATH = os.path.join(FOLDER_PATH, "app/")
@@ -74,18 +71,13 @@ class HTTPServer:
             return app.send_static_file("index.html")
 
         # Example GET and POST request.
-        @app.route("/fetchBase", methods=["POST"])
+        @app.route("/fetchData", methods=["POST"])
         @cross_origin()
-        def fetchBase():
+        def fetchData():
             request_context = request.json
-            base_data = readData(request_context["base"])
-            target_data = readData(request_context["target"])
-            base_data, remap_data = remapTarget(base_data, target_data)
-            return jsonify(base=base_data, target=target_data, remap=remap_data)
+            # base_data = readData(request_context["base"])
+            # target_data = readData(request_context["target"])
+            # return jsonify(base=base_data, target=target_data)
+            return jsonify()
     
-        @app.route("/fetchDatasets", methods=["POST"])
-        @cross_origin()
-        def fetchDatasets():
-            directory = request.json["directory_name"]
-            dir_files = os.listdir(os.path.join(self.data_dir, directory))
-            return HTTPServer.emit_json("fetchDatasets", { "datasets": dir_files, "selectedDataset": dir_files[0] }) 
+        
