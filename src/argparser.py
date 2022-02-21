@@ -36,11 +36,12 @@ class ArgParser:
         Parse the input arguments.
         """
         parser = argparse.ArgumentParser(prefix_chars="--")
-        parser.add_argument('--http', action="store_true", help="Server mode." "Spawns a http server to render the views.")
-        parser.add_argument('--cmd', help='input command as a string such as: -i "./app --foo 20 --bar 5"', required=True)
-        parser.add_argument('--num_gpus', help='Number of gpus', type=int, required=True)
+        parser.add_argument('--http', action="store_true", help="Server mode." "Spawns a http server to render the views.", required=False)
+        parser.add_argument('--cmd', help='input command as a string such as: -i "./app --foo 20 --bar 5"', required=False)
+        parser.add_argument('--num_gpus', help='Number of gpus', type=int, required=False)
         parser.add_argument('--app_name', help='Application Name', type=str, required=True)
-        parser.add_argument('--output_dir', help='Output directory path', type=str, required=True)
+        parser.add_argument('--output_dir', help='Output directory path', type=str, required=False)
+        parser.add_argument('--data_dir', help='Data directory path', type=str, required=False)
         return parser
 
     def _verify_parser(self):
@@ -67,9 +68,21 @@ class ArgParser:
             exit(1)
 
         if _has_http:
-            mode = "COLLECT"
+            mode = "HTTP"
+            
+            _has_data_dir = self.args["data_dir"] is not None
+
+            if not _has_data_dir:
+                self.parser.print_help()
+                exit(1)
 
         if _has_cmd:
-            mode = "COLLECT"
+            mode = "TRACE"
+            _has_output_dir = self.args["output_dir"] is not None
+            _has_num_gpus = self.args["num_gpus"] is not None
+
+            if not _has_output_dir or not _has_num_gpus:
+                self.parser.print_help()
+                exit(1)            
 
         return mode
