@@ -24,7 +24,7 @@ class Tracer:
         
 
         # Run app with nvprof GPU Trace
-        self.gpu_trace_file = os.path.join(self.output_dir, "gpu_trace.csv")
+        # self.gpu_trace_file = os.path.join(self.output_dir, "gpu_trace.csv")
         
         # Run app with Metric Trace
         # self.metrics = ["nvlink_user_data_received", "nvlink_user_data_transmitted", "sysmem_read_bytes", "sysmem_write_bytes"]
@@ -48,14 +48,14 @@ class Tracer:
         #     nccl_cmd = f'{preload} {args.ifile}'
         #     subprocess.run([nccl_cmd], shell=True)
 
-    def start(self):
+    def start(self, nvprof_metrics="all"):
         """
         TODO: Run all the commands in parallel.
         """
-        gpu_trace_cmd = f'nvprof --print-gpu-trace --csv --log-file {self.gpu_trace_file} {self.cmd}'
-        subprocess.run([gpu_trace_cmd], shell=True)
-
-        metric_trace_cmd = f'nvprof --print-gpu-trace --metrics {",".join(self.metrics)} --csv --log-file {self.metric_trace_file} {self.cmd}'
+        if(nvprof_metrics == "all"):
+            metric_trace_cmd = f'nvprof --print-gpu-trace --aggregate-mode off --metrics all --csv --log-file{self.metric_trace_file} {self.cmd}'
+        else:
+            metric_trace_cmd = f'nvprof --print-gpu-trace --aggregate-mode off --metrics {self.metrics} --csv --log-file{self.metric_trace_file} {self.cmd}'
         subprocess.run([metric_trace_cmd], shell=True)
 
         runtime_metrics_cmd = f'{self.cmd} -m  {self.runtime_metrics_file}'
@@ -63,10 +63,11 @@ class Tracer:
 
         nsys_metrics_cmd = f'nsys profile --trace=cuda,nvtx -d 20 --sample=none -o {self.nsys_trace_qdrep_file} {self.cmd}'
         subprocess.run([nsys_metrics_cmd], shell=True)
-        
-        nsys_convert_to_json_cmd = f'nsys export {self.nsys_trace_qdrep_file} -o {self.nsys_trace_json_file} -t json'
-        subprocess.run([nsys_convert_to_json_cmd], shell=True)
 
+        caliper_configs ="uvm-tracking,uvm-trace,hatchet-region-profile"
+        caliper_metrics_cmd = f'CALI_CONFIG_PROFILE={caliper_configs} {self.cmd}'
+        subprocess.run([caliper_metrics_cmd], shell=True)
+    
     @staticmethod
     def merge_matrices(matrix1, matrix2):
         """
