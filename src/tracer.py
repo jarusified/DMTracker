@@ -21,7 +21,6 @@ class Tracer:
         self.app_name = args.args["app_name"]
         self.num_gpus = args.args["num_gpus"]
         self.output_dir = os.path.join(os.path.abspath(args.args["output_dir"]), self.app_name)
-        
 
         # Run app with nvprof GPU Trace
         # self.gpu_trace_file = os.path.join(self.output_dir, "gpu_trace.csv")
@@ -67,6 +66,9 @@ class Tracer:
         caliper_configs ="uvm-tracking,uvm-trace,hatchet-region-profile"
         caliper_metrics_cmd = f'CALI_CONFIG_PROFILE={caliper_configs} {self.cmd}'
         subprocess.run([caliper_metrics_cmd], shell=True)
+
+        topology_cmd = f'lstopo --of xml >> ./data/topology.xml'
+        subprocess.run([topology_cmd], shell=True)
     
     @staticmethod
     def merge_matrices(matrix1, matrix2):

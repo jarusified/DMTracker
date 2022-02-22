@@ -5,6 +5,8 @@ from flask import Flask, json, jsonify, request
 from flask_cors import CORS, cross_origin
 
 from logger import get_logger
+from interfaces import *
+from generators import *
 
 # Globals
 FOLDER_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -19,17 +21,19 @@ app = Flask(__name__, static_url_path="", static_folder=STATIC_FOLDER_PATH)
 cors = CORS(app, automatic_options=True)
 app.config["CORS_HEADERS"] = "Content-Type"
 
-
 class HTTPServer:
     """
     HTTP Server Class.
     """
 
-    def __init__(self):
-
+    def __init__(self, args):
         LOGGER.info(f"{type(self).__name__} mode enabled.")
-        self.data_dir = os.path.abspath("./data")
+        self.data_dir = os.path.abspath(args.args['data_dir'])
         self.handle_routes()
+
+    def load(self) -> None:
+        CCT(data_dir=self.data_dir)
+        H2DCudaMemcpyCommMatrixGenerator(1)
 
     def start(self, host: str, port: int) -> None:
         """
@@ -71,7 +75,7 @@ class HTTPServer:
             return app.send_static_file("index.html")
 
         # Example GET and POST request.
-        @app.route("/fetchData", methods=["POST"])
+        @app.route("/fetchCCT", methods=["POST"])
         @cross_origin()
         def fetchData():
             request_context = request.json

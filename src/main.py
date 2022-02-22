@@ -29,14 +29,13 @@ def main():
     LOGGER.profile(f"Initialized {APP_NAME}")
 
     args = ArgParser(sys.argv)
-    cmd = args.args["cmd"]
-    http = args.args["http"]
 
-    if http:
+    if args.mode == "HTTP":
         wip = HTTPServer(args)
+        wip.load()
         wip.start(host=APP_HOST, port=APP_PORT)
 
-    if cmd:
+    if args.mode == "TRACER":
         tracer = Tracer(args)
         tracer.start()
 
