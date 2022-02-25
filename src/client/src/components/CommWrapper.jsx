@@ -1,30 +1,31 @@
 import React, { Fragment } from 'react'
 import {
-    Grid, Paper, Typography,
+    Grid, Box, Typography,
 } from '@material-ui/core';
 
 
 function CommWrapper() {
     return (
-        <Fragment>  
-            <Paper elevation={12} square>
-                <Typography variant='overline' style={{ fontWeight: 'bold' }} spacing={1}>
-                    Data movement Matrix
-                </Typography>
-                <Grid container item direction='column' spacing={4}>
+        <Box sx={{ p: 1, border: '1px dashed grey' }}>
+            <Typography variant='overline' style={{ fontWeight: 'bold' }} spacing={1}>
+                Data movement Matrix
+            </Typography>
+
+            <Grid item>
+                <Grid item >
                     <Matrix />
                 </Grid>
-                <Grid container item direction='column' spacing={2}>
-                </Grid>
-            </Paper>
-        </Fragment>
+            </Grid>
+            <Grid item>
+            </Grid>
+        </Box>
     )
 }
 
 function Matrix() {
     return (
         <Fragment>
-            <svg width={window.innerWidth/2} height={window.innerHeight/3}></svg>
+            <svg height={window.innerHeight/4}></svg>
         </Fragment>
     )
 }

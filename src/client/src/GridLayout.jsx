@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 
 import CommWrapper from './components/CommWrapper';
 import CCTWrapper from './components/CCTWrapper';
@@ -10,33 +10,37 @@ import TimelineWrapper from './components/TimelineWrapper';
 
 const useStyles = makeStyles((theme) => ({
     contentContainer: {
-        padding: theme.spacing(1),
         height: '100%',
+        width: window.innerWidth,
         flexGrow: 1,
         alignItems: 'stretch',
         flexWrap: 'wrap',
     },
+    rowContainer: {
+        display: "grid",
+        gridAutoFlow: "column",
+        alignItems: "center",
+        padding: 0,
+    }
 }))
 
 export default function GridLayout() {
     const classes = useStyles();
     return (
-        <Box>
-            <Grid container>
-                <Grid container item direction='column'>
-                    <Grid container item sm md lg xl spacing={1}>
-                        <CommWrapper />
-                        <CCTWrapper />
-                    </Grid>
-                    <Grid container item sm md lg xl spacing={1}>
-                        <ReuseWrapper />
-                        <MetricsWrapper />
-                    </Grid>
-                    <Grid container item sm md lg xl spacing={1}>
-                        <TimelineWrapper />
-                    </Grid>
+        <Grid className={classes.contentContainer}>
+            <Grid container item direction='column'>
+                <Grid className={classes.rowContainer}>
+                    <CommWrapper />
+                    <CCTWrapper />
+                </Grid>
+                <Grid className={classes.rowContainer}> 
+                    <ReuseWrapper />
+                    <MetricsWrapper />
+                </Grid>
+                <Grid className={classes.rowContainer}>
+                    <TimelineWrapper />
                 </Grid>
             </Grid>
-        </Box>
+        </Grid>
     )
 }

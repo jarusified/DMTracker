@@ -1,30 +1,28 @@
 import React, { Fragment } from 'react'
 import {
-    Grid, Paper, Typography,
+    Grid, Box, Typography,
 } from '@material-ui/core';
 
 
 function CCTWrapper() {
     return (
-        <Fragment>  
-            <Paper elevation={3}>
-                <Typography variant='overline' style={{ fontWeight: 'bold' }}>
-                    Calling Context Tree
-                </Typography>
-                <Grid container item direction='column' spacing={2}>
-                    <CCT />
-                </Grid>
-                <Grid container item direction='column' spacing={2}>
-                </Grid>
-            </Paper>
-        </Fragment>
+        <Box sx={{ p: 1, border: '1px dashed grey' }}>
+            <Typography variant='overline' style={{ fontWeight: 'bold' }}>
+                Calling Context Tree
+            </Typography>
+            <Grid item>
+                <CCT />
+            </Grid>
+            <Grid item>
+            </Grid>
+        </Box>
     )
 }
 
 function CCT() {
     return (
         <Fragment>
-            <svg width={window.innerWidth/2} height={window.innerHeight/3}></svg>
+            <svg height={window.innerHeight/4}></svg>
         </Fragment>
     )
 }

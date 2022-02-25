@@ -74,7 +74,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 	display: "flex",
 	alignItems: "center",
 	justifyContent: "flex-end",
-	padding: theme.spacing(0, 1),
 	// necessary for content to be below app bar
 	...theme.mixins.toolbar,
 }));
@@ -133,7 +132,11 @@ export default function Dashboard() {
 	};
 
 	return (
-		<Box sx={{ display: "flex" }}>
+		<Box sx={{ 
+			display: "flex",
+			boxShadow: 1,
+			width: "inherit"
+		}}>
 			<CssBaseline />
 			<AppBar position="fixed" open={open}>
 				<Toolbar className={classes.toolbar}>
@@ -201,10 +204,8 @@ export default function Dashboard() {
 					))}
 				</List>
 			</Drawer>
-			<Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-				<DrawerHeader />
-				<GridLayout />
-			</Box>
+			<DrawerHeader />
+			<GridLayout />
 		</Box>
 	);
 }

@@ -1,30 +1,28 @@
 import React, { Fragment } from 'react'
 import {
-    Grid, Paper, Typography,
+    Grid, Box, Typography,
 } from '@material-ui/core';
 
 
 function TimelineWrapper() {
     return (
-        <Fragment>  
-            <Paper elevation={3}>
-                <Typography variant='overline' style={{ fontWeight: 'bold' }}>
-                    Execution Timeline
-                </Typography>
-                <Grid container item direction='column' spacing={2}>
-                    <Timeline />
-                </Grid>
-                <Grid container item direction='column' spacing={2}>
-                </Grid>
-            </Paper>
-        </Fragment>
+        <Box sx={{ p: 1, border: '1px dashed grey' }}>
+            <Typography variant='overline' style={{ fontWeight: 'bold' }}>
+                Execution Timeline
+            </Typography>
+            <Grid item>
+                <Timeline />
+            </Grid>
+            <Grid item>
+            </Grid>
+        </Box>
     )
 }
 
 function Timeline() {
     return (
         <Fragment>
-            <svg width={window.innerWidth} height={window.innerHeight/4}></svg>
+            <svg height={window.innerHeight/4}></svg>
         </Fragment>
     )
 }

@@ -1,30 +1,28 @@
 import React, { Fragment } from 'react'
 import {
-    Grid, Paper, Typography,
+    Grid, Box, Typography,
 } from '@material-ui/core';
 
 
 function MetricsWrapper() {
-    return (
-        <Fragment>  
-            <Paper elevation={3}>
-                <Typography variant='overline' style={{ fontWeight: 'bold' }}>
-                    Performance metrics
-                </Typography>
-                <Grid container item direction='column' spacing={2}>
-                    <Metrics />
-                </Grid>
-                <Grid container item direction='column' spacing={2}>
-                </Grid>
-            </Paper>
-        </Fragment>
+    return ( 
+        <Box sx={{ p: 1, border: '1px dashed grey' }}>
+            <Typography variant='overline' style={{ fontWeight: 'bold' }}>
+                Performance metrics
+            </Typography>
+            <Grid item>
+                <Metrics />
+            </Grid>
+            <Grid item>
+            </Grid>
+        </Box>
     )
 }
 
 function Metrics() {
     return (
         <Fragment>
-            <svg width={window.innerWidth/2} height={window.innerHeight/4}></svg>
+            <svg height={window.innerHeight/4}></svg>
         </Fragment>
     )
 }
