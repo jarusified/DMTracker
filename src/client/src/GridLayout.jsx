@@ -1,6 +1,6 @@
-import React, {Fragment} from 'react'
+import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid } from '@material-ui/core';
+import { Box, Grid } from '@mui/material';
 
 import CommWrapper from './components/CommWrapper';
 import CCTWrapper from './components/CCTWrapper';
@@ -21,8 +21,8 @@ const useStyles = makeStyles((theme) => ({
 export default function GridLayout() {
     const classes = useStyles();
     return (
-        <Fragment>
-            <Grid container className={classes.contentContainer}>
+        <Box>
+            <Grid container>
                 <Grid container item direction='column'>
                     <Grid container item sm md lg xl spacing={1}>
                         <CommWrapper />
@@ -37,6 +37,6 @@ export default function GridLayout() {
                     </Grid>
                 </Grid>
             </Grid>
-        </Fragment>
+        </Box>
     )
 }

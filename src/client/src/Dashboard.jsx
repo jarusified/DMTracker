@@ -27,7 +27,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 import GridLayout from "./GridLayout";
 
-const drawerWidth = 240;
+const DRAWER_WIDTH = 240;
 
 const useStyles = makeStyles((theme) => ({
 	contentContainer: {
@@ -43,15 +43,14 @@ const useStyles = makeStyles((theme) => ({
 		justifyContent: "space-between",
 	},
 	formControl: {
-		right: 0,
-		width: "20%",
+		padding: 10,
 		justifyContent: "flex-end",
 		textColor: "white",
 	},
 }));
 
 const openedMixin = (theme) => ({
-	width: drawerWidth,
+	width: DRAWER_WIDTH,
 	transition: theme.transitions.create("width", {
 		easing: theme.transitions.easing.sharp,
 		duration: theme.transitions.duration.enteringScreen,
@@ -89,8 +88,8 @@ const AppBar = styled(MuiAppBar, {
 		duration: theme.transitions.duration.leavingScreen,
 	}),
 	...(open && {
-		marginLeft: drawerWidth,
-		width: `calc(100% - ${drawerWidth}px)`,
+		marginLeft: DRAWER_WIDTH,
+		width: `calc(100% - ${DRAWER_WIDTH}px)`,
 		transition: theme.transitions.create(["width", "margin"], {
 			easing: theme.transitions.easing.sharp,
 			duration: theme.transitions.duration.enteringScreen,
@@ -101,7 +100,7 @@ const AppBar = styled(MuiAppBar, {
 const Drawer = styled(MuiDrawer, {
 	shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
-	width: drawerWidth,
+	width: DRAWER_WIDTH,
 	flexShrink: 0,
 	whiteSpace: "nowrap",
 	boxSizing: "border-box",
@@ -154,7 +153,7 @@ export default function Dashboard() {
 						DataFlow - Analysis of CPU-GPU Data Movement
 					</Typography>
 					{experiments.length > 0 ? (
-						<FormControl className={classes.formControl}>
+						<FormControl className={classes.formControl} size="small">
 							<InputLabel id="dataset-label">Experiment</InputLabel>
 							<Select
 								labelId="dataset-label"
