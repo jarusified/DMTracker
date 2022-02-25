@@ -1,7 +1,7 @@
-import { FETCH_REUSE } from "./helpers/types";
+import { FETCH_EXPERIMENTS } from "./helpers/types";
 import { SERVER_URL } from "./helpers/utils";
 
-async function requestWrapper(url_path, json_data) {
+async function POSTWrapper(url_path, json_data) {
 	const request_context = {
 		// credentials: 'include',
 		method: "POST",
@@ -15,10 +15,23 @@ async function requestWrapper(url_path, json_data) {
   return data;
 }
 
-export const fetchREUSE = (dataset_name) => async (dispatch) => {
-  const data = await requestWrapper("fetch_reuse", { dataset: dataset_name });
+async function GETWrapper(url_path) {
+	const request_context = {
+		// credentials: 'include',
+		method: "GET",
+		headers: { "Content-Type": "application/json" },
+    mode: 'cors'
+	};
+
+  const response = await fetch(`${SERVER_URL}/${url_path}`, request_context);
+  const data = await response.json();
+  return data;
+}
+
+export const fetchExperiments = () => async (dispatch) => {
+  const data = await GETWrapper("fetch_experiments");
   dispatch({
-    type: FETCH_REUSE,
+    type: FETCH_EXPERIMENTS,
     payload: data,
   });
 };

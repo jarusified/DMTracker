@@ -17,6 +17,8 @@ experiments/rodinia_3.1/*
 experiments/vector_addition/vector_addition
 experiments/xplacer/*
 data/*
+uvm-eval-data/*
+src/data/*
 
 */__pycache__/*
 *.pyc

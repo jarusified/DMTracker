@@ -29,9 +29,11 @@ class HTTPServer:
     def __init__(self, args):
         LOGGER.info(f"{type(self).__name__} mode enabled.")
         self.data_dir = os.path.abspath(args.args['data_dir'])
+        self.experiments = os.listdir(self.data_dir)
         self.handle_routes()
 
     def load(self) -> None:
+        
         CCT(data_dir=self.data_dir)
         H2DCudaMemcpyCommMatrixGenerator(1)
 
@@ -73,6 +75,11 @@ class HTTPServer:
         @cross_origin()
         def index():
             return app.send_static_file("index.html")
+
+        @app.route("/fetchExperiments", methods=["GET"])
+        @cross_origin()
+        def fetch_experiments():
+            return jsonify(experiments=self.experiments)
 
         # Example GET and POST request.
         @app.route("/fetchCCT", methods=["POST"])
