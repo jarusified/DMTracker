@@ -9,8 +9,7 @@ import thunkMiddleware from "redux-thunk";
 
 import Reducer from "./reducer";
 import "./main.css";
-// import DashboardLayoutWrapper from "./DashboardLayoutWrapper";
-import AlternativeWrapper from "./AlternativeWrapper";
+import Dashboard from "./Dashboard";
 
 const store = createStore(Reducer, applyMiddleware(thunkMiddleware));
 
@@ -44,7 +43,7 @@ function App() {
 function DashboardWrapper() {
 	return (
 		<MuiThemeProvider theme={theme}>
-			<AlternativeWrapper />
+			<Dashboard />
 		</MuiThemeProvider>
 	);
 }

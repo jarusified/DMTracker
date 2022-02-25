@@ -2,7 +2,6 @@ import React, {Fragment} from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
 
-import ControlWrapper from './components/Control';
 import CommWrapper from './components/CommWrapper';
 import CCTWrapper from './components/CCTWrapper';
 import ReuseWrapper from './components/ReuseWrapper';
@@ -19,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }))
 
-export default function DashboardLayoutWrapper() {
+export default function GridLayout() {
     const classes = useStyles();
     return (
         <Fragment>

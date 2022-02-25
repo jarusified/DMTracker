@@ -1,19 +1,31 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { styled, useTheme } from "@mui/material/styles";
 import { makeStyles } from "@material-ui/core/styles";
-import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar from '@mui/material/AppBar';
-import { Box, Toolbar, List, CssBaseline, 
-    Typography, Divider, IconButton, ListItem, 
-    ListItemText, FormControl, InputLabel, 
-    FormHelperText, MenuItem, Select } from "@mui/material";
+import MuiDrawer from "@mui/material/Drawer";
+import MuiAppBar from "@mui/material/AppBar";
+import {
+	Box,
+	Toolbar,
+	List,
+	CssBaseline,
+	Typography,
+	Divider,
+	IconButton,
+	ListItem,
+	ListItemText,
+	FormControl,
+	InputLabel,
+	FormHelperText,
+	MenuItem,
+	Select,
+} from "@mui/material";
 
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import MenuIcon from "@mui/icons-material/Menu";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-import DashboardLayoutWrapper from "./DashboardLayoutWrapper";
-import { useDispatch, useSelector } from 'react-redux';
+import GridLayout from "./GridLayout";
 
 const drawerWidth = 240;
 
@@ -25,12 +37,17 @@ const useStyles = makeStyles((theme) => ({
 		alignItems: "stretch",
 		flexWrap: "nowrap",
 	},
-    formControl: {
-        right: 0,
-        width: "20%",
-        justifyContent: "flex-end",
-        textColor: "white",
-    }
+	toolbar: {
+		color: "black",
+		backgroundColor: "white",
+		justifyContent: "space-between",
+	},
+	formControl: {
+		right: 0,
+		width: "20%",
+		justifyContent: "flex-end",
+		textColor: "white",
+	},
 }));
 
 const openedMixin = (theme) => ({
@@ -50,7 +67,7 @@ const closedMixin = (theme) => ({
 	overflowX: "hidden",
 	width: `calc(${theme.spacing(0)} + 1px)`,
 	[theme.breakpoints.up("sm")]: {
-    width: `calc(${theme.spacing(0)} + 1px)`,
+		width: `calc(${theme.spacing(0)} + 1px)`,
 	},
 });
 
@@ -98,14 +115,12 @@ const Drawer = styled(MuiDrawer, {
 	}),
 }));
 
-export default function MiniDrawer() {
-    const classes = useStyles();
+export default function Dashboard() {
+	const classes = useStyles();
 
-    const dispatch = useDispatch();
-    const experiments = useSelector(store => store.experiments);
-    const [selectedExperiment, setSelectedExperiment] = useState('');
-
-    console.log(experiments);
+	const dispatch = useDispatch();
+	const experiments = useSelector((store) => store.experiments);
+	const [selectedExperiment, setSelectedExperiment] = useState("");
 
 	const theme = useTheme();
 	const [open, setOpen] = React.useState(false);
@@ -122,7 +137,7 @@ export default function MiniDrawer() {
 		<Box sx={{ display: "flex" }}>
 			<CssBaseline />
 			<AppBar position="fixed" open={open}>
-				<Toolbar>
+				<Toolbar className={classes.toolbar}>
 					<IconButton
 						color="inherit"
 						aria-label="open drawer"
@@ -138,18 +153,26 @@ export default function MiniDrawer() {
 					<Typography variant="h6" noWrap component="div">
 						DataFlow - Analysis of CPU-GPU Data Movement
 					</Typography>
-                    { experiments.length > 0 ? (
-                        <FormControl className={classes.formControl}>
-                            <InputLabel id="dataset-label">Experiment</InputLabel>
-                                <Select labelId="dataset-label" id="dataset-select"
-                                value={selectedExperiment} onChange={(e) => setSelectedExperiment(e.target.value)} >
-                                { experiments.map((cc) => (
-                                    <MenuItem key={cc} value={cc}>{cc}</MenuItem>
-                                )) }
-                                </Select>
-                                <FormHelperText>Select the experiment</FormHelperText>
-                        </FormControl>
-                    ): (<></>)} 
+					{experiments.length > 0 ? (
+						<FormControl className={classes.formControl}>
+							<InputLabel id="dataset-label">Experiment</InputLabel>
+							<Select
+								labelId="dataset-label"
+								id="dataset-select"
+								value={selectedExperiment}
+								onChange={(e) => setSelectedExperiment(e.target.value)}
+							>
+								{experiments.map((cc) => (
+									<MenuItem key={cc} value={cc}>
+										{cc}
+									</MenuItem>
+								))}
+							</Select>
+							<FormHelperText>Select the experiment</FormHelperText>
+						</FormControl>
+					) : (
+						<></>
+					)}
 				</Toolbar>
 			</AppBar>
 			<Drawer variant="permanent" open={open}>
@@ -181,7 +204,7 @@ export default function MiniDrawer() {
 			</Drawer>
 			<Box component="main" sx={{ flexGrow: 1, p: 3 }}>
 				<DrawerHeader />
-				<DashboardLayoutWrapper />
+				<GridLayout />
 			</Box>
 		</Box>
 	);
