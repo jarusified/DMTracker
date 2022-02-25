@@ -1,12 +1,19 @@
-import { FETCH_REUSE, FETCH_TRACE, FETCH_COMM } from './helpers/types';
+import { FETCH_REUSE, FETCH_TRACE, FETCH_COMM, FETCH_EXPERIMENTS } from './helpers/types';
 
 const initialState = {
     reuse: {},
-    datasets: [],
+    experiments: ['a'],
+    selectedExperiment: ''
 };
 
 export default function Reducer(state=initialState, action){
     switch (action.type) {
+        case FETCH_EXPERIMENTS:
+            return {
+                ...state,
+                experiments: action.payload.experiments,
+                selectedExperiment: action.payload.experiments[0],
+            }
         case FETCH_REUSE:
             return {
                 ...state,

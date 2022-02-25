@@ -8,23 +8,22 @@ import CCTWrapper from './components/CCTWrapper';
 import ReuseWrapper from './components/ReuseWrapper';
 import MetricsWrapper from './components/MetricsWrapper';
 import TimelineWrapper from './components/TimelineWrapper';
+
 const useStyles = makeStyles((theme) => ({
     contentContainer: {
         padding: theme.spacing(1),
         height: '100%',
         flexGrow: 1,
         alignItems: 'stretch',
-        flexWrap: 'nowrap',
+        flexWrap: 'wrap',
     },
 }))
 
 export default function DashboardLayoutWrapper() {
     const classes = useStyles();
-    
     return (
         <Fragment>
             <Grid container className={classes.contentContainer}>
-                {/* <ControlWrapper /> */}
                 <Grid container item direction='column'>
                     <Grid container item sm md lg xl spacing={1}>
                         <CommWrapper />
