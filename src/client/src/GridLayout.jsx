@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     contentContainer: {
         height: '100%',
         width: window.innerWidth,
-        paddingTop: 50,
+        paddingTop: 60,
         flexGrow: 1,
         alignItems: 'stretch',
         flexWrap: 'wrap',

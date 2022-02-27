@@ -22,12 +22,23 @@ const theme = createTheme({
 		secondary: {
 			main: grey[700],
 		},
+		background: {
+			paper: "#fff",
+		},
+		text: {
+			primary: {
+				main: '#fff',
+			},
+			secondary: {
+				main: '#000',
+			}
+		}
 	},
 });
 
 function App() {
 	useEffect(() => {
-		document.title = "DataFlow - Data Movement in CPU-GPU Interfaces"
+		document.title = "DataFlow - Data Movement in CPU-GPU Interfaces";
 	}, []);
 	return (
 		<Provider store={store}>
