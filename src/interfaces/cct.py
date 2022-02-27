@@ -5,6 +5,7 @@ import networkx as nx
 from logger import get_logger
 from utils.sanitizer import Sanitizer
 from utils.df import df_factorize_column, df_add_column
+from networkx.readwrite import json_graph
 
 LOGGER = get_logger(__name__)
 
@@ -114,4 +115,4 @@ class CCT():
         pass
 
     def get_nxg(self, exp):
-        return self.nxgs[exp].to_json()
+        return json_graph.node_link_data(self.nxgs[exp])

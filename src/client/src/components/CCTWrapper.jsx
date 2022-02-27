@@ -1,10 +1,23 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState, useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+
 import {
     Grid, Box, Typography,
 } from '@material-ui/core';
 
+import { fetchCCT } from "../actions";
 
 function CCTWrapper() {
+    const dispatch = useDispatch();
+    const selectedExperiment = useSelector((store) => store.selectedExperiment);
+	const cct = useSelector((store) => store.cct);
+
+    useEffect(() => {
+        if(selectedExperiment !== '') {
+            dispatch(fetchCCT(selectedExperiment));
+        }
+    }, [selectedExperiment])
+
     return (
         <Box sx={{ p: 1, border: '1px dashed grey' }}>
             <Typography variant='overline' style={{ fontWeight: 'bold' }}>

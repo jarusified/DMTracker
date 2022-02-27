@@ -1,9 +1,10 @@
-import { FETCH_REUSE, FETCH_TRACE, FETCH_COMM, FETCH_EXPERIMENTS } from './helpers/types';
+import { FETCH_REUSE, FETCH_TRACE, FETCH_COMM, FETCH_EXPERIMENTS, FETCH_CCT } from './helpers/types';
 
 const initialState = {
     reuse: {},
     experiments: [],
-    selectedExperiment: ''
+    selectedExperiment: '',
+    cct: {},
 };
 
 export default function Reducer(state=initialState, action){
@@ -29,6 +30,11 @@ export default function Reducer(state=initialState, action){
                 ...state,
                 baseGlyphData: action.payload.base,
                 targetGlyphData: action.payload.target,
+            }
+        case FETCH_CCT:
+            return {
+                ...state,
+                cct: action.payload,
             }
         default:
             return state;
