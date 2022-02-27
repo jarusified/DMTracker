@@ -2,7 +2,7 @@ import { FETCH_REUSE, FETCH_TRACE, FETCH_COMM, FETCH_EXPERIMENTS } from './helpe
 
 const initialState = {
     reuse: {},
-    experiments: ['a'],
+    experiments: [],
     selectedExperiment: ''
 };
 

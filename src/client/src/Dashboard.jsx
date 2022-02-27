@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { styled, useTheme } from "@mui/material/styles";
 import { makeStyles } from "@material-ui/core/styles";
@@ -20,12 +20,12 @@ import {
 	MenuItem,
 	Select,
 } from "@mui/material";
-
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 import GridLayout from "./GridLayout";
+import { fetchExperiments } from "./actions";
 
 const DRAWER_WIDTH = 240;
 
@@ -118,7 +118,18 @@ export default function Dashboard() {
 
 	const dispatch = useDispatch();
 	const experiments = useSelector((store) => store.experiments);
-	const [selectedExperiment, setSelectedExperiment] = useState("");
+	const firstExperiment = useSelector((store) => store.selectedExperiment);
+	const [selectedExperiment, setSelectedExperiment] = useState(firstExperiment);
+
+	useEffect(() => {
+        if (experiments.length == 0) {
+            dispatch(fetchExperiments());
+        }
+    }, [])
+
+	useEffect(() => {
+		// TODO: Perform full-refresh when selected experiment changes.
+	}, [setSelectedExperiment])
 
 	const theme = useTheme();
 	const [open, setOpen] = React.useState(false);

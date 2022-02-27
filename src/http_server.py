@@ -75,17 +75,18 @@ class HTTPServer:
         def index():
             return app.send_static_file("index.html")
 
-        @app.route("/fetchExperiments", methods=["GET"])
+        @app.route("/fetch_experiments", methods=["GET"])
         @cross_origin()
         def fetch_experiments():
+            print(self.experiments)
             return jsonify(experiments=self.experiments)
 
         # Example GET and POST request.
-        @app.route("/fetchCCT", methods=["POST"])
+        @app.route("/fetch_cct", methods=["POST"])
         @cross_origin()
         def fetch_cct():
             request_context = request.json
             nxg = self.cct_interface.get_nxg(request_context["experiment"])
-            return jsonify(nxg)s
+            return jsonify(nxg)
     
         
