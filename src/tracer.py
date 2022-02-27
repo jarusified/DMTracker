@@ -3,7 +3,7 @@ import subprocess
 
 from logger import get_logger
 from generators import *
-from utils import create_dir_after_check
+from utils.general import create_dir_after_check
 
 LOGGER = get_logger(__name__)
 
