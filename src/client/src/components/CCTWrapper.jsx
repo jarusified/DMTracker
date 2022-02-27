@@ -43,12 +43,11 @@ function CCTWrapper() {
     }, [cct]);
 
     return (
-        <Box sx={{ p: 1, border: '1px dashed grey' }}>
+        <Box sx={{ p: 1, border: '1px dashed grey' }} id="cct-view">
             <Typography variant='overline' style={{ fontWeight: 'bold' }}>
                 Calling Context Tree
             </Typography>
             <Grid item>
-                {/* <CCT /> */}
                 <DagreGraph
                     nodes={nodes}
                     links={links}
@@ -57,7 +56,6 @@ function CCTWrapper() {
                         align: 'UL',
                         ranker: 'tight-tree'
                     }}
-                    width={window.innerWidth/3}
                     height={window.innerHeight/4}
                     animate={1000}
                     shape='circle'
@@ -66,8 +64,6 @@ function CCTWrapper() {
                     onNodeClick={e => console.log(e)}
                     onRelationshipClick={e => console.log(e)}
                 />
-            </Grid>
-            <Grid item>
             </Grid>
         </Box>
     )

@@ -22,6 +22,15 @@ class CCT():
         self.dfs = { exp: self.add_path_columns(self.hts[exp]) for exp in self.experiments }
         self.nxgs = { exp: self.ht_graph_to_nxg(self.hts[exp].graph) for exp in self.experiments }
 
+    def get_idx(self, callsite):
+        return self.callsite2idx[callsite]
+
+    def get_callsite(self, idx):
+        return self.idx2callsite[idx]
+
+    def get_mean_runtime(self, exp, tag):
+        pass
+    
     def add_path_columns(self, ht) -> pd.DataFrame:
         """
         Add path columns to the GraphFrame.
@@ -33,13 +42,12 @@ class CCT():
         callers = {}
         callees = {}
 
-        _csidx = lambda _: self.callsite2idx[_]  # noqa E731
         for node in ht.graph.traverse():
             node_name = Sanitizer.from_htframe(node.frame)
-            cs_idx = _csidx(node_name)
-            paths[cs_idx] = [_csidx(Sanitizer.from_htframe(_)) for _ in node.paths()[0]]
-            callers[cs_idx] = [_csidx(Sanitizer.from_htframe(_.frame)) for _ in node.parents]
-            callees[cs_idx] = [_csidx(Sanitizer.from_htframe(_.frame)) for _ in node.children]
+            cs_idx = self.get_idx[node_name]
+            paths[cs_idx] = [self.get_idx(Sanitizer.from_htframe(_)) for _ in node.paths()[0]]
+            callers[cs_idx] = [self.get_idx(Sanitizer.from_htframe(_.frame)) for _ in node.parents]
+            callees[cs_idx] = [self.get_idx(Sanitizer.from_htframe(_.frame)) for _ in node.children]
 
         df = df_add_column(df, "callees", apply_dict=callees, dict_default=[], apply_on="nid")
         df = df_add_column(df, "callers", apply_dict=callers, dict_default=[], apply_on="nid")
@@ -112,7 +120,24 @@ class CCT():
         pass
 
     def _node_attributes(self):
-        pass
+        datamap = {}
+        for callsite in self.nxg.nodes():
+            for column in CCT.COLUMNS:
+                if column not in datamap:
+                    datamap[column] = {}
+
+                callsite_idx = self.sg.get_idx(callsite, "callsite")
+                _df = self.sg.df_lookup_with_column("name", callsite_idx)
+
+                if column == "time (inc)":
+                    datamap[column][callsite] = self.get_mean_runtime(_df, self.time_inc)
+                elif column == "time":
+                    datamap[column][callsite] = self.get_mean_runtime(_df, self.time_exc)
+                elif column == "name":
+                    datamap['label'][callsite] = callsite
+                elif column == "module":
+                    datamap['class'][callsite] = self.sg.get_module(callsite_idx)
+
 
     def get_nxg(self, exp):
         return json_graph.node_link_data(self.nxgs[exp])
