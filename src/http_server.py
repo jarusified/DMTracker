@@ -33,8 +33,7 @@ class HTTPServer:
         self.handle_routes()
 
     def load(self) -> None:
-        
-        CCT(data_dir=self.data_dir)
+        self.cct_interface = CCT(data_dir=self.data_dir)
         H2DCudaMemcpyCommMatrixGenerator(1)
 
     def start(self, host: str, port: int) -> None:
@@ -84,11 +83,9 @@ class HTTPServer:
         # Example GET and POST request.
         @app.route("/fetchCCT", methods=["POST"])
         @cross_origin()
-        def fetchData():
+        def fetch_cct():
             request_context = request.json
-            # base_data = readData(request_context["base"])
-            # target_data = readData(request_context["target"])
-            # return jsonify(base=base_data, target=target_data)
-            return jsonify()
+            nxg = self.cct_interface.get_nxg(request_context["experiment"])
+            return jsonify(nxg)s
     
         
