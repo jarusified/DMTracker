@@ -1,4 +1,5 @@
-import React, { Fragment, useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { makeStyles } from '@material-ui/core/styles';
 import * as d3 from "d3";
 import { Grid, Paper, Box, Typography } from "@material-ui/core";
 import { useSelector } from "react-redux";
@@ -13,7 +14,17 @@ const margins = {
 	left: 0,
 };
 
+const useStyles = makeStyles((theme) => ({
+	rowContainer: {
+        display: "grid",
+        gridAutoFlow: "column",
+        alignItems: "center",
+        padding: 0,
+    }
+}));
+
 function ReuseWrapper() {
+	const classes = useStyles();
 	const cpu = useSelector((store) => store.cpuData);
 	const gpu = useSelector((store) => store.gpuData);
 
@@ -22,16 +33,14 @@ function ReuseWrapper() {
 			<Typography variant="overline" style={{ fontWeight: "bold" }}>
 				Data Reuse analysis
 			</Typography>
-			<Fragment>
-				<Grid container item sm md lg xl >
-                    <Grid>
-    					<OperationGlyph data={cpu} name={"cpu"} />
-                    </Grid>
-                    <Grid>
-                        <OperationGlyph data={gpu} name={"gpu"} />
-                    </Grid>
+			<Grid className={classes.rowContainer}>
+				<Grid item>
+					<OperationGlyph data={cpu} name={"cpu"} />
 				</Grid>
-			</Fragment>
+				<Grid item>									
+					<OperationGlyph data={gpu} name={"gpu"} />
+				</Grid>
+			</Grid>
 		</Box>
 	);
 }
@@ -159,11 +168,11 @@ function OperationGlyph({ data, name }) {
 			<Paper>
 				<Grid item>
 					<Typography variant="overline" style={{ fontWeight: "bold" }}>
-						{name} Operation - {data ? data.op_id : ""}
+						{name} {data ? data.op_id : ""}
 					</Typography>
 				</Grid>
 				<Grid item>
-					<div ref={glyphRef} className="viz-container">
+					<div ref={glyphRef}>
 						<svg id={`operation-${name}-svg`} width="100%" height="100%"></svg>
 					</div>
 				</Grid>

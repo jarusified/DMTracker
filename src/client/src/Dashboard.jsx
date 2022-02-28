@@ -30,13 +30,6 @@ import { fetchExperiments } from "./actions";
 const DRAWER_WIDTH = 240;
 
 const useStyles = makeStyles((theme) => ({
-	contentContainer: {
-		padding: theme.spacing(1),
-		height: "100%",
-		flexGrow: 1,
-		alignItems: "stretch",
-		flexWrap: "nowrap",
-	},
 	toolbar: {
 		color: "black",
 		backgroundColor: "white",
