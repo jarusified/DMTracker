@@ -30,13 +30,13 @@ export default function GridLayout() {
     return (
         <Grid className={classes.contentContainer}>
             <Grid container item direction='column'>
-                <Grid className={classes.rowContainer}>
-                    <CommWrapper />
-                    <CCTWrapper />
-                </Grid>
                 <Grid className={classes.rowContainer}> 
                     <ReuseWrapper />
                     <MetricsWrapper />
+                </Grid>
+                <Grid className={classes.rowContainer}>
+                    <CommWrapper />
+                    <CCTWrapper />
                 </Grid>
                 <Grid className={classes.rowContainer}>
                     <TimelineWrapper />
