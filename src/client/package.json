@@ -27,6 +27,7 @@
     "react-tabulator": "^0.15.0",
     "redux": "^4.1.0",
     "redux-thunk": "^2.3.0",
+    "vis-data": "^7.1.2",
     "vis-timeline": "^7.5.0"
   },
   "devDependencies": {

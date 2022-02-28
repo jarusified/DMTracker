@@ -1,9 +1,7 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-    Grid, Box, Typography,
-} from '@material-ui/core';
+import { Grid, Box, Typography } from '@material-ui/core';
 import DagreGraph from 'dagre-d3-react'
 import { fetchCCT } from "../actions";
 
