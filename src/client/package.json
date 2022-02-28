@@ -26,7 +26,8 @@
     "react-router-dom": "^6.0.0",
     "react-tabulator": "^0.15.0",
     "redux": "^4.1.0",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "vis-timeline": "^7.5.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^1.0.7",
