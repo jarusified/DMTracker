@@ -1,9 +1,13 @@
 import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import { Grid, Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Timeline } from "vis-timeline";
 import { DataSet } from "vis-data";
 import "vis-timeline/dist/vis-timeline-graph2d.css";
+
+import { fetchTimeline } from "../actions";
 
 const useStyles = makeStyles((theme) => ({
 	timeline: {
@@ -15,6 +19,16 @@ const useStyles = makeStyles((theme) => ({
 
 function TimelineWrapper() {
 	const classes = useStyles();
+
+    const dispatch = useDispatch();
+    const selectedExperiment = useSelector((store) => store.selectedExperiment);
+	const timeline = useSelector((store) => store.timeline);
+
+    useEffect(() => {
+        if(selectedExperiment !== '') {
+            dispatch(fetchTimeline(selectedExperiment));
+        }
+    }, [selectedExperiment]);
 
 	useEffect(() => {
 		const container = document.getElementById("timeline-view");

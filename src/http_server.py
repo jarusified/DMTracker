@@ -34,6 +34,7 @@ class HTTPServer:
 
     def load(self) -> None:
         self.cct_interface = CCT(data_dir=self.data_dir)
+        self.timeline_interface = Timeline(data_dir=self.data_dir)
         H2DCudaMemcpyCommMatrixGenerator(1)
 
     def start(self, host: str, port: int) -> None:
@@ -87,5 +88,13 @@ class HTTPServer:
             experiment = request_context["experiment"]
             nxg = self.cct_interface.get_nxg(experiment)
             return jsonify(nxg)
+
+        @app.route("/fetch_timeline", methods=["POST"])
+        @cross_origin()
+        def fetch_timeline():
+            request_context = request.json
+            experiment = request_context["experiment"]
+            timeline = self.timeline_interface.get_timeline(experiment)
+            return jsonify(timeline)
     
         

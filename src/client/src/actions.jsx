@@ -1,4 +1,4 @@
-import { FETCH_EXPERIMENTS, FETCH_CCT } from "./helpers/types";
+import { FETCH_EXPERIMENTS, FETCH_CCT, FETCH_TIMELINE } from "./helpers/types";
 import { SERVER_URL } from "./helpers/utils";
 
 async function POSTWrapper(url_path, json_data) {
@@ -40,6 +40,14 @@ export const fetchCCT = (experiment_tag) => async (dispatch) => {
   const data = await POSTWrapper("fetch_cct", {experiment: experiment_tag});
   dispatch({
     type: FETCH_CCT,
+    payload: data,
+  });
+};
+
+export const fetchTimeline = (experiment_tag) => async (dispatch) => {
+  const data = await POSTWrapper("fetch_timeline", {experiment: experiment_tag});
+  dispatch({
+    type: FETCH_TIMELINE,
     payload: data,
   });
 };
