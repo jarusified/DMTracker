@@ -29,9 +29,27 @@ class HTTPServer:
     def __init__(self, args):
         LOGGER.info(f"{type(self).__name__} mode enabled.")
         self.data_dir = os.path.abspath(args.args['data_dir'])
+        
+        # Check if the directory exists. 
+        HTTPServer._check_data_dir_exists(self.data_dir)
+
         self.experiments = os.listdir(self.data_dir)
         self.handle_routes()
 
+    @staticmethod
+    def _check_data_dir_exists(data_dir):
+        """
+        Internal method to check if the data_dir exists. If not, raise an
+        exception and exit the program. 
+        """
+        _is_dir = os.path.exists(data_dir)
+
+        if(not _is_dir):
+            message = f'It looks like {data_dir} has not been created. Please run `python main.py` with --cmd option'
+            LOGGER.error(message)
+            exit(1) 
+
+    
     def load(self) -> None:
         self.cct_interface = CCT(data_dir=self.data_dir)
         self.timeline_interface = Timeline(data_dir=self.data_dir)
