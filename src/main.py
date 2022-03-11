@@ -35,7 +35,7 @@ def main():
         wip.load()
         wip.start(host=APP_HOST, port=APP_PORT)
 
-    if args.mode == "TRACER":
+    if args.mode == "TRACE":
         tracer = Tracer(args)
         tracer.start()
 

@@ -20,7 +20,7 @@ class Tracer:
         self.cmd = args.args["cmd"]
         self.app_name = args.args["app_name"]
         self.num_gpus = args.args["num_gpus"]
-        self.output_dir = os.path.join(os.path.abspath(args.args["output_dir"]), self.app_name)
+        self.output_dir = os.path.join(os.path.abspath(args.args["data_dir"]), self.app_name)
 
         # Run app with nvprof GPU Trace
         # self.gpu_trace_file = os.path.join(self.output_dir, "gpu_trace.csv")

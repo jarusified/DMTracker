@@ -77,6 +77,5 @@ class ArgParser:
 
         if _has_cmd:
             mode = "TRACE"
-           
-        LOGGER.info(f"{mode} triggered")
+        
         return mode
