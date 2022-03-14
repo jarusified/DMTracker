@@ -204,6 +204,8 @@ void RunBenchmark(ResultDatabase &resultDB, OptionParser &op) {
     }
     RunTest<half>("HGEMM", resultDB, op);
   }
+
+  CALI_MARK_FUNCTION_END;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -249,9 +251,6 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
   //   CALI_MARK_END("Initialize Matrix data");
   // #endif
 
-  #ifdef USE_CALIPER
-    CALI_MARK_BEGIN("Setup CUBLAS");
-  #endif
   // Initialize the cublas library
   cublasHandle_t handle; // CUBLAS context
   cublasStatus_t stat = cublasCreate(&handle);
@@ -259,10 +258,6 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
         std::cerr << "CUBLAS initialization failed" << std::endl;
         safe_exit(-1);
   }
-
-  #ifdef USE_CALIPER
-    CALI_MARK_END("Setup CUBLAS");
-  #endif
 
   // Allocate GPU memory
   T *dA, *dB, *dC;
@@ -478,34 +473,20 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
     CALI_CXX_MARK_LOOP_END(passesloop);
   #endif
 
-  // Clean Up
-  #ifdef USE_CALIPER
-    CALI_MARK_BEGIN("Cleanup vars");
-  #endif
   checkCudaErrors(cudaFree(dA));
   checkCudaErrors(cudaFree(dB));
   checkCudaErrors(cudaFree(dC));
-  #ifdef USE_CALIPER
-    CALI_MARK_END("Cleanup vars");
-  #endif
 
   if (!uvm && !uvm_prefetch && !uvm_advise && !uvm_prefetch_advise) {
-    #ifdef USE_CALIPER
-      CALI_MARK_BEGIN("Cleanup UVM vars");
-    #endif
     checkCudaErrors(cudaFreeHost(A));
     checkCudaErrors(cudaFreeHost(B));
     checkCudaErrors(cudaFreeHost(C));
-    #ifdef USE_CALIPER
-      CALI_MARK_END("Cleanup UVM vars");
-    #endif
   }
 
   checkCudaErrors(cudaEventDestroy(start));
   checkCudaErrors(cudaEventDestroy(stop));
   cublasDestroy(handle);
 
-  CALI_MARK_FUNCTION_END;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
