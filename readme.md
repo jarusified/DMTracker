@@ -1,4 +1,4 @@
-# nvidia Data Movement Experiments.
+# Nvidia Data Movement Experiments.
 
 ## Setup
 
