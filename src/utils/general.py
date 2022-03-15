@@ -20,3 +20,12 @@ def get_memory_usage(process=None):
 def create_dir_after_check(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
+
+from os.path import isabs, getmtime
+from os import getcwd, listdir, path
+
+def get_latest_file(p):
+    if not isabs(p):
+        p = path.join(getcwd(), p)
+    files = sorted([path.join(p, x) for x in listdir(p)], key=getmtime)
+    return (files and files[-1]) or None

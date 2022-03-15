@@ -3,7 +3,7 @@ import subprocess
 
 from logger import get_logger
 from generators import *
-from utils.general import create_dir_after_check
+from utils.general import create_dir_after_check, get_latest_file
 
 LOGGER = get_logger(__name__)
 
@@ -65,8 +65,8 @@ class Tracer:
         self.nsys_trace_qdrep_file = os.path.join(self.output_dir, "nsys_trace.qdrep")
         self.nsys_trace_json_file = os.path.join(self.output_dir, "nsys_trace.json")
         self.lstopo_svg_file = os.path.join(self.output_dir, "topology.svg")
-        self.uvm_tracking_file = os.path.join(self.output_dir, "uvm-tracking.cali")
-        self.uvm_trace_file = os.path.join(self.output_dir, "uvm_trace.cali")
+        self.uvm_tracking_file = os.path.join(self.output_dir, "uvm-tracking.json")
+        self.nvbit_trace_file = os.path.join(self.output_dir, "nvbit_trace.json")
         self.region_profile_file = os.path.join(self.output_dir, "region_profile.json")
         self.runtime_report_file = os.path.join(self.output_dir, "runtime_report.txt")
 
@@ -83,12 +83,16 @@ class Tracer:
         #     nccl_cmd = f'{preload} {args.ifile}'
         #     subprocess.run([nccl_cmd], shell=True)
 
+    def cali_to_json(self, from_file, to_file):
+        cmd = f'cali-query -j {from_file} >> {to_file}'
+        subprocess.run([cmd], shell=True)
+
     def start(self, nvprof_metrics="select"):
         """
         TODO: Run all the commands in parallel.
         """
         LOGGER.info("[Tracer] Runtime summary")
-        runtime_metrics_cmd = f'{self.cmd} -m  {self.runtime_metrics_file}'
+        runtime_metrics_cmd = f'{self.cmd} -m {self.runtime_metrics_file}'
         subprocess.run([runtime_metrics_cmd], shell=True)
 
         LOGGER.info("[Tracer] Metrics summary")
@@ -112,10 +116,18 @@ class Tracer:
         caliper_metrics_cmd = f'CALI_CONFIG_PROFILE={caliper_configs} {self.cmd}'
         subprocess.run([caliper_metrics_cmd], shell=True)
 
+        f = get_latest_file(os.getcwd())
+        self.cali_to_json(f, self.nvbit_trace_file)
+        os.remove(f)
+
         LOGGER.info("[Tracer] Caliper UVM tracking total")
         caliper_configs ="uvm-tracking-total"
-        caliper_metrics_cmd = f'CALI_CONFIG_PROFILE={caliper_configs} {self.cmd}'
+        caliper_metrics_cmd = f'CALI_CONFIG_PROFILE={caliper_configs},output=stdout {self.cmd}'
         subprocess.run([caliper_metrics_cmd], shell=True)
+
+        f = get_latest_file(os.getcwd())
+        self.cali_to_json(f, self.uvm_tracking_file)
+        os.remove(f)
 
         LOGGER.info("[Tracer] Caliper Hatchet region profile")
         caliper_configs ="hatchet-region-profile"
