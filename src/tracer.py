@@ -26,13 +26,45 @@ class Tracer:
         # self.gpu_trace_file = os.path.join(self.output_dir, "gpu_trace.csv")
         
         # Run app with Metric Trace
-        # self.metrics = ["nvlink_user_data_received", "nvlink_user_data_transmitted", "sysmem_read_bytes", "sysmem_write_bytes"]
-        self.metrics = ["crop__busy_cycles_avg"]
-        self.metric_trace_file = os.path.join(self.output_dir, "metric_trace.csv")
+        self.metrics = [
+            "dram_read_throughput",
+            "dram_read_transactions",
+            "dram_write_throughput",
+            "dram_write_transactions",
+            "gld_efficiency",
+            "gld_throughput",
+            "gld_transactions",
+            "gst_efficiency",
+            "gst_throughput",
+            "gst_transactions",
+            "sysmem_read_bytes",
+            "sysmem_write_bytes",
+            "dram_utilization",
+            "l2_utilization",
+            "double_precision_fu_utilization",
+            "achieved_occupancy",
+            "nvlink_user_data_received", 
+            "nvlink_user_data_transmitted", 
+        ]
+        self.metrics_summary_file = os.path.join(self.output_dir, "metric_summary.csv")
         
+        self.events = [
+            "active_cycles",
+            "active_warps",
+            "active_cycles_pm",
+            "active_warps_pm",
+            "warps_launched",
+            "divergent_branch",
+            "shared_ld_bank_conflict",
+            "shared_st_bank_conflict",
+            "active_cycles",
+        ]
+        self.events_summary_file = os.path.join(self.output_dir, "events_summary.csv")
+
         self.runtime_metrics_file = os.path.join(self.output_dir, "runtime_metrics.csv")
         self.nsys_trace_qdrep_file = os.path.join(self.output_dir, "nsys_trace.qdrep")
         self.nsys_trace_json_file = os.path.join(self.output_dir, "nsys_trace.json")
+        self.lstopo_svg_file = os.path.join(self.output_dir, "topology.svg")
 
         create_dir_after_check(self.output_dir)
         
@@ -47,27 +79,37 @@ class Tracer:
         #     nccl_cmd = f'{preload} {args.ifile}'
         #     subprocess.run([nccl_cmd], shell=True)
 
-    def start(self, nvprof_metrics="all"):
+    def start(self, nvprof_metrics="select"):
         """
         TODO: Run all the commands in parallel.
         """
-        if(nvprof_metrics == "all"):
-            metric_trace_cmd = f'nvprof --print-gpu-trace --aggregate-mode off --metrics all --csv --log-file{self.metric_trace_file} {self.cmd}'
-        else:
-            metric_trace_cmd = f'nvprof --print-gpu-trace --aggregate-mode off --metrics {self.metrics} --csv --log-file{self.metric_trace_file} {self.cmd}'
-        subprocess.run([metric_trace_cmd], shell=True)
-
+        LOGGER.info("[Tracer] Runtime summary")
         runtime_metrics_cmd = f'{self.cmd} -m  {self.runtime_metrics_file}'
         subprocess.run([runtime_metrics_cmd], shell=True)
 
+        LOGGER.info("[Tracer] Metrics summary")
+        if(nvprof_metrics == "all"):
+            metric_summary_cmd = f'nvprof --metrics all --csv --log-file {self.metrics_summary_file} {self.cmd}'
+        else:
+            metric_summary_cmd = f'nvprof --metrics {",".join(self.metrics)} --csv --log-file {self.metrics_summary_file} {self.cmd}'
+        subprocess.run([metric_summary_cmd], shell=True)
+
+        if(len(self.events) > 0):
+            LOGGER.info("[Tracer] Events summary")
+            event_summary_cmd = f'nvprof --events {",".join(self.events)} --csv --log-file{self.events_summary_file} {self.cmd}'
+            subprocess.run([event_summary_cmd], shell=True)
+
+        LOGGER.info("[Tracer] Nsys trace summary")
         nsys_metrics_cmd = f'nsys profile --trace=cuda,nvtx -d 20 --sample=none -o {self.nsys_trace_qdrep_file} {self.cmd}'
         subprocess.run([nsys_metrics_cmd], shell=True)
 
+        LOGGER.info("[Tracer] Caliper UM")
         caliper_configs ="uvm-tracking,uvm-trace,hatchet-region-profile"
         caliper_metrics_cmd = f'CALI_CONFIG_PROFILE={caliper_configs} {self.cmd}'
         subprocess.run([caliper_metrics_cmd], shell=True)
 
-        topology_cmd = f'lstopo --of xml >> ./data/topology.xml'
+        LOGGER.info("[Tracer] LSTOPO SVG dump")
+        topology_cmd = f'lstopo --of svg >> {self.lstopo_svg_file}'
         subprocess.run([topology_cmd], shell=True)
     
     @staticmethod
