@@ -72,17 +72,6 @@ class Tracer:
 
         create_dir_after_check(self.output_dir)
         
-        # # Run app with NCCL library
-        # if(with_nccl): 
-        #     check_nccl(NCCL_SHARED_LIBRARY_PATH)
-        #     preload = f'LD_PRELOAD={NCCL_SHARED_LIBRARY_PATH}'
-
-        #     file_regex = f'nccl_{args.coll_type}_*.csv'
-        #     file_paths = glob.glob(file_regex)
-        #     remove_existing_files(file_paths)
-        #     nccl_cmd = f'{preload} {args.ifile}'
-        #     subprocess.run([nccl_cmd], shell=True)
-
     def cali_to_json(self, from_file, to_file):
         cmd = f'cali-query -j {from_file} >> {to_file}'
         subprocess.run([cmd], shell=True)
