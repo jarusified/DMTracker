@@ -1,0 +1,28 @@
+Chose device: name='NVIDIA GeForce GTX 1050 Ti' index=0
+Running GEMM
+Running single precision test
+Dimensions of matrix: 2048, 2
+
+test                       atts           units        median            mean              stddev          min               max               
+SGEMM-N                    dim:2048       GFlops       2031.15           2031.83           24.8621         2004.08           2098.91           
+SGEMM-N-KernelTime         dim:2048       sec          0.0084582         0.0084566         0.000101412     0.00818515        0.00857243        
+SGEMM-N-TotalTime          dim:2048       sec          0.00846038        0.00845877        0.000101412     0.00818733        0.00857461        
+SGEMM-N-TransferTime       dim:2048       sec          2.176e-06         2.176e-06         4.23516e-22     2.176e-06         2.176e-06         
+SGEMM-N_PCIe               dim:2048       GFlops       2030.63           2031.31           24.8491         2003.57           2098.35           
+SGEMM-N_Parity             dim:2048       N            0.000257265       0.000257352       3.14903e-06     0.000253837       0.000265847       
+SGEMM-T                    dim:2048       GFlops       2064.94           2060.27           22.3221         2026.35           2110.85           
+SGEMM-T-KernelTime         dim:2048       sec          0.0083198         0.00833961        8.98257e-05     0.00813885        0.00847822        
+SGEMM-T-TotalTime          dim:2048       sec          0.00832198        0.00834179        8.98257e-05     0.00814102        0.00848039        
+SGEMM-T-TransferTime       dim:2048       sec          2.176e-06         2.176e-06         4.23516e-22     2.176e-06         2.176e-06         
+SGEMM-T_PCIe               dim:2048       GFlops       2064.4            2059.74           22.3105         2025.83           2110.28           
+SGEMM-T_Parity             dim:2048       N            0.000261545       0.000260954       2.82732e-06     0.000256658       0.00026736        
+
+Note: results marked with (*) had missing values such as
+might occur with a mixture of architectural capabilities.
+Path                 Min time/rank Max time/rank Avg time/rank Time %    
+RunBenchmark              0.185673      0.185673      0.185673 15.331230 
+  passes.loop             0.000085      0.000085      0.000085  0.007019 
+    cublas_t.loop         0.417592      0.417592      0.417592 34.481045 
+      cublas_n.loop       0.430174      0.430174      0.430174 35.519955 
+  Fill matrix (file)      0.177046      0.177046      0.177046 14.618889 
+  Initialize CUDA         0.000010      0.000010      0.000010  0.000826 

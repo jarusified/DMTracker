@@ -1,0 +1,39 @@
+==1879408== NVPROF is profiling process 1879408, command: ../../../bin/cublas-gemm/cublas-gemm -s 1 --uvm-advise
+==1879408== Warning: Profiling results might be incorrect with current version of nvcc compiler used to compile cuda app. Compile with nvcc compiler 9.0 or later version to get correct profiling results. Ignore this warning if code is already compiled with the recommended nvcc version 
+==1879408== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==1879408== Profiling application: ../../../bin/cublas-gemm/cublas-gemm -s 1 --uvm-advise
+==1879408== Profiling result:
+==1879408== Metric result:
+"Device","Kernel","Invocations","Metric Name","Metric Description","Min","Max","Avg"
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_TN_vec",50,"dram_read_throughput","Device Memory Read Throughput",21.428809GB/s,25.006356GB/s,22.979637GB/s
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_TN_vec",50,"dram_read_transactions","Device Memory Read Transactions",786436,835164,789462
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_TN_vec",50,"dram_write_throughput","Device Memory Write Throughput",3.601251GB/s,4.132617GB/s,3.866381GB/s
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_TN_vec",50,"dram_write_transactions","Device Memory Write Transactions",122975,138875,132828
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_TN_vec",50,"gld_efficiency","Global Memory Load Efficiency",100.000000%,100.000000%,100.000000%
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_TN_vec",50,"gld_throughput","Global Load Throughput",57.117634GB/s,62.792614GB/s,61.043841GB/s
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_TN_vec",50,"gld_transactions","Global Load Transactions",8388610,8388610,8388610
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_TN_vec",50,"gst_efficiency","Global Memory Store Efficiency",100.000000%,100.000000%,100.000000%
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_TN_vec",50,"gst_throughput","Global Store Throughput",3.569852GB/s,3.924538GB/s,3.815240GB/s
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_TN_vec",50,"gst_transactions","Global Store Transactions",131072,131072,131072
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_TN_vec",50,"sysmem_read_bytes","System Memory Read Bytes",0,0,0
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_TN_vec",50,"sysmem_write_bytes","System Memory Write Bytes",160,160,160
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_TN_vec",50,"dram_utilization","Device Memory Utilization","Low (3)","Low (3)","Low (3)"
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_TN_vec",50,"l2_utilization","L2 Cache Utilization","Low (1)","Low (1)","Low (1)"
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_TN_vec",50,"double_precision_fu_utilization","Double-Precision Function Unit Utilization","Idle (0)","Idle (0)","Idle (0)"
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_TN_vec",50,"achieved_occupancy","Achieved Occupancy",0.238633,0.244465,0.239700
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_NN_vec",50,"dram_read_throughput","Device Memory Read Throughput",20.948885GB/s,23.014886GB/s,22.216422GB/s
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_NN_vec",50,"dram_read_transactions","Device Memory Read Transactions",786444,789720,786996
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_NN_vec",50,"dram_write_throughput","Device Memory Write Throughput",3.279615GB/s,4.043929GB/s,3.745608GB/s
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_NN_vec",50,"dram_write_transactions","Device Memory Write Transactions",122975,138963,132684
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_NN_vec",50,"gld_efficiency","Global Memory Load Efficiency",100.000000%,100.000000%,100.000000%
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_NN_vec",50,"gld_throughput","Global Load Throughput",55.859431GB/s,61.220732GB/s,59.201288GB/s
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_NN_vec",50,"gld_transactions","Global Load Transactions",8388610,8388610,8388610
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_NN_vec",50,"gst_efficiency","Global Memory Store Efficiency",100.000000%,100.000000%,100.000000%
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_NN_vec",50,"gst_throughput","Global Store Throughput",3.491214GB/s,3.826296GB/s,3.700080GB/s
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_NN_vec",50,"gst_transactions","Global Store Transactions",131072,131072,131072
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_NN_vec",50,"sysmem_read_bytes","System Memory Read Bytes",0,0,0
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_NN_vec",50,"sysmem_write_bytes","System Memory Write Bytes",160,160,160
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_NN_vec",50,"dram_utilization","Device Memory Utilization","Low (3)","Low (3)","Low (3)"
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_NN_vec",50,"l2_utilization","L2 Cache Utilization","Low (1)","Low (1)","Low (1)"
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_NN_vec",50,"double_precision_fu_utilization","Double-Precision Function Unit Utilization","Idle (0)","Idle (0)","Idle (0)"
+"NVIDIA GeForce GTX 1050 Ti (0)","sgemm_128x128x8_NN_vec",50,"achieved_occupancy","Achieved Occupancy",0.238094,0.244022,0.238836

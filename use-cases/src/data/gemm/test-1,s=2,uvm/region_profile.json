@@ -1,0 +1,16 @@
+{
+  "data": [
+    [ 0.000482, null ],
+    [ 0.178693, 0 ],
+    [ 0.000009, 1 ],
+    [ 0.178084, 2 ],
+    [ 0.000149, 3 ],
+    [ 0.418022, 4 ],
+    [ 0.432035, 5 ]
+  ],
+  "columns": [ "time", "path" ],
+  "column_metadata": [ { "is_value": true, "attribute.alias": "time", "attribute.unit": "sec" }, { "is_value": false }  ],
+  "nodes": [ { "label": "RunBenchmark", "column": "path" }, { "label": "Initialize CUDA", "column": "path", "parent": 0 }, { "label": "Fill matrix (file)", "column": "path", "parent": 0 }, { "label": "passes.loop", "column": "path", "parent": 0 }, { "label": "cublas_t.loop", "column": "path", "parent": 3 }, { "label": "cublas_n.loop", "column": "path", "parent": 4 } ],
+  "cali.caliper.version": "2.8.0-dev",
+  "cali.channel": "hatchet-region-profile"
+}

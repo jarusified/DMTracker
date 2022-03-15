@@ -1,0 +1,7 @@
+Path                 Min time/rank Max time/rank Avg time/rank Time %    
+RunBenchmark              0.188823      0.188823      0.188823 51.877586 
+  passes.loop             0.000110      0.000110      0.000110  0.030222 
+    cublas_t.loop         0.064774      0.064774      0.064774 17.796131 
+      cublas_n.loop       0.063906      0.063906      0.063906 17.557655 
+  Fill matrix (file)      0.045822      0.045822      0.045822 12.589222 
+  Initialize CUDA         0.000010      0.000010      0.000010  0.002747 

@@ -1,0 +1,4 @@
+[
+{"cupti.starttime":"1647370214131786114","event.begin#function":"RunBenchmark"},
+{"cupti.starttime":"1647370214131786114","event.end#function":"RunBenchmark","path":"RunBenchmark","region.count":1}
+]
