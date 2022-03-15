@@ -12,6 +12,7 @@
 timemory*
 xtracer/*
 softwares/*
+build/*
 
 experiments/*
 experiments/rodinia_3.1/*

@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(CMAKE_C_COMPILER "/usr/bin/gcc")
 set(CMAKE_CXX_COMPILER "/usr/bin/g++")
-set(CMAKE_CUDA_COMPILER "/home/suraj/Work/llnl/spack/opt/spack/linux-ubuntu20.04-skylake/gcc-9.3.0/cuda-11.1.0-5zknzvukfvdi2ihfhj25fcqj4gktqesr/bin/nvcc")
+set(CMAKE_CUDA_COMPILER "/home/suraj/Work/llnl/spack/opt/spack/linux-ubuntu20.04-skylake/gcc-9.3.0/cuda-11.1.0-5zknzvukfvdi2ihfhj25fcqj4gktqesr")
 
 set(CMAKE_THREAD_LIBS_INIT "-lpthread")
 set(CMAKE_HAVE_THREADS_LIBRARY 1)
