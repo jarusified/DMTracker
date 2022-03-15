@@ -10,7 +10,7 @@
 .metadata/*
 
 timemory*
-tracer/*
+xtracer/*
 softwares/*
 
 experiments/*
