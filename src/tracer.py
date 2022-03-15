@@ -65,6 +65,10 @@ class Tracer:
         self.nsys_trace_qdrep_file = os.path.join(self.output_dir, "nsys_trace.qdrep")
         self.nsys_trace_json_file = os.path.join(self.output_dir, "nsys_trace.json")
         self.lstopo_svg_file = os.path.join(self.output_dir, "topology.svg")
+        self.uvm_tracking_file = os.path.join(self.output_dir, "uvm-tracking.cali")
+        self.uvm_trace_file = os.path.join(self.output_dir, "uvm_trace.cali")
+        self.region_profile_file = os.path.join(self.output_dir, "region_profile.json")
+        self.runtime_report_file = os.path.join(self.output_dir, "runtime_report.txt")
 
         create_dir_after_check(self.output_dir)
         
@@ -103,9 +107,24 @@ class Tracer:
         nsys_metrics_cmd = f'nsys profile --trace=cuda,nvtx -d 20 --sample=none -o {self.nsys_trace_qdrep_file} {self.cmd}'
         subprocess.run([nsys_metrics_cmd], shell=True)
 
-        LOGGER.info("[Tracer] Caliper UM")
-        caliper_configs ="uvm-tracking,uvm-trace,hatchet-region-profile"
+        LOGGER.info("[Tracer] Caliper NV-Bit")
+        caliper_configs ="nvbit-trace"
         caliper_metrics_cmd = f'CALI_CONFIG_PROFILE={caliper_configs} {self.cmd}'
+        subprocess.run([caliper_metrics_cmd], shell=True)
+
+        LOGGER.info("[Tracer] Caliper UVM tracking total")
+        caliper_configs ="uvm-tracking-total"
+        caliper_metrics_cmd = f'CALI_CONFIG_PROFILE={caliper_configs} {self.cmd}'
+        subprocess.run([caliper_metrics_cmd], shell=True)
+
+        LOGGER.info("[Tracer] Caliper Hatchet region profile")
+        caliper_configs ="hatchet-region-profile"
+        caliper_metrics_cmd = f'CALI_CONFIG={caliper_configs},output=stdout {self.cmd} >> {self.region_profile_file}'
+        subprocess.run([caliper_metrics_cmd], shell=True)
+
+        LOGGER.info("[Tracer] Caliper Hatchet runtime-report")
+        caliper_configs ="runtime-report"
+        caliper_metrics_cmd = f'CALI_CONFIG={caliper_configs},output=stdout {self.cmd} >> {self.runtime_report_file}'
         subprocess.run([caliper_metrics_cmd], shell=True)
 
         LOGGER.info("[Tracer] LSTOPO SVG dump")
