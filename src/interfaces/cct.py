@@ -5,6 +5,7 @@ import networkx as nx
 from logger import get_logger
 from utils.sanitizer import Sanitizer
 from utils.df import df_factorize_column, df_add_column, df_lookup_by_column
+from utils.general import get_sorted_files
 from networkx.readwrite import json_graph
 
 LOGGER = get_logger(__name__)
@@ -15,9 +16,13 @@ class CCT():
 
     def __init__(self, data_dir):
         LOGGER.info(f"{type(self).__name__} interface triggered.")
-        self.experiments = os.listdir(data_dir)
+        self.experiments = get_sorted_files(data_dir)
         self.file_paths = { exp: os.path.join(os.path.abspath(data_dir), f'{exp}/{self.FILENAME}') for exp in self.experiments }
         self.graph = nx.DiGraph()
+        for exp in self.experiments:
+            print("adding graph for experiment:", exp)
+            ht.GraphFrame.from_caliper_json(self.file_paths[exp])
+
         self.hts = { exp: ht.GraphFrame.from_caliper_json(self.file_paths[exp]) for exp in self.experiments }
         self.dfs = { exp: self.add_path_columns(self.hts[exp]) for exp in self.experiments }
         self.nxgs = { exp: self.ht_graph_to_nxg(self.hts[exp]) for exp in self.experiments }

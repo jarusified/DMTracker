@@ -21,11 +21,14 @@ def create_dir_after_check(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-from os.path import isabs, getmtime
-from os import getcwd, listdir, path
+def get_sorted_files(p):
+    if not os.path.isabs(p):
+        p = os.path.join(os.getcwd(), p)
+    files = sorted([os.path.join(p, x) for x in os.listdir(p)], key=os.path.getmtime)
+    return files    
 
 def get_latest_file(p):
-    if not isabs(p):
-        p = path.join(getcwd(), p)
-    files = sorted([path.join(p, x) for x in listdir(p)], key=getmtime)
+    if not os.path.isabs(p):
+        p = os.path.join(os.getcwd(), p)
+    files = sorted([os.path.join(p, x) for x in os.listdir(p)], key=os.path.getmtime)
     return (files and files[-1]) or None
