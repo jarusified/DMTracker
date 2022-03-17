@@ -51,9 +51,9 @@ class HTTPServer:
 
     
     def load(self) -> None:
-        self.cct_interface = CCT(data_dir=self.data_dir)
-        # self.timeline_interface = Timeline(data_dir=self.data_dir)
         self.metrics_interface = Metrics(data_dir=self.data_dir)
+        # self.cct_interface = CCT(data_dir=self.data_dir)
+        # self.timeline_interface = Timeline(data_dir=self.data_dir)
 
     def start(self, host: str, port: int) -> None:
         """

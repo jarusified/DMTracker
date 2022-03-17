@@ -104,7 +104,7 @@ class Metrics():
         """
         Returns the total runtime for a given experiment.
         """
-        return df.loc[df['test'] == 'TotalTime'].iloc[0]['mean']
+        return df.loc[df['test'] == 'SGEMM-N-TotalTime'].iloc[0]['mean']
 
     def get_metrics(self, exp):
         """
@@ -120,6 +120,7 @@ class Metrics():
             'transfer_metrics': self.transfer_metrics,
             'atts': self.atts,
             'kernel_metrics': self.get_kernel_metrics(),
+            "no_of_kernels": len(self.kernels),
         }
 
     def get_kernels(self, exp_df):

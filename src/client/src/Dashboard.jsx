@@ -111,7 +111,7 @@ export default function Dashboard() {
 
 	const dispatch = useDispatch();
 	const experiments = useSelector((store) => store.experiments);
-	const firstExperiment = useSelector((store) => store.selectedExperiment);
+	const firstExperiment = useSelector((store) => store.selected_experiment);
 	const [selectedExperiment, setSelectedExperiment] = useState(firstExperiment);
 
 	useEffect(() => {

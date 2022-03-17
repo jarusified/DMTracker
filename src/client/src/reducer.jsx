@@ -3,7 +3,7 @@ import { FETCH_REUSE, FETCH_COMM, FETCH_EXPERIMENTS, FETCH_CCT, FETCH_TIMELINE, 
 const initialState = {
     reuse: {},
     experiments: [],
-    selectedExperiment: '',
+    selected_experiment: '',
     cct: {},
     timeline: {},
     comm: {},
@@ -11,6 +11,7 @@ const initialState = {
     transfer_metrics: {},
     atts: {},
     kernel_metrics: {},
+    no_of_kernels: 0,
 };
 
 export default function Reducer(state=initialState, action){
@@ -19,7 +20,7 @@ export default function Reducer(state=initialState, action){
             return {
                 ...state,
                 experiments: action.payload.experiments,
-                selectedExperiment: action.payload.experiments[0],
+                selected_experiment: action.payload.experiments[0],
             }
         case FETCH_REUSE:
             return {
@@ -48,6 +49,7 @@ export default function Reducer(state=initialState, action){
                 runtime_metrics: action.payload.runtime_metrics,
                 transfer_metrics: action.payload.transfer_metrics,
                 atts: action.payload.atts,
+                no_of_kernels: action.payload.no_of_kernels,
             }
         default:
             return state;

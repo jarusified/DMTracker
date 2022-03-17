@@ -22,7 +22,7 @@ function CCTWrapper() {
     const classes = useStyles();
 
     const dispatch = useDispatch();
-    const selectedExperiment = useSelector((store) => store.selectedExperiment);
+    const selectedExperiment = useSelector((store) => store.selected_experiment);
 	const cct = useSelector((store) => store.cct);
     const [nodes, setNodes] = useState([]);
     const [links, setLinks] = useState([]);

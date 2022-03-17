@@ -76,3 +76,9 @@ a {
   margin: 10%;
   text-decoration: none;
 }
+
+path {
+	fill: none;
+	stroke: gray;
+	stroke-width: 0.5px;
+}
