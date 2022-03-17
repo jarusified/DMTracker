@@ -26,7 +26,7 @@ function MetricsWrapper() {
     return ( 
         <Box sx={{ p: 1, border: '1px dashed grey' }}>
             <Typography variant='overline' style={{ fontWeight: 'bold' }}>
-                Performance metrics
+                Ensemble Performance
             </Typography>
             <Grid item>
                 <Grid item>
@@ -41,7 +41,12 @@ function MetricsWrapper() {
 
 function RuntimeMetrics() {
     const runtime_metrics = useSelector((store) => store.runtime_metrics);
+    const kernel_metrics = useSelector((store) => store.kernel_metrics);
+    const transfer_metrics = useSelector((store) => store.transfer_metrics);
+
     console.log(runtime_metrics);
+    console.log(transfer_metrics);
+    console.log(kernel_metrics);
     return (
         <Fragment>
             {runtime_metrics.length > 0 ? (

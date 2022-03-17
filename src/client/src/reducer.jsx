@@ -9,7 +9,8 @@ const initialState = {
     comm: {},
     runtime_metrics: {},
     transfer_metrics: {},
-    problem_size_metrics: {},
+    atts: {},
+    kernel_metrics: {},
 };
 
 export default function Reducer(state=initialState, action){
@@ -43,9 +44,10 @@ export default function Reducer(state=initialState, action){
         case FETCH_METRICS:
             return {
                 ...state,
+                kernel_metrics: action.payload.kernel_metrics,
                 runtime_metrics: action.payload.runtime_metrics,
                 transfer_metrics: action.payload.transfer_metrics,
-                problem_size_metrics: action.payload.problem_size_metrics,
+                atts: action.payload.atts,
             }
         default:
             return state;

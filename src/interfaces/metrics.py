@@ -1,4 +1,5 @@
 import os
+from typing import OrderedDict
 import pandas as pd
 
 class Metrics():
@@ -11,31 +12,61 @@ class Metrics():
         Initializes a Metrics object.
         """
         self.experiments = os.listdir(data_dir)
+    
+        # Runtime metrics
         self.runtime_summary_file_paths = {exp: os.path.join(os.path.abspath(data_dir), f'{exp}/{self.RUNTIME_SUMMARY_FILE_NAME}') for exp in self.experiments}
-        self.kernel_summary_file_paths = {exp: os.path.join(os.path.abspath(data_dir), f'{exp}/{self.KERNEL_SUMMARY_FILE_NAME}') for exp in self.experiments}
-
-        # Find the kernels from the first experiment.
-        self.kernels = self.get_kernels(self.experiments[0]);
-
-        self.dfs = {}
+        self.runtime_dfs = {}
         self.runtime_metrics = {}
         self.transfer_metrics = {}
         self.atts = {}
         self.total_runtime = {}
+        
+        for exp in self.experiments:
+            # Check if the runtime metric file exists.
+            if os.path.exists(self.runtime_summary_file_paths[exp]):
+                self.runtime_dfs[exp] = pd.read_csv(self.runtime_summary_file_paths[exp], sep=", ", engine='python')
+                self.runtime_metrics[exp] = self.load_runtime_metrics(self.runtime_dfs[exp])
+                self.transfer_metrics[exp] = self.load_transfer_metrics(self.runtime_dfs[exp])
+                self.atts[exp] =  self.load_atts(self.runtime_dfs[exp])
+                self.total_runtime[exp] = self.load_total_time(self.runtime_dfs[exp])
 
-        # for exp in self.experiments:
-        #     # Check if the runtime metric file exists.
-        #     if os.path.exists(self.runtime_summary_file_paths[exp]):
-        #         self.dfs[exp] = pd.read_csv(self.runtime_file_paths[exp], sep=", ", engine='python')
-        #         self.runtime_metrics[exp] = self.load_runtime_metrics(self.dfs[exp])
-        #         self.transfer_metrics[exp] = self.load_transfer_metrics(self.dfs[exp])
-        #         self.atts[exp] =  self.load_atts(self.dfs[exp])
-        #         self.total_runtime[exp] = self.load_total_time(self.dfs[exp])
-    
-        #     # Check if the kernel summary file exists.
-        #     elif os.path.exists(self.kernel_summary_file_paths[exp]):
-        #         self.dfs[exp] = pd.read_csv(self.kernel_summary_file_paths[exp], sep=", ", engine='python')
+        # Kernel metrics
+        self.kernel_summary_file_paths = {exp: os.path.join(os.path.abspath(data_dir), f'{exp}/{self.KERNEL_SUMMARY_FILE_NAME}') for exp in self.experiments}
+
+        # Find the kernels from the first experiment.
+        exp_0_df = pd.read_csv(self.kernel_summary_file_paths[self.experiments[0]], sep=",", engine='python', skiprows=6)
+        self.kernels = exp_0_df['Kernel'].unique();
+        self.metrics = exp_0_df['Metric Name'].unique();
+        self.kernel_dfs = {}
+        self.devices = {}
+        for exp in self.experiments: 
+            # Check if the kernel summary file exists.
+            if os.path.exists(self.kernel_summary_file_paths[exp]):
+                self.kernel_dfs[exp] = pd.read_csv(self.kernel_summary_file_paths[exp], sep=",", engine='python', skiprows=6)
+                self.devices[exp] = self.kernel_dfs[exp]['Device'].unique()
                 
+    def get_kernel_metrics(self):
+        """
+        Returns the metrics for a given kernel.
+        Format: {
+            'experiment_name': {
+                'kernel_name': {
+                    metric_1: val,
+                    metric_2: val...
+                }
+            }
+        }
+        """
+        ret = {}
+        for exp, k_df in self.kernel_dfs.items():
+            ret[exp] = {}
+            for (k, v) in k_df.groupby('Kernel'):
+                ret[exp][k] = {}
+                for (m, v) in v.groupby('Metric Name'):
+                    ret[exp][k][m] = v['Avg'].iloc[0]
+        return ret
+
+        
     # Write a function that prints 10 most expensive kernels.
     def print_expensive_kernels(self, exps):
         expensive_kernels = {}
@@ -81,22 +112,28 @@ class Metrics():
         """
         return self.metrics[exp] if exp in self.experiments else None    
 
-    def get_data(self, exp):
+    def get_data(self):
         """
         Returns metrics for a given experiment."""
         return {
-            'runtime_metrics': self.runtime_metrics[exp],
-            'transfer_metrics': self.transfer_metrics[exp],
-            'atts': self.atts[exp]
+            'runtime_metrics': self.runtime_metrics,
+            'transfer_metrics': self.transfer_metrics,
+            'atts': self.atts,
+            'kernel_metrics': self.get_kernel_metrics(),
         }
 
-    def get_kernels(self, exp):
+    def get_kernels(self, exp_df):
         """
         Returns a list of kernels for a given ensemble.
         Note: It is assumed that the kernels are the same for all experiments.
         """
-        df = pd.read_csv(self.kernel_summary_file_paths[exp], sep=",", engine='python', skiprows=6)
-        return df['Kernel'].unique()
+        return exp_df['Kernel'].unique()
+
+    def get_metrics(self, exp_df):
+        """
+        Returns the list of metrics recorded.
+        """
+        df = pd.read_csv(self.runtime_summary_file_paths[exp], sep=",", engine='python', skiprows=6)
 
     def sort_by_runtime(self, exps):
         return dict(sorted(self.total_runtime.items(), key=lambda item: item[1], reverse=True))

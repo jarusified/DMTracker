@@ -52,7 +52,7 @@ class HTTPServer:
     
     def load(self) -> None:
         self.cct_interface = CCT(data_dir=self.data_dir)
-        self.timeline_interface = Timeline(data_dir=self.data_dir)
+        # self.timeline_interface = Timeline(data_dir=self.data_dir)
         self.metrics_interface = Metrics(data_dir=self.data_dir)
 
     def start(self, host: str, port: int) -> None:
@@ -98,7 +98,6 @@ class HTTPServer:
         @cross_origin()
         def fetch_experiments():
             sorted_experiments = self.metrics_interface.sort_by_runtime(self.experiments)
-            print("Sorted experiemnts", sorted_experiments)
             return jsonify(experiments=list(sorted_experiments.keys()))
 
         @app.route("/fetch_cct", methods=["POST"])
@@ -122,5 +121,5 @@ class HTTPServer:
         def fetch_metrics():
             request_context = request.json
             experiment = request_context["experiment"]
-            data = self.metrics_interface.get_data(experiment)
+            data = self.metrics_interface.get_data()
             return jsonify(data)
