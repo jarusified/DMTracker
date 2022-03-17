@@ -19,13 +19,17 @@ class CCT():
         self.experiments = get_sorted_files(data_dir)
         self.file_paths = { exp: os.path.join(os.path.abspath(data_dir), f'{exp}/{self.FILENAME}') for exp in self.experiments }
         self.graph = nx.DiGraph()
-        for exp in self.experiments:
-            print("adding graph for experiment:", exp)
-            ht.GraphFrame.from_caliper_json(self.file_paths[exp])
 
-        self.hts = { exp: ht.GraphFrame.from_caliper_json(self.file_paths[exp]) for exp in self.experiments }
-        self.dfs = { exp: self.add_path_columns(self.hts[exp]) for exp in self.experiments }
-        self.nxgs = { exp: self.ht_graph_to_nxg(self.hts[exp]) for exp in self.experiments }
+        self.hts = {}
+        self.nxgs = {}
+        self.dfs = {}
+        for exp in self.experiments:
+            # LOGGER.info("adding graph for experiment:", exp)
+            # Check if file exists.
+            if os.path.exists(self.file_paths[exp]):
+                self.hts[exp] = ht.GraphFrame.from_caliper_json(self.file_paths[exp])
+                self.dfs[exp] = self.add_path_columns(self.hts[exp])
+                self.nxgs[exp] = self.ht_graph_to_nxg(self.hts[exp])
 
     def get_idx(self, callsite):
         return self.callsite2idx[callsite]

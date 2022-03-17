@@ -97,7 +97,9 @@ class HTTPServer:
         @app.route("/fetch_experiments", methods=["GET"])
         @cross_origin()
         def fetch_experiments():
-            return jsonify(experiments=self.experiments)
+            sorted_experiments = self.metrics_interface.sort_by_runtime(self.experiments)
+            print("Sorted experiemnts", sorted_experiments)
+            return jsonify(experiments=list(sorted_experiments.keys()))
 
         @app.route("/fetch_cct", methods=["POST"])
         @cross_origin()

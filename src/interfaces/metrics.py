@@ -10,10 +10,21 @@ class Metrics():
         """
         self.experiments = os.listdir(data_dir)
         self.file_paths = {exp: os.path.join(os.path.abspath(data_dir), f'{exp}/{self.FILENAME}') for exp in self.experiments}
-        self.dfs = {exp: pd.read_csv(self.file_paths[exp], sep=", ") for exp in self.experiments}
-        self.runtime_metrics = {exp: self.load_runtime_metrics(self.dfs[exp]) for exp in self.experiments}
-        self.transfer_metrics = {exp: self.load_transfer_metrics(self.dfs[exp]) for exp in self.experiments}
-        self.problem_size = {exp: self.load_problem_size(self.dfs[exp]) for exp in self.experiments}
+        
+        self.dfs = {}
+        self.runtime_metrics = {}
+        self.transfer_metrics = {}
+        self.atts = {}
+        self.total_runtime = {}
+        for exp in self.experiments:
+            # Check if file exists.
+            if os.path.exists(self.file_paths[exp]):
+                self.dfs[exp] = pd.read_csv(self.file_paths[exp], sep=", ", engine='python')
+                self.runtime_metrics[exp] = self.load_runtime_metrics(self.dfs[exp])
+                self.transfer_metrics[exp] = self.load_transfer_metrics(self.dfs[exp])
+                self.atts[exp] =  self.load_atts(self.dfs[exp])
+                self.total_runtime[exp] = self.load_total_time(self.dfs[exp])
+                print(self.total_runtime[exp])
 
     def load_runtime_metrics(self, df):
         """
@@ -21,7 +32,7 @@ class Metrics():
         """
         metrics = []
         for jdict in df.to_dict(orient='records'):
-            print(jdict)
+            # print(jdict)
             if jdict['units'] == 'sec':
                 metrics.append(jdict)
         return metrics
@@ -36,11 +47,17 @@ class Metrics():
                 transfers.append(jdict)
         return transfers
 
-    def load_problem_size(self, df):
+    def load_atts(self, df):
         """
         Populates the attributes from the csv file.
         """
         return list(df["atts"].unique())[0]
+
+    def load_total_time(self, df):
+        """
+        Returns the total runtime for a given experiment.
+        """
+        return df.loc[df['test'] == 'TotalTime'].iloc[0]['mean']
 
     def get_metrics(self, exp):
         """
@@ -56,3 +73,6 @@ class Metrics():
             'transfer_metrics': self.transfer_metrics[exp],
             'problem_size': self.problem_size[exp]
         }
+
+    def sort_by_runtime(self, exps):
+        return dict(sorted(self.total_runtime.items(), key=lambda item: item[1], reverse=True))

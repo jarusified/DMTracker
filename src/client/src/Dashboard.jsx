@@ -122,7 +122,8 @@ export default function Dashboard() {
 
 	useEffect(() => {
 		// TODO: Perform full-refresh when selected experiment changes.
-	}, [setSelectedExperiment])
+		setSelectedExperiment(firstExperiment);
+	}, [firstExperiment])
 
 	const theme = useTheme();
 	const [open, setOpen] = React.useState(false);
@@ -159,9 +160,12 @@ export default function Dashboard() {
 					<Typography variant="h6" noWrap component="div">
 						DataFlow - Analysis of CPU-GPU Data Movement
 					</Typography>
+					<Typography variant="text" noWrap component="div">
+						Ensemble: {experiments.length} runs
+					</Typography>
 					{experiments.length > 0 ? (
 						<FormControl className={classes.formControl} size="small">
-							<InputLabel id="dataset-label">Experiment</InputLabel>
+							{/* <InputLabel id="dataset-label">Experiment</InputLabel> */}
 							<Select
 								labelId="dataset-label"
 								id="dataset-select"
