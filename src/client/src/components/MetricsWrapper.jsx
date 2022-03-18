@@ -54,7 +54,7 @@ function RuntimeMetrics() {
 
 	const width = window.innerWidth / 3;
 	const height = window.innerHeight / 5;
-    const margin = {top: 30, right: 0, bottom: 40, left: 50};
+    const margin = {top: 30, right: 40, bottom: 40, left: 40};
 
 
 	useEffect(() => {
@@ -92,7 +92,7 @@ function RuntimeMetrics() {
                 .range([0, width ]);
             svg.append("g")
                 .attr("transform", `translate(0, ${height})`)
-                .call(d3.axisBottom(x).ticks(5))
+                .call(d3.axisBottom(x).ticks(5));
 
             // Add X axis label:
             svg.append("text")
@@ -116,7 +116,7 @@ function RuntimeMetrics() {
                 .domain([0, 20000000])
                 .range([ height, 0 ]);
             svg.append("g")
-                .call(d3.axisLeft(y).ticks(5))
+                .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format(".1e")))
 
             // Add a clipPath: everything out of this area won't be drawn.
             const clip = svg.append("defs").append("svg:clipPath")
