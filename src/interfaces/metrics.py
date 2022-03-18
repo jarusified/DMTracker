@@ -45,7 +45,7 @@ class Metrics():
                 self.kernel_dfs[exp] = pd.read_csv(self.kernel_summary_file_paths[exp], sep=",", engine='python', skiprows=6)
                 self.devices[exp] = self.kernel_dfs[exp]['Device'].unique()
                 
-    def get_kernel_metrics(self):
+    def get_kernel_metrics(self, metric="gst_transactions"):
         """
         Returns the metrics for a given kernel.
         Format: {
@@ -57,13 +57,14 @@ class Metrics():
             }
         }
         """
-        ret = {}
+        ret = []
         for exp, k_df in self.kernel_dfs.items():
-            ret[exp] = {}
-            for (k, v) in k_df.groupby('Kernel'):
-                ret[exp][k] = {}
-                for (m, v) in v.groupby('Metric Name'):
-                    ret[exp][k][m] = v['Avg'].iloc[0]
+            temp = {}
+            for kernel in self.kernels:
+                _df = k_df.loc[k_df['Metric Name'] == metric]
+                temp[kernel] = float(_df.loc[_df['Kernel'] == kernel]['Avg'].tolist()[0])
+            temp["exp"] = exp
+            ret.append(temp)
         return ret
 
         
@@ -120,7 +121,7 @@ class Metrics():
             'transfer_metrics': self.transfer_metrics,
             'atts': self.atts,
             'kernel_metrics': self.get_kernel_metrics(),
-            "no_of_kernels": len(self.kernels),
+            "kernels": self.kernels.tolist(),
         }
 
     def get_kernels(self, exp_df):

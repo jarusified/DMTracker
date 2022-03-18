@@ -20,7 +20,7 @@ function MetricsWrapper() {
 
 	const dispatch = useDispatch();
 	const selectedExperiment = useSelector((store) => store.selected_experiment);
-	const noOfKernels = useSelector((store) => store.no_of_kernels);
+	const kernels = useSelector((store) => store.kernels);
 
 	useEffect(() => {
 		if (selectedExperiment !== "") {
@@ -31,7 +31,7 @@ function MetricsWrapper() {
 	return (
 		<Box sx={{ p: 1, border: "1px dashed grey" }}>
 			<Typography variant="overline" style={{ fontWeight: "bold" }}>
-				Ensemble Performance ({noOfKernels} Kernels)
+				Ensemble Performance ({kernels.length} Kernels)
 			</Typography>
 			<Grid item>
 				<Grid item>
@@ -49,13 +49,14 @@ function RuntimeMetrics() {
 	const runtimeMetrics = useSelector((store) => store.runtime_metrics);
 	const kernelMetrics = useSelector((store) => store.kernel_metrics);
 	const transferMetrics = useSelector((store) => store.transfer_metrics);
+	const kernels = useSelector((store) => store.kernels);
+    const experiments = useSelector((store) => store.experiments);
 
 	const width = window.innerWidth / 3;
 	const height = window.innerHeight / 5;
     const margin = {top: 30, right: 0, bottom: 40, left: 50};
 
-	const [selectedMetric, setSelectedMetric] = useState("time");
-    console.log(selectedMetric);
+	const [selectedMetric, setSelectedMetric] = useState("Global Store Transactions");
 
 	useEffect(() => {
 		console.log(runtimeMetrics);
@@ -71,87 +72,84 @@ function RuntimeMetrics() {
                 .append("g")
                 .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-            // Parse the Data
-            d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/5_OneCatSevNumOrdered_wide.csv").then(function(data) {
-                const keys = data.columns.slice(1)
+            const color = d3.scaleOrdinal()
+                .domain(kernels)
+                .range(d3.schemeSet2);
 
-                const color = d3.scaleOrdinal()
-                    .domain(keys)
-                    .range(d3.schemeSet2);
+            //stack the data
+            const stackedData = d3.stack()
+                .keys(kernels)(kernelMetrics)
 
-                //stack the data
-                const stackedData = d3.stack()
-                    .keys(keys)(data)
+            const x = d3.scaleLinear()
+                .domain([0, experiments.length])
+                .range([0, width ]);
+            const xAxis = svg.append("g")
+                .attr("transform", `translate(0, ${height})`)
+                .call(d3.axisBottom(x).ticks(5))
 
-                const x = d3.scaleLinear()
-                    .domain(d3.extent(data, function(d) { return d.year; }))
-                    .range([ 0, width ]);
-                const xAxis = svg.append("g")
-                    .attr("transform", `translate(0, ${height})`)
-                    .call(d3.axisBottom(x).ticks(5))
+            // Add X axis label:
+            svg.append("text")
+                .attr("text-anchor", "end")
+                .attr("font-size", "10px")
+                .attr("x", width)
+                .attr("y", height + 30 )
+                .text("Experiment");
 
-                // Add X axis label:
-                svg.append("text")
-                    .attr("text-anchor", "end")
-                    .attr("x", width)
-                    .attr("y", height + 40 )
-                    .text("Attribute");
+            // Add Y axis label:
+            svg.append("text")
+                .attr("font-size", "10px")
+                .attr("text-anchor", "end")
+                .attr("x", 0)
+                .attr("y", -10 )
+                .text(selectedMetric)
+                .attr("text-anchor", "start")
 
-                // Add Y axis label:
-                svg.append("text")
-                    .attr("text-anchor", "end")
-                    .attr("x", 0)
-                    .attr("y", -10 )
-                    .text("Metric")
-                    .attr("text-anchor", "start")
+            // Add Y axis
+            const y = d3.scaleLinear()
+                .domain([0, 20000000])
+                .range([ height, 0 ]);
+            svg.append("g")
+                .call(d3.axisLeft(y).ticks(5))
 
-                // Add Y axis
-                const y = d3.scaleLinear()
-                    .domain([0, 200000])
-                    .range([ height, 0 ]);
-                svg.append("g")
-                    .call(d3.axisLeft(y).ticks(5))
+            // Add a clipPath: everything out of this area won't be drawn.
+            const clip = svg.append("defs").append("svg:clipPath")
+                .attr("id", "clip")
+                .append("svg:rect")
+                .attr("width", width )
+                .attr("height", height )
+                .attr("x", 0)
+                .attr("y", 0);
 
-                // Add a clipPath: everything out of this area won't be drawn.
-                const clip = svg.append("defs").append("svg:clipPath")
-                    .attr("id", "clip")
-                    .append("svg:rect")
-                    .attr("width", width )
-                    .attr("height", height )
-                    .attr("x", 0)
-                    .attr("y", 0);
+            // Add brushing
+            const brush = d3.brushX()                 // Add the brush feature using the d3.brush function
+                .extent( [ [0,0], [width,height] ] ) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
+                // .on("end", updateChart) // Each time the brush selection changes, trigger the 'updateChart' function
 
-                // Add brushing
-                const brush = d3.brushX()                 // Add the brush feature using the d3.brush function
-                    .extent( [ [0,0], [width,height] ] ) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
-                    // .on("end", updateChart) // Each time the brush selection changes, trigger the 'updateChart' function
+            // Create the scatter variable: where both the circles and the brush take place
+            const areaChart = svg.append('g')
+                .attr("clip-path", "url(#clip)")
 
-                // Create the scatter variable: where both the circles and the brush take place
-                const areaChart = svg.append('g')
-                    .attr("clip-path", "url(#clip)")
+            // Area generator
+            const area = d3.area()
+                .x(function(d, i) { console.log(d); return x(i); })
+                .y0(function(d) { return y(d[0]); })
+                .y1(function(d) { return y(d[1]); })
 
-                // Area generator
-                const area = d3.area()
-                    .x(function(d) { return x(d.data.year); })
-                    .y0(function(d) { return y(d[0]); })
-                    .y1(function(d) { return y(d[1]); })
+            // Show the areas
+            areaChart
+                .selectAll("mylayers")
+                .data(stackedData)
+                .join("path")
+                .attr("class", function(d) { return "myArea " + d.key })
+                .style("fill", function(d) { return color(d.key); })
+                .attr("stroke-width", "1px")
+                .attr("d", area)
 
-                // Show the areas
-                areaChart
-                    .selectAll("mylayers")
-                    .data(stackedData)
-                    .join("path")
-                    .attr("class", function(d) { return "myArea " + d.key })
-                    .style("fill", function(d) { return color(d.key); })
-                    .attr("stroke-width", "1px")
-                    .attr("d", area)
-
-                // Add the brushing
-                areaChart
-                    .append("g")
-                    .attr("class", "brush")
-                    .call(brush);
-            });
+            // Add the brushing
+            areaChart
+                .append("g")
+                .attr("class", "brush")
+                .call(brush);
         }
 	}, [kernelMetrics]);
 

@@ -11,7 +11,7 @@ const initialState = {
     transfer_metrics: {},
     atts: {},
     kernel_metrics: {},
-    no_of_kernels: 0,
+    kernels: [],
 };
 
 export default function Reducer(state=initialState, action){
@@ -49,7 +49,7 @@ export default function Reducer(state=initialState, action){
                 runtime_metrics: action.payload.runtime_metrics,
                 transfer_metrics: action.payload.transfer_metrics,
                 atts: action.payload.atts,
-                no_of_kernels: action.payload.no_of_kernels,
+                kernels: action.payload.kernels,
             }
         default:
             return state;
