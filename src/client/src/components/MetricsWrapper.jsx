@@ -4,7 +4,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Box, Typography } from "@material-ui/core";
 import * as d3 from "d3";
 
-
 import { fetchMetrics } from "../actions";
 
 const useStyles = makeStyles((theme) => ({
@@ -19,14 +18,14 @@ function MetricsWrapper() {
 	const classes = useStyles();
 
 	const dispatch = useDispatch();
-	const selectedExperiment = useSelector((store) => store.selected_experiment);
+	const selectedKernelMetric = useSelector((store) => store.selected_kernel_metric);
 	const kernels = useSelector((store) => store.kernels);
 
 	useEffect(() => {
-		if (selectedExperiment !== "") {
-			dispatch(fetchMetrics(selectedExperiment));
+		if (selectedKernelMetric !== "") {
+			dispatch(fetchMetrics(selectedKernelMetric));
 		}
-	}, [selectedExperiment]);
+	}, [selectedKernelMetric]);
 
 	return (
 		<Box sx={{ p: 1, border: "1px dashed grey" }}>
@@ -51,12 +50,12 @@ function RuntimeMetrics() {
 	const transferMetrics = useSelector((store) => store.transfer_metrics);
 	const kernels = useSelector((store) => store.kernels);
     const experiments = useSelector((store) => store.experiments);
+    const selectedKernelMetric = useSelector((store) => store.selected_kernel_metric);
 
 	const width = window.innerWidth / 3;
 	const height = window.innerHeight / 5;
     const margin = {top: 30, right: 0, bottom: 40, left: 50};
 
-	const [selectedMetric, setSelectedMetric] = useState("Global Store Transactions");
 
 	useEffect(() => {
 		console.log(runtimeMetrics);
@@ -66,7 +65,15 @@ function RuntimeMetrics() {
 
 	useEffect(() => {
         if(Object.keys(kernelMetrics).length > 0) {
+            const container = d3.select("#" + id);
+
+            // Check if svg element exists inside the container and clear it.
+            if (!container.select("svg").empty()) {
+                container.select("svg").remove();
+            }
+
             const svg = d3.select("#" + id)
+                .append("svg")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g")
@@ -83,7 +90,7 @@ function RuntimeMetrics() {
             const x = d3.scaleLinear()
                 .domain([0, experiments.length])
                 .range([0, width ]);
-            const xAxis = svg.append("g")
+            svg.append("g")
                 .attr("transform", `translate(0, ${height})`)
                 .call(d3.axisBottom(x).ticks(5))
 
@@ -101,7 +108,7 @@ function RuntimeMetrics() {
                 .attr("text-anchor", "end")
                 .attr("x", 0)
                 .attr("y", -10 )
-                .text(selectedMetric)
+                .text(selectedKernelMetric)
                 .attr("text-anchor", "start")
 
             // Add Y axis
@@ -131,7 +138,7 @@ function RuntimeMetrics() {
 
             // Area generator
             const area = d3.area()
-                .x(function(d, i) { console.log(d); return x(i); })
+                .x(function(d, i) { return x(i); })
                 .y0(function(d) { return y(d[0]); })
                 .y1(function(d) { return y(d[1]); })
 
@@ -193,11 +200,12 @@ function RuntimeMetrics() {
                 .on("mouseover", highlight)
                 .on("mouseleave", noHighlight)
         }
-	}, [kernelMetrics]);
+	}, [kernelMetrics, selectedKernelMetric]);
 
 	return (
 		<Fragment>
-			<svg id={id} width={width} height={height} pointerEvents="all"></svg>
+            <div id={id}>
+            </div>
 		</Fragment>
 	);
 }

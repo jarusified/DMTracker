@@ -122,6 +122,7 @@ class Metrics():
             'atts': self.atts,
             'kernel_metrics': self.get_kernel_metrics(),
             "kernels": self.kernels.tolist(),
+            "metrics": self.metrics.tolist(),
         }
 
     def get_kernels(self, exp_df):

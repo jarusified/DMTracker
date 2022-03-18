@@ -11,7 +11,9 @@ const initialState = {
     transfer_metrics: {},
     atts: {},
     kernel_metrics: {},
+    selected_kernel_metric: 'gst_transactions',
     kernels: [],
+    metrics: [],
 };
 
 export default function Reducer(state=initialState, action){
@@ -50,6 +52,8 @@ export default function Reducer(state=initialState, action){
                 transfer_metrics: action.payload.transfer_metrics,
                 atts: action.payload.atts,
                 kernels: action.payload.kernels,
+                selected_kernel_metric: action.payload.metrics[0],
+                metrics: action.payload.metrics,
             }
         default:
             return state;

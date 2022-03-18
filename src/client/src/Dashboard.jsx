@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 		justifyContent: "space-between",
 	},
 	formControl: {
-		padding: 10,
+		padding: 20,
 		justifyContent: "flex-end",
 		textColor: "white",
 	},
@@ -114,16 +114,34 @@ export default function Dashboard() {
 	const firstExperiment = useSelector((store) => store.selected_experiment);
 	const [selectedExperiment, setSelectedExperiment] = useState(firstExperiment);
 
+	const metrics = useSelector((store) => store.metrics);
+	const [selectedMetric, setSelectedMetric] = useState("");
+
+	const kernels = useSelector((store) => store.kernels);
+	const [selectedKernel, setSelectedKernel] = useState("");
+
 	useEffect(() => {
-        if (experiments.length == 0) {
-            dispatch(fetchExperiments());
-        }
-    }, [])
+		if (experiments.length == 0) {
+			dispatch(fetchExperiments());
+		}
+	}, []);
 
 	useEffect(() => {
 		// TODO: Perform full-refresh when selected experiment changes.
 		setSelectedExperiment(firstExperiment);
-	}, [firstExperiment])
+	}, [firstExperiment]);
+
+	useEffect(() => {
+		if(selectedMetric != "") {
+			setSelectedMetric(metrics[0]);
+		}
+	}, [metrics]);
+
+	useEffect(() => {
+		if(selectedKernel != "") {
+			setSelectedKernel(kernels[0]);
+		}
+	}, [kernels]);
 
 	const theme = useTheme();
 	const [open, setOpen] = React.useState(false);
@@ -137,11 +155,13 @@ export default function Dashboard() {
 	};
 
 	return (
-		<Box sx={{ 
-			display: "flex",
-			boxShadow: 1,
-			width: "inherit"
-		}}>
+		<Box
+			sx={{
+				display: "flex",
+				boxShadow: 1,
+				width: "inherit",
+			}}
+		>
 			<CssBaseline />
 			<AppBar position="fixed" open={open}>
 				<Toolbar className={classes.toolbar}>
@@ -163,16 +183,16 @@ export default function Dashboard() {
 					<Typography variant="text" noWrap component="div">
 						Ensemble: {experiments.length} runs
 					</Typography>
-					{experiments.length > 0 ? (
+					{kernels.length > 0 ? (
 						<FormControl className={classes.formControl} size="small">
-							{/* <InputLabel id="dataset-label">Experiment</InputLabel> */}
+							<InputLabel id="dataset-label">Experiments</InputLabel>
 							<Select
 								labelId="dataset-label"
 								id="dataset-select"
-								value={selectedExperiment}
-								onChange={(e) => setSelectedExperiment(e.target.value)}
+								value={selectedKernel}
+								onChange={(e) => setSelectedKernel(e.target.value)}
 							>
-								{experiments.map((cc) => (
+								{kernels.map((cc) => (
 									<MenuItem key={cc} value={cc}>
 										{cc}
 									</MenuItem>
@@ -197,20 +217,49 @@ export default function Dashboard() {
 				</DrawerHeader>
 				<Divider />
 				<List>
-					{["Inbox"].map((text, index) => (
-						<ListItem button key={text}>
-							<ListItemText primary={text} />
-						</ListItem>
-					))}
+					<Typography variant="text" noWrap component="div">
+						Ensemble Performance
+					</Typography>
+					<ListItem button key={"Select Kernel"}>
+						<FormControl className="form-control-fit">
+							<InputLabel className={classes.formLabel} id="kernel-label">
+								Select the Kernel
+							</InputLabel>
+							<Select
+								labelId="kernel-label"
+								id="kernel-select"
+								value={selectedKernel}
+								onChange={(e) => setSelectedKernel(e.target.value)}
+							>
+								{kernels.map((cc) => (
+									<MenuItem key={cc} value={cc}>
+										{cc}
+									</MenuItem	>
+								))}
+							</Select>
+						</FormControl>
+					</ListItem>
+					<ListItem button key={"Select Metric"}>
+						<FormControl className="form-control-fit">
+							<InputLabel className={classes.formLabel} id="metric-label">
+								Select the Metric
+							</InputLabel>
+							<Select
+								labelId="metric-label"
+								id="metric-select"
+								value={selectedMetric}
+								onChange={(e) => setSelectedMetric(e.target.value)}
+							>
+								{metrics.map((cc) => (
+									<MenuItem key={cc} value={cc}>
+										{cc}
+									</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+					</ListItem>
 				</List>
 				<Divider />
-				<List>
-					{["All mail", "Trash", "Spam"].map((text, index) => (
-						<ListItem button key={text}>
-							<ListItemText primary={text} />
-						</ListItem>
-					))}
-				</List>
 			</Drawer>
 			<DrawerHeader />
 			<GridLayout />
