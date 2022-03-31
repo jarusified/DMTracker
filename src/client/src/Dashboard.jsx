@@ -115,10 +115,10 @@ export default function Dashboard() {
 	const [selectedExperiment, setSelectedExperiment] = useState(firstExperiment);
 
 	const metrics = useSelector((store) => store.metrics);
-	const [selectedMetric, setSelectedMetric] = useState("");
+	const selectedMetric = useSelector((store) => store.selected_metric);
 
 	const kernels = useSelector((store) => store.kernels);
-	const [selectedKernel, setSelectedKernel] = useState("");
+	const selectedKernel = useSelector((store) => store.selected_kernel);
 
 	useEffect(() => {
 		if (experiments.length == 0) {
@@ -127,21 +127,10 @@ export default function Dashboard() {
 	}, []);
 
 	useEffect(() => {
-		// TODO: Perform full-refresh when selected experiment changes.
-		setSelectedExperiment(firstExperiment);
-	}, [firstExperiment]);
-
-	useEffect(() => {
-		if(selectedMetric != "") {
-			setSelectedMetric(metrics[0]);
+		if(selectedMetric != "" && selectedKernel != "") {
+			// Refresh the plot.
 		}
-	}, [metrics]);
-
-	useEffect(() => {
-		if(selectedKernel != "") {
-			setSelectedKernel(kernels[0]);
-		}
-	}, [kernels]);
+	}, [selectedKernel, selectedMetric]);
 
 	const theme = useTheme();
 	const [open, setOpen] = React.useState(false);
@@ -232,7 +221,9 @@ export default function Dashboard() {
 								labelId="kernel-label"
 								id="kernel-select"
 								value={selectedKernel}
-								onChange={(e) => setSelectedKernel(e.target.value)}
+								onChange={(e) => {
+									dispatch(updateSelectedKernel(e.target.value));
+								}}
 							>
 								{kernels.map((cc) => (
 									<MenuItem key={cc} value={cc}>
@@ -251,7 +242,9 @@ export default function Dashboard() {
 								labelId="metric-label"
 								id="metric-select"
 								value={selectedMetric}
-								onChange={(e) => setSelectedMetric(e.target.value)}
+								onChange={(e) => {
+									dispatch(updateSelectedMetric(e.target.value));
+								}}
 							>
 								{metrics.map((cc) => (
 									<MenuItem key={cc} value={cc}>
