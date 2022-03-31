@@ -25,7 +25,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 import GridLayout from "./GridLayout";
-import { fetchExperiments } from "./actions";
+import { fetchExperiments, updateSelectedExperiment } from "./actions";
 
 const DRAWER_WIDTH = 240;
 
@@ -183,16 +183,19 @@ export default function Dashboard() {
 					<Typography variant="text" noWrap component="div">
 						Ensemble: {experiments.length} runs
 					</Typography>
-					{kernels.length > 0 ? (
+					{experiments.length > 0 ? (
 						<FormControl className={classes.formControl} size="small">
 							<InputLabel id="dataset-label">Experiments</InputLabel>
 							<Select
 								labelId="dataset-label"
 								id="dataset-select"
-								value={selectedKernel}
-								onChange={(e) => setSelectedKernel(e.target.value)}
+								value={selectedExperiment}
+								onChange={(e) => {
+									setSelectedExperiment(e.target.value);
+									dispatch(updateSelectedExperiment(e.target.value));
+								}}
 							>
-								{kernels.map((cc) => (
+								{experiments.map((cc) => (
 									<MenuItem key={cc} value={cc}>
 										{cc}
 									</MenuItem>

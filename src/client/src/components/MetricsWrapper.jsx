@@ -47,25 +47,21 @@ function MetricsWrapper() {
 
 function RuntimeMetrics() {
 	const id = "ensemble-runtime-metrics";
+
+	// Get the data from the store.
 	const runtimeMetrics = useSelector((store) => store.runtime_metrics);
 	const kernelMetrics = useSelector((store) => store.kernel_metrics);
 	const transferMetrics = useSelector((store) => store.transfer_metrics);
 	const kernels = useSelector((store) => store.kernels);
 	const experiments = useSelector((store) => store.experiments);
-	const selectedKernelMetric = useSelector(
-		(store) => store.selected_kernel_metric
-	);
+	const selectedKernelMetric = useSelector((store) => store.selected_kernel_metric);
 
-	const width = window.innerWidth / 3;
-	const height = window.innerHeight / 5;
+	// Set dimensions.
+	const width = (window.innerHeight/3) * 2;
+	const height = window.innerHeight/6;
 	const margin = { top: 30, right: 40, bottom: 40, left: 40 };
 
-	useEffect(() => {
-		console.log(runtimeMetrics);
-		console.log(transferMetrics);
-		console.log(kernelMetrics);
-	}, [runtimeMetrics, transferMetrics, kernelMetrics]);
-
+	// Render the chart when the data changes.
 	useEffect(() => {
 		if (Object.keys(kernelMetrics).length > 0) {
 			const container = d3.select("#" + id);
@@ -247,9 +243,7 @@ function RuntimeMetrics() {
 	}, [kernelMetrics, selectedKernelMetric]);
 
 	return (
-		<Fragment>
-			<div id={id}></div>
-		</Fragment>
+		<div id={id}></div>
 	);
 }
 

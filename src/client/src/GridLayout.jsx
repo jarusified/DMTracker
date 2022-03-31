@@ -31,15 +31,14 @@ export default function GridLayout() {
         <Grid className={classes.contentContainer}>
             <Grid container item direction='column'>
                 <Grid className={classes.rowContainer}> 
-                    <ReuseWrapper />
                     <MetricsWrapper />
+                    {/* <CCTWrapper /> */}
                 </Grid>
                 <Grid className={classes.rowContainer}>
-                    <CommWrapper />
-                    <CCTWrapper />
+                    {/* <CommWrapper /> */}
                 </Grid>
                 <Grid className={classes.rowContainer}>
-                    <TimelineWrapper />
+                    {/* <TimelineWrapper /> */}
                 </Grid>
             </Grid>
         </Grid>

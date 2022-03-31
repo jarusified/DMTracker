@@ -1,4 +1,4 @@
-import { FETCH_REUSE, FETCH_COMM, FETCH_EXPERIMENTS, FETCH_CCT, FETCH_TIMELINE, FETCH_METRICS } from './helpers/types';
+import { FETCH_REUSE, FETCH_COMM, FETCH_EXPERIMENTS, FETCH_CCT, FETCH_TIMELINE, FETCH_METRICS, UPDATE_EXPERIMENT } from './helpers/types';
 
 const initialState = {
     reuse: {},
@@ -54,6 +54,11 @@ export default function Reducer(state=initialState, action){
                 kernels: action.payload.kernels,
                 selected_kernel_metric: action.payload.metrics[0],
                 metrics: action.payload.metrics,
+            }
+        case UPDATE_EXPERIMENT:
+            return {
+                ...state,
+                selected_experiment: action.payload,
             }
         default:
             return state;

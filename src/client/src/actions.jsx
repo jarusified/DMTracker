@@ -1,4 +1,4 @@
-import { FETCH_EXPERIMENTS, FETCH_CCT, FETCH_TIMELINE, FETCH_METRICS } from "./helpers/types";
+import { FETCH_EXPERIMENTS, FETCH_CCT, FETCH_TIMELINE, FETCH_METRICS, UPDATE_EXPERIMENT } from "./helpers/types";
 import { SERVER_URL } from "./helpers/utils";
 
 async function POSTWrapper(url_path, json_data) {
@@ -58,4 +58,12 @@ export const fetchMetrics = (experiment_tag) => async (dispatch) => {
     type: FETCH_METRICS,
     payload: data,
   });
+};
+
+export const updateSelectedExperiment = (exp) => (dispatch) => {
+  console.log(exp);
+	return dispatch({
+		type: UPDATE_EXPERIMENT,
+		payload: exp,
+	});
 };
