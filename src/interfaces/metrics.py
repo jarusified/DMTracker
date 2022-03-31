@@ -37,15 +37,24 @@ class Metrics():
         exp_0_df = pd.read_csv(self.kernel_summary_file_paths[self.experiments[0]], sep=",", engine='python', skiprows=6)
         self.kernels = exp_0_df['Kernel'].unique();
         self.metrics = exp_0_df['Metric Name'].unique();
-        print(self.metrics)
         self.kernel_dfs = {}
         self.devices = {}
         for exp in self.experiments: 
             # Check if the kernel summary file exists.
             if os.path.exists(self.kernel_summary_file_paths[exp]):
-                self.kernel_dfs[exp] = pd.read_csv(self.kernel_summary_file_paths[exp], sep=",", engine='python', skiprows=6)
+                self.kernel_dfs[exp] = self.read_kernel_summary_file(self.kernel_summary_file_paths[exp])
                 self.devices[exp] = self.kernel_dfs[exp]['Device'].unique()
-                
+
+    def read_kernel_summary_file(self, file_path):
+        """
+        Reads the kernel summary file.
+        """
+        df = pd.read_csv(file_path, sep=",", engine='python', skiprows=6)
+        df["Min"] = df['Min'].replace(regex=r"[^0-9.]", value="")
+        df["Max"] = df['Max'].replace(regex=r"[^0-9.]", value="")
+        df["Avg"] = df['Max'].replace(regex=r"[^0-9.]", value="")          
+        return df
+
     def get_kernel_metrics(self, metric="gst_transactions"):
         """
         Returns the metrics for a given kernel.
@@ -63,7 +72,7 @@ class Metrics():
             temp = {}
             for kernel in self.kernels:
                 _df = k_df.loc[k_df['Metric Name'] == metric]
-                temp[kernel] = _df.loc[_df['Kernel'] == kernel]['Avg'].tolist()[0]
+                temp[kernel] = float(_df.loc[_df['Kernel'] == kernel]['Avg'].tolist()[0])
             temp["exp"] = exp
             ret.append(temp)
         return ret

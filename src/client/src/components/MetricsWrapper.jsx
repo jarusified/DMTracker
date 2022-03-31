@@ -62,6 +62,7 @@ function RuntimeMetrics() {
 	// Render the chart when the data changes.
 	useEffect(() => {
 		if (Object.keys(kernelMetrics).length > 0) {
+			console.log(kernelMetrics);
 			const container = d3.select("#" + id);
 
 			// Check if svg element exists inside the container and clear it.
@@ -80,6 +81,9 @@ function RuntimeMetrics() {
 
 			//stack the data
 			const stackedData = d3.stack().keys(kernels)(kernelMetrics);
+			console.log(stackedData);
+			const yDomain =  d3.extent(stackedData.flat(2));
+			console.log(yDomain);
 
 			const x = d3.scaleLinear()
 				.domain([0, experiments.length])
@@ -107,7 +111,7 @@ function RuntimeMetrics() {
 				.attr("text-anchor", "start");
 
 			// Add Y axis
-			const y = d3.scaleLinear().domain([0, 20000000]).range([height, 0]);
+			const y = d3.scaleLinear().domain(yDomain).range([height, 0]);
 			svg.append("g")
 				.call(d3.axisLeft(y).ticks(5).tickFormat(d3.format(".1e")));
 

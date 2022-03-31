@@ -24,3 +24,5 @@ src/data/*
 
 */__pycache__/*
 *.pyc
+
+*.svg
