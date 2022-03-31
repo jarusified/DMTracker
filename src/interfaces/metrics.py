@@ -37,6 +37,7 @@ class Metrics():
         exp_0_df = pd.read_csv(self.kernel_summary_file_paths[self.experiments[0]], sep=",", engine='python', skiprows=6)
         self.kernels = exp_0_df['Kernel'].unique();
         self.metrics = exp_0_df['Metric Name'].unique();
+        print(self.metrics)
         self.kernel_dfs = {}
         self.devices = {}
         for exp in self.experiments: 
@@ -62,7 +63,7 @@ class Metrics():
             temp = {}
             for kernel in self.kernels:
                 _df = k_df.loc[k_df['Metric Name'] == metric]
-                temp[kernel] = float(_df.loc[_df['Kernel'] == kernel]['Avg'].tolist()[0])
+                temp[kernel] = _df.loc[_df['Kernel'] == kernel]['Avg'].tolist()[0]
             temp["exp"] = exp
             ret.append(temp)
         return ret
@@ -113,30 +114,30 @@ class Metrics():
         """
         return self.metrics[exp] if exp in self.experiments else None    
 
-    def get_data(self):
+    def get_data(self, metric):
         """
-        Returns metrics for a given experiment."""
+        Returns metrics for a given experiment.
+        """
         return {
             'runtime_metrics': self.runtime_metrics,
             'transfer_metrics': self.transfer_metrics,
             'atts': self.atts,
-            'kernel_metrics': self.get_kernel_metrics(),
-            "kernels": self.kernels.tolist(),
-            "metrics": self.metrics.tolist(),
+            'kernel_metrics': self.get_kernel_metrics(metric),
         }
 
-    def get_kernels(self, exp_df):
+    def get_kernels(self, exp):
         """
         Returns a list of kernels for a given ensemble.
         Note: It is assumed that the kernels are the same for all experiments.
+        TODO: Make this more robust for individual experiments.
         """
-        return exp_df['Kernel'].unique()
+        return self.kernels.tolist()
 
-    def get_metrics(self, exp_df):
+    def get_metrics(self):
         """
         Returns the list of metrics recorded.
         """
-        df = pd.read_csv(self.runtime_summary_file_paths[exp], sep=",", engine='python', skiprows=6)
+        return self.metrics.tolist()
 
     def sort_by_runtime(self, exps):
         return dict(sorted(self.total_runtime.items(), key=lambda item: item[1], reverse=True))

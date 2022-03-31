@@ -25,7 +25,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 import GridLayout from "./GridLayout";
-import { fetchExperiments, updateSelectedExperiment } from "./actions";
+import { fetchExperiments, updateSelectedExperiment, updateSelectedMetric, updateSelectedKernel, fetchMetrics, fetchKernels } from "./actions";
 
 const DRAWER_WIDTH = 240;
 
@@ -111,8 +111,7 @@ export default function Dashboard() {
 
 	const dispatch = useDispatch();
 	const experiments = useSelector((store) => store.experiments);
-	const firstExperiment = useSelector((store) => store.selected_experiment);
-	const [selectedExperiment, setSelectedExperiment] = useState(firstExperiment);
+	const selectedExperiment = useSelector((store) => store.selected_experiment);
 
 	const metrics = useSelector((store) => store.metrics);
 	const selectedMetric = useSelector((store) => store.selected_metric);
@@ -124,13 +123,17 @@ export default function Dashboard() {
 		if (experiments.length == 0) {
 			dispatch(fetchExperiments());
 		}
+
+		if (metrics.length == 0) {
+			dispatch(fetchMetrics());
+		}
 	}, []);
 
 	useEffect(() => {
-		if(selectedMetric != "" && selectedKernel != "") {
-			// Refresh the plot.
+		if (kernels.length == 0 && selectedExperiment !== "" && experiments.length > 0) {
+			dispatch(fetchKernels(selectedExperiment));
 		}
-	}, [selectedKernel, selectedMetric]);
+	}, [experiments, selectedExperiment]);
 
 	const theme = useTheme();
 	const [open, setOpen] = React.useState(false);
@@ -180,7 +183,6 @@ export default function Dashboard() {
 								id="dataset-select"
 								value={selectedExperiment}
 								onChange={(e) => {
-									setSelectedExperiment(e.target.value);
 									dispatch(updateSelectedExperiment(e.target.value));
 								}}
 							>

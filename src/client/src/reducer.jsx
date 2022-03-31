@@ -5,6 +5,8 @@ import {
     FETCH_CCT, 
     FETCH_TIMELINE, 
     FETCH_METRICS, 
+    FETCH_KERNELS,
+    FETCH_ENSEMBLE,
     UPDATE_EXPERIMENT,
     UPDATE_KERNEL,
     UPDATE_METRIC,
@@ -21,7 +23,6 @@ const initialState = {
     transfer_metrics: {},
     atts: {},
     kernel_metrics: {},
-    selected_kernel_metric: 'gst_transactions',
     kernels: [],
     selected_kernel: '',
     metrics: [],
@@ -56,17 +57,26 @@ export default function Reducer(state=initialState, action){
                 ...state,
                 timeline: action.payload,
             }
-        case FETCH_METRICS:
+        case FETCH_ENSEMBLE:
             return {
                 ...state,
                 kernel_metrics: action.payload.kernel_metrics,
                 runtime_metrics: action.payload.runtime_metrics,
                 transfer_metrics: action.payload.transfer_metrics,
                 atts: action.payload.atts,
+                
+            }
+        case FETCH_METRICS:
+            return {
+                ...state,
+                metrics: action.payload.metrics,
+                selected_metric: action.payload.metrics[0],
+            }
+        case FETCH_KERNELS:
+            return {
+                ...state,
                 kernels: action.payload.kernels,
                 selected_kernel: action.payload.kernels[0],
-                selected_kernel_metric: action.payload.metrics[0],
-                metrics: action.payload.metrics,
             }
         case UPDATE_EXPERIMENT:
             return {
@@ -81,7 +91,7 @@ export default function Reducer(state=initialState, action){
         case UPDATE_METRIC: 
             return {
                 ...state,
-                selected_kernel_metric: action.payload,
+                selected_metric: action.payload,
             }
         default:
             return state;

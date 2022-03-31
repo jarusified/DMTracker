@@ -52,7 +52,7 @@ class HTTPServer:
     
     def load(self) -> None:
         self.metrics_interface = Metrics(data_dir=self.data_dir)
-        # self.cct_interface = CCT(data_dir=self.data_dir)
+        self.cct_interface = CCT(data_dir=self.data_dir)
         # self.timeline_interface = Timeline(data_dir=self.data_dir)
 
     def start(self, host: str, port: int) -> None:
@@ -108,6 +108,22 @@ class HTTPServer:
             nxg = self.cct_interface.get_nxg(experiment)
             return jsonify(nxg)
 
+        @app.route("/fetch_metrics", methods=["GET"])
+        @cross_origin()
+        def fetch_metrics():
+            metrics = self.metrics_interface.get_metrics()
+            return jsonify({'metrics': metrics})
+
+        @app.route("/fetch_kernels", methods=["POST"])
+        @cross_origin()
+        def fetch_kernels():
+            request_context = request.json
+            print(request_context)
+            experiment = request_context["experiment"]
+            kernels = self.metrics_interface.get_kernels(experiment)
+            print(kernels)
+            return jsonify({'kernels': kernels})
+
         @app.route("/fetch_timeline", methods=["POST"])
         @cross_origin()
         def fetch_timeline():
@@ -116,10 +132,11 @@ class HTTPServer:
             timeline = self.timeline_interface.get_timeline(experiment)
             return jsonify(timeline)
 
-        @app.route("/fetch_metrics", methods=["POST"])
+        @app.route("/fetch_ensemble", methods=["POST"])
         @cross_origin()
-        def fetch_metrics():
+        def fetch_ensemble():
             request_context = request.json
-            experiment = request_context["experiment"]
-            data = self.metrics_interface.get_data()
-            return jsonify(data)
+            metric = request_context['metric']
+            if len(metric) > 0:
+                data = self.metrics_interface.get_data(metric)
+                return jsonify(data)

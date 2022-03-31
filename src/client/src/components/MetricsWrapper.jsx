@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Box, Typography } from "@material-ui/core";
 import * as d3 from "d3";
 
-import { fetchMetrics } from "../actions";
+import { fetchEnsemble } from "../actions";
 
 const useStyles = makeStyles((theme) => ({
 	path: {
@@ -18,16 +18,14 @@ function MetricsWrapper() {
 	const classes = useStyles();
 
 	const dispatch = useDispatch();
-	const selectedKernelMetric = useSelector(
-		(store) => store.selected_kernel_metric
-	);
+	const selectedMetric = useSelector((store) => store.selected_metric);
 	const kernels = useSelector((store) => store.kernels);
 
 	useEffect(() => {
-		if (selectedKernelMetric !== "") {
-			dispatch(fetchMetrics(selectedKernelMetric));
+		if (selectedMetric !== "") {
+			dispatch(fetchEnsemble(selectedMetric));
 		}
-	}, [selectedKernelMetric]);
+	}, [selectedMetric]);
 
 	return (
 		<Box sx={{ p: 1, border: "1px dashed grey" }}>
@@ -54,7 +52,7 @@ function RuntimeMetrics() {
 	const transferMetrics = useSelector((store) => store.transfer_metrics);
 	const kernels = useSelector((store) => store.kernels);
 	const experiments = useSelector((store) => store.experiments);
-	const selectedKernelMetric = useSelector((store) => store.selected_kernel_metric);
+	const selectedMetric = useSelector((store) => store.selected_metric);
 
 	// Set dimensions.
 	const width = (window.innerHeight/3) * 2;
@@ -105,7 +103,7 @@ function RuntimeMetrics() {
 				.attr("text-anchor", "end")
 				.attr("x", 0)
 				.attr("y", -10)
-				.text(selectedKernelMetric)
+				.text(selectedMetric)
 				.attr("text-anchor", "start");
 
 			// Add Y axis
@@ -240,7 +238,7 @@ function RuntimeMetrics() {
 				areaChart.selectAll("path").transition().duration(1000).attr("d", area);
 			}
 		}
-	}, [kernelMetrics, selectedKernelMetric]);
+	}, [kernelMetrics, selectedMetric]);
 
 	return (
 		<div id={id}></div>

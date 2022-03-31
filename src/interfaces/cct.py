@@ -131,4 +131,6 @@ class CCT():
         pass
 
     def get_nxg(self, exp):
+        if exp not in self.nxgs:
+            raise Exception(f"Experiment {exp} not found.")
         return json_graph.node_link_data(self.nxgs[exp])
