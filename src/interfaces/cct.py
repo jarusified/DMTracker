@@ -27,9 +27,10 @@ class CCT():
             # LOGGER.info("adding graph for experiment:", exp)
             # Check if file exists.
             if os.path.exists(self.file_paths[exp]):
-                self.hts[exp] = ht.GraphFrame.from_caliper_json(self.file_paths[exp])
-                self.dfs[exp] = self.add_path_columns(self.hts[exp])
-                self.nxgs[exp] = self.ht_graph_to_nxg(self.hts[exp])
+                exp_tag = exp.split('/')[-1]
+                self.hts[exp_tag] = ht.GraphFrame.from_caliper_json(self.file_paths[exp])
+                self.dfs[exp_tag] = self.add_path_columns(self.hts[exp_tag])
+                self.nxgs[exp_tag] = self.ht_graph_to_nxg(self.hts[exp_tag])
 
     def get_idx(self, callsite):
         return self.callsite2idx[callsite]
@@ -131,6 +132,7 @@ class CCT():
         pass
 
     def get_nxg(self, exp):
+        print(self.nxgs.keys())
         if exp not in self.nxgs:
             raise Exception(f"Experiment {exp} not found.")
         return json_graph.node_link_data(self.nxgs[exp])

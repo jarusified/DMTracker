@@ -7,6 +7,7 @@ import CCTWrapper from './components/CCTWrapper';
 import ReuseWrapper from './components/ReuseWrapper';
 import MetricsWrapper from './components/MetricsWrapper';
 import TimelineWrapper from './components/TimelineWrapper';
+import KernelWrapper from './components/KernelWrapper';
 
 const useStyles = makeStyles((theme) => ({
     contentContainer: {
@@ -28,17 +29,18 @@ const useStyles = makeStyles((theme) => ({
 export default function GridLayout() {
     const classes = useStyles();
     return (
-        <Grid className={classes.contentContainer}>
-            <Grid container item direction='column'>
-                <Grid className={classes.rowContainer}> 
+        <Grid className={classes.contentContainer} justify="center">
+            <Grid container item>
+                <Grid className={classes.rowContainer} xs={12}> 
+                    <KernelWrapper />
                     <MetricsWrapper />
-                    {/* <CCTWrapper /> */}
+                    <CCTWrapper />
+                </Grid>
+                <Grid className={classes.rowContainer} xs={12}>
+                    <CommWrapper />
                 </Grid>
                 <Grid className={classes.rowContainer}>
-                    {/* <CommWrapper /> */}
-                </Grid>
-                <Grid className={classes.rowContainer}>
-                    {/* <TimelineWrapper /> */}
+                    <TimelineWrapper />
                 </Grid>
             </Grid>
         </Grid>
