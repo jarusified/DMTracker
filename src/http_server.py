@@ -118,10 +118,8 @@ class HTTPServer:
         @cross_origin()
         def fetch_kernels():
             request_context = request.json
-            print(request_context)
             experiment = request_context["experiment"]
             kernels = self.metrics_interface.get_kernels(experiment)
-            print(kernels)
             return jsonify({'kernels': kernels})
 
         @app.route("/fetch_timeline", methods=["POST"])

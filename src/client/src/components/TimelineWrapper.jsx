@@ -31,7 +31,6 @@ function TimelineWrapper() {
     }, [selectedExperiment]);
 
 	useEffect(() => {
-		console.log(timeline);
 		const container = document.getElementById("timeline-view");
 
 		const items = new DataSet(timeline);

@@ -62,7 +62,6 @@ function RuntimeMetrics() {
 	// Render the chart when the data changes.
 	useEffect(() => {
 		if (Object.keys(kernelMetrics).length > 0) {
-			console.log(kernelMetrics);
 			const container = d3.select("#" + id);
 
 			// Check if svg element exists inside the container and clear it.
@@ -81,9 +80,7 @@ function RuntimeMetrics() {
 
 			//stack the data
 			const stackedData = d3.stack().keys(kernels)(kernelMetrics);
-			console.log(stackedData);
 			const yDomain =  d3.extent(stackedData.flat(2));
-			console.log(yDomain);
 
 			const x = d3.scaleLinear()
 				.domain([0, experiments.length])
@@ -178,44 +175,44 @@ function RuntimeMetrics() {
 				d3.selectAll(".myArea").style("opacity", 1);
 			};
 
-			// Add one dot in the legend for each name.
-			var size = 10;
-			svg.selectAll("myrect")
-				.data(kernels)
-				.enter()
-				.append("rect")
-				.attr("x", 400)
-				.attr("y", function (d, i) {
-					return 10 + i * (size + 5);
-				}) // 100 is where the first dot appears. 25 is the distance between dots
-				.attr("width", size)
-				.attr("height", size)
-				.style("fill", function (d) {
-					return color(d);
-				})
-				.on("mouseover", highlight)
-				.on("mouseleave", noHighlight);
+			// // Add one dot in the legend for each name.
+			// const size = 10;
+			// svg.selectAll("myrect")
+			// 	.data(kernels)
+			// 	.enter()
+			// 	.append("rect")
+			// 	.attr("x", 400)
+			// 	.attr("y", function (d, i) {
+			// 		return 10 + i * (size + 5);
+			// 	}) // 100 is where the first dot appears. 25 is the distance between dots
+			// 	.attr("width", size)
+			// 	.attr("height", size)
+			// 	.style("fill", function (d) {
+			// 		return color(d);
+			// 	})
+			// 	.on("mouseover", highlight)
+			// 	.on("mouseleave", noHighlight);
 
-			// Add one dot in the legend for each name.
-			svg.selectAll("mylabels")
-				.data(kernels)
-				.enter()
-				.append("text")
-				.attr("x", 400 + size * 1.2)
-				.attr("y", function (d, i) {
-					return 10 + i * (size + 5) + size / 2;
-				}) // 100 is where the first dot appears. 25 is the distance between dots
-				.style("fill", function (d) {
-					return color(d);
-				})
-				.text(function (d) {
-					return d;
-				})
-				.attr("text-anchor", "left")
-				.style("font-size", "10px")
-				.style("alignment-baseline", "middle")
-				.on("mouseover", highlight)
-				.on("mouseleave", noHighlight);
+			// // Add one dot in the legend for each name.
+			// svg.selectAll("mylabels")
+			// 	.data(kernels)
+			// 	.enter()
+			// 	.append("text")
+			// 	.attr("x", 400 + size * 1.2)
+			// 	.attr("y", function (d, i) {
+			// 		return 10 + i * (size + 5) + size / 2;
+			// 	}) // 100 is where the first dot appears. 25 is the distance between dots
+			// 	.style("fill", function (d) {
+			// 		return color(d);
+			// 	})
+			// 	.text(function (d) {
+			// 		return d;
+			// 	})
+			// 	.attr("text-anchor", "left")
+			// 	.style("font-size", "10px")
+			// 	.style("alignment-baseline", "middle")
+			// 	.on("mouseover", highlight)
+			// 	.on("mouseleave", noHighlight);
 
             let idleTimeout;    
             function idled() { idleTimeout = null; }

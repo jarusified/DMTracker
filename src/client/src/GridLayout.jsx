@@ -31,15 +31,15 @@ export default function GridLayout() {
     return (
         <Grid className={classes.contentContainer} justify="center">
             <Grid container item>
-                <Grid className={classes.rowContainer} xs={12}> 
+                <Grid className={classes.rowContainer} xs={12} item={true}> 
                     <KernelWrapper />
                     <MetricsWrapper />
                     <CCTWrapper />
                 </Grid>
-                <Grid className={classes.rowContainer} xs={12}>
+                <Grid className={classes.rowContainer} xs={12} item={true}>
                     <CommWrapper />
                 </Grid>
-                <Grid className={classes.rowContainer}>
+                <Grid className={classes.rowContainer} xs={12} item={true}>
                     <TimelineWrapper />
                 </Grid>
             </Grid>
