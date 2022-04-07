@@ -70,7 +70,7 @@ function CCTWrapper() {
 function CCT() {
     return (
         <Fragment>
-            <svg height={window.innerHeight/4}>
+            <svg>
                 <g id="container"></g>
             </svg>
         </Fragment>

@@ -9,7 +9,7 @@ import { fetchEnsemble } from "../actions";
 const useStyles = makeStyles((theme) => ({
 	path: {
 		stroke: "black",
-		strokeWidth: 0.3,
+		strokeWidth: 1,
 		fill: "none",
 	},
 }));
@@ -28,7 +28,7 @@ function MetricsWrapper() {
 	}, [selectedMetric]);
 
 	return (
-		<Box sx={{ p: 1, border: "1px dashed grey" }}>
+		<Box sx={{ p: 1, border: "1px dashed grey" }} id="ensemble-view">
 			<Typography variant="overline" style={{ fontWeight: "bold" }}>
 				Ensemble Performance ({kernels.length} Kernels)
 			</Typography>
@@ -55,7 +55,7 @@ function RuntimeMetrics() {
 	const selectedMetric = useSelector((store) => store.selected_metric);
 
 	// Set dimensions.
-	const width = (window.innerHeight/3) * 2;
+	const width = (window.innerWidth - 300) / 2;
 	const height = window.innerHeight/6;
 	const margin = { top: 30, right: 40, bottom: 40, left: 40 };
 

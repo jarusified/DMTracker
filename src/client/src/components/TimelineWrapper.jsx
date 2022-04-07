@@ -12,8 +12,7 @@ import { fetchTimeline } from "../actions";
 const useStyles = makeStyles((theme) => ({
 	timeline: {
 		width: window.innerWidth - 20,
-		height: window.innerHeight / 4,
-		border: "1px solid lightgray",
+		height: 250,
 	},
 }));
 

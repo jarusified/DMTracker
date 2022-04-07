@@ -25,7 +25,7 @@ function KernelWrapper() {
     }, [kernels]);
 
     return (
-        <Box sx={{ p: 1, border: '1px dashed grey' }} id="cct-view">
+        <Box sx={{ p: 1, border: '1px dashed grey' }}>
             <Typography variant='overline' style={{ fontWeight: 'bold' }}>
                 GPU Kernels
             </Typography>
