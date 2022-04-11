@@ -36,9 +36,20 @@ class CCT():
         return self.callsite2idx[callsite]
 
     def get_callsite(self, idx):
+        """
+        Get callsite from index.
+        :param idx: (int) Index
+        :return: (str) Callsite
+        """
         return self.idx2callsite[idx]
 
     def get_mean_runtime(self, exp, tag):
+        """
+        Get mean runtime for a given experiment.
+        :param exp: (str) Experiment name
+        :param tag: (str) Tag 
+        :return: (float) Mean runtime
+        """
         pass
     
     def add_path_columns(self, ht) -> pd.DataFrame:
@@ -101,11 +112,17 @@ class CCT():
                 del root
 
         self._node_attributes(nxg, ht_df)
-        self._edge_attributes(nxg)
+        self._edge_attributes(nxg, ht_df)
 
         return nxg
 
     def _node_attributes(self, nxg, df):
+        """
+        Get node attributes for a given dataframe.
+        :param nxg: (NetworkX.nxg) NetworkX graph
+        :param df: (pandas.DataFrame) Dataframe
+        :return: (NetworkX.nxg) NetworkX graph
+        """
         datamap = {}
         for callsite in nxg.nodes():
             for column in CCT.COLUMNS:
@@ -128,11 +145,21 @@ class CCT():
             nx.set_node_attributes(nxg, name=key, values=datamap[key])
 
 
-    def _edge_attributes(self, nxg):
+    def _edge_attributes(self, nxg, df):
+        """
+        Get edge attributes for a given dataframe.
+        :param nxg: (NetworkX.nxg) NetworkX graph
+        :param df: (pandas.DataFrame) Dataframe
+        :return: (NetworkX.nxg) NetworkX graph
+        """
         pass
 
     def get_nxg(self, exp):
-        print(self.nxgs.keys())
+        """
+        Get the networkx graph for a given experiment.
+        :param exp: (str) Experiment name
+        :return: (NetworkX.nxg) NetworkX graph
+        """
         if exp not in self.nxgs:
             raise Exception(f"Experiment {exp} not found.")
         return json_graph.node_link_data(self.nxgs[exp])
