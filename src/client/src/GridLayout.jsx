@@ -37,6 +37,7 @@ export default function GridLayout() {
                 </Grid>
                 <Grid className={classes.rowContainer} xs={12} item={true}>
                     <CommWrapper />
+                    <ReuseWrapper />
                 </Grid>
                 <Grid className={classes.rowContainer} xs={12} item={true}>
                     <TimelineWrapper />

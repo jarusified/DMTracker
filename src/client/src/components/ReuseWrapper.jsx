@@ -31,15 +31,15 @@ function ReuseWrapper() {
 	return (
 		<Box sx={{ p: 1, border: "1px dashed grey" }}>
 			<Typography variant="overline" style={{ fontWeight: "bold" }}>
-				Data Reuse analysis
+				Reuse Analysis
 			</Typography>
-			<Grid className={classes.rowContainer}>
+			<Grid>
 				<Grid item>
 					<OperationGlyph data={cpu} name={"cpu"} />
 				</Grid>
-				<Grid item>									
+				{/* <Grid item>									
 					<OperationGlyph data={gpu} name={"gpu"} />
-				</Grid>
+				</Grid> */}
 			</Grid>
 		</Box>
 	);
@@ -167,13 +167,13 @@ function OperationGlyph({ data, name }) {
 	return (
 			<Paper>
 				<Grid item>
-					<Typography variant="overline" style={{ fontWeight: "bold" }}>
+					{/* <Typography variant="overline" style={{ fontWeight: "bold" }}>
 						{name} {data ? data.op_id : ""}
-					</Typography>
+					</Typography> */}
 				</Grid>
 				<Grid item>
 					<div ref={glyphRef}>
-						<svg id={`operation-${name}-svg`} width="100%" height="100%"></svg>
+						<svg id={`operation-${name}-svg`}></svg>
 					</div>
 				</Grid>
 			</Paper>

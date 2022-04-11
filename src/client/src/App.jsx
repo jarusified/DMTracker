@@ -10,6 +10,7 @@ import thunkMiddleware from "redux-thunk";
 import Reducer from "./reducer";
 import "./main.css";
 import Dashboard from "./Dashboard";
+import Summary from "./Summary";
 
 const store = createStore(Reducer, applyMiddleware(thunkMiddleware));
 
@@ -44,6 +45,7 @@ function App() {
 		<Provider store={store}>
 			<Router>
 				<Routes>
+					<Route path="/" element={<SummaryWrapper />} />
 					<Route path="/" element={<DashboardWrapper />} />
 				</Routes>
 			</Router>
@@ -55,6 +57,14 @@ function DashboardWrapper() {
 	return (
 		<MuiThemeProvider theme={theme}>
 			<Dashboard />
+		</MuiThemeProvider>
+	);
+}
+
+function SummaryWrapper() {
+	return (
+		<MuiThemeProvider theme={theme}>
+			<Summary />
 		</MuiThemeProvider>
 	);
 }
