@@ -5,9 +5,7 @@ import { Grid } from '@mui/material';
 import CommWrapper from './components/CommWrapper';
 import CCTWrapper from './components/CCTWrapper';
 import ReuseWrapper from './components/ReuseWrapper';
-import MetricsWrapper from './components/MetricsWrapper';
 import TimelineWrapper from './components/TimelineWrapper';
-import KernelWrapper from './components/KernelWrapper';
 
 const useStyles = makeStyles((theme) => ({
     contentContainer: {
@@ -31,13 +29,11 @@ export default function GridLayout() {
         <Grid className={classes.contentContainer}>
             <Grid container>
                 <Grid className={classes.rowContainer} xs={12} item={true}> 
-                    <KernelWrapper />
-                    <MetricsWrapper />
+                    <ReuseWrapper />
                     <CCTWrapper />
                 </Grid>
                 <Grid className={classes.rowContainer} xs={12} item={true}>
                     <CommWrapper />
-                    <ReuseWrapper />
                 </Grid>
                 <Grid className={classes.rowContainer} xs={12} item={true}>
                     <TimelineWrapper />

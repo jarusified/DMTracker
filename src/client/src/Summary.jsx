@@ -1,6 +1,13 @@
-import React, {Fragment} from 'react'
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
+import {
+    Box,
+    CssBaseline
+} from "@mui/material";
+
+import KernelWrapper from './components/KernelWrapper';
+import MetricsWrapper from './components/MetricsWrapper';
 
 const useStyles = makeStyles((theme) => ({
     contentContainer: {
@@ -10,21 +17,40 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'stretch',
         flexWrap: 'nowrap',
     },
+    rowContainer: {
+        display: "grid",
+        gridAutoFlow: "column",
+        alignItems: "center",
+        justifyContent: "space-evenly",
+        gridAutoColumns: "1fr",
+    }
 }))
 
 export default function SummaryWrapper() {
     const classes = useStyles();
-    
+
     return (
-        <Fragment>
-            <Grid container className={classes.contentContainer} spacing={1}>
-                <Grid container item sm={8} md={8} lg={9} xl={9}>
+        <Box
+			sx={{
+				display: "flex",
+				boxShadow: 1,
+				width: "inherit",
+			}}
+		>
+            <CssBaseline />
+            
+            <Grid className={classes.contentContainer}>
+                <Grid container>
+                    <Grid className={classes.rowContainer} item xs={12}>
+                        <KernelWrapper />
+                    </Grid>
                 </Grid>
-                <Grid container item sm md lg xl direction='column' spacing={2}>
-                    <Grid container item sm md lg xl>
+                <Grid container>
+                    <Grid className={classes.rowContainer} item xs={12}>
+                        <MetricsWrapper />
                     </Grid>
                 </Grid>
             </Grid>
-        </Fragment>
+        </Box>
     )
 }
