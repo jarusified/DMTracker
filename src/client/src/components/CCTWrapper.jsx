@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Box, Typography } from '@material-ui/core';
+import { Grid, Paper, Typography } from '@material-ui/core';
 import DagreGraph from 'dagre-d3-react'
 import { fetchCCT } from "../actions";
 
@@ -41,11 +41,11 @@ function CCTWrapper() {
     }, [cct]);
 
     return (
-        <Box sx={{ p: 1, border: '1px dashed grey' }} id="cct-view">
+        <Paper>
             <Typography variant='overline' style={{ fontWeight: 'bold' }}>
                 Calling Context Tree
             </Typography>
-            <Grid item>
+            <Grid container>
                 <DagreGraph
                     nodes={nodes}
                     links={links}
@@ -63,7 +63,7 @@ function CCTWrapper() {
                     onRelationshipClick={e => console.log(e)}
                 />
             </Grid>
-        </Box>
+        </Paper>
     )
 }
 

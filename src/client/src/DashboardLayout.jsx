@@ -26,18 +26,16 @@ const useStyles = makeStyles((theme) => ({
 export default function GridLayout() {
     const classes = useStyles();
     return (
-        <Grid className={classes.contentContainer}>
-            <Grid container>
-                <Grid className={classes.rowContainer} xs={12} item={true}> 
-                    <ReuseWrapper />
-                    <CCTWrapper />
-                </Grid>
-                <Grid className={classes.rowContainer} xs={12} item={true}>
-                    <CommWrapper />
-                </Grid>
-                <Grid className={classes.rowContainer} xs={12} item={true}>
-                    <TimelineWrapper />
-                </Grid>
+        <Grid container>
+            <Grid className={classes.rowContainer} xs={12} item={true}> 
+                <ReuseWrapper />
+                <CCTWrapper />
+            </Grid>
+            <Grid className={classes.rowContainer} xs={12} item={true}>
+                <CommWrapper />
+            </Grid>
+            <Grid className={classes.rowContainer} xs={12} item={true}>
+                <TimelineWrapper />
             </Grid>
         </Grid>
     )
