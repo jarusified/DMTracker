@@ -35,9 +35,9 @@ function MetricsWrapper() {
 	}, [metrics]);
 
 	return (
-		<Box sx={{ p: 1, border: "1px dashed grey" }} id="ensemble-view">
+		<Box sx={{ p: 1 }} id="ensemble-view">
 			<Typography variant="overline" style={{ fontWeight: "bold" }}>
-				Ensemble Performance ({kernels.length} Kernels)
+				Metrics View
 			</Typography>
 			<Grid item>
 				<Grid item>

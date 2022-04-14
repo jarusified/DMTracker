@@ -29,9 +29,9 @@ function KernelWrapper() {
     }, [kernels]);
 
     return (
-        <Box sx={{ p: 1, border: '1px dashed grey' }}>
+        <Box sx={{ p: 1 }}>
             <Typography variant='overline' style={{ fontWeight: 'bold' }}>
-                GPU Kernels
+                Kernels view ({kernels.length} Kernels)
             </Typography>
 
             <List>
