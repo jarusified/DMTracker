@@ -134,7 +134,7 @@ class Metrics():
             'kernel_metrics': self.get_kernel_metrics(metric),
         }
 
-    def get_kernels(self, exp):
+    def get_kernels(self):
         """
         Returns a list of kernels for a given ensemble.
         Note: It is assumed that the kernels are the same for all experiments.

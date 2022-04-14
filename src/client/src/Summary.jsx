@@ -6,6 +6,7 @@ import {
     CssBaseline
 } from "@mui/material";
 
+import ToolBar from "./components/ToolBar";
 import KernelWrapper from './components/KernelWrapper';
 import MetricsWrapper from './components/MetricsWrapper';
 
@@ -38,7 +39,7 @@ export default function SummaryWrapper() {
 			}}
 		>
             <CssBaseline />
-            
+            <ToolBar />
             <Grid className={classes.contentContainer}>
                 <Grid container>
                     <Grid className={classes.rowContainer} item xs={12}>

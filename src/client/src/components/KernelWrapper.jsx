@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Box, Typography, List, ListItem, ListItemText } from '@material-ui/core';
+import { Box, Typography, List, ListItem, ListItemText } from '@material-ui/core';
+import { fetchKernels } from "../actions";
+
 
 const useStyles = makeStyles((theme) => ({
 	nodes: {
@@ -21,7 +23,9 @@ function KernelWrapper() {
     const kernels = useSelector((store) => store.kernels);
 
     useEffect(() => {
-        
+        if(kernels.length === 0) {
+            dispatch(fetchKernels())
+        }
     }, [kernels]);
 
     return (

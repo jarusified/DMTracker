@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Box, Typography } from "@material-ui/core";
 import * as d3 from "d3";
 
-import { fetchEnsemble } from "../actions";
+import { fetchEnsemble, fetchMetrics } from "../actions";
 
 const useStyles = makeStyles((theme) => ({
 	path: {
@@ -20,12 +20,19 @@ function MetricsWrapper() {
 	const dispatch = useDispatch();
 	const selectedMetric = useSelector((store) => store.selected_metric);
 	const kernels = useSelector((store) => store.kernels);
+	const metrics = useSelector((store) => store.metrics);
 
 	useEffect(() => {
 		if (selectedMetric !== "") {
 			dispatch(fetchEnsemble(selectedMetric));
 		}
 	}, [selectedMetric]);
+
+	useEffect(() => {
+		if (metrics.length == 0) {
+			dispatch(fetchMetrics());
+		}
+	}, [metrics]);
 
 	return (
 		<Box sx={{ p: 1, border: "1px dashed grey" }} id="ensemble-view">

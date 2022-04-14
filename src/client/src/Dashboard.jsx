@@ -19,7 +19,7 @@ export default function Dashboard() {
 		>
 			<CssBaseline />
 			<ToolBar />
-			{/* <ControlWrapper /> */}
+			<ControlWrapper />
 			{/* <DashboardLayout /> */}
 		</Box>
 	);
