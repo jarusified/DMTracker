@@ -1,9 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid } from '@material-ui/core';
 import {
-    Box,
-    Paper,  
+    Grid,
     CssBaseline
 } from "@mui/material";
 
@@ -14,12 +12,17 @@ import MetricsWrapper from './components/MetricsWrapper';
 const useStyles = makeStyles((theme) => ({
     root: {
         display: "flex",
-        flexGrow: 1,
     },
     paper: {
         textAlign: 'center',
         color: theme.palette.text.secondary,
-    }
+    },
+    content: {
+		flexGrow: 1,
+		height: "100vh",
+		overflow: "auto",
+	},
+	appBarSpacer: theme.mixins.toolbar,
 }))
 
 export default function SummaryWrapper() {
@@ -29,27 +32,19 @@ export default function SummaryWrapper() {
         <div className={classes.root}>
             <CssBaseline />
             <ToolBar />
-            <Box
-                sx={{
-                    display: "flex",
-                    position: "relative",
-                    width: "100%",
-                    top: "0px",
-                }}
-            >
-                <Grid container>
-                    <Grid item xs={6}>
-                        <Paper className={classes.paper}>
+            <main className={classes.content}>
+                <div className={classes.appBarSpacer} />
+                <Grid>
+                    <Grid container spacing={1} m={1}>
+                        <Grid item xs={6}>
                             <KernelWrapper />
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Paper className={classes.paper}>
+                        </Grid>
+                        <Grid item xs={6}>
                             <MetricsWrapper />
-                        </Paper>
+                        </Grid>
                     </Grid>
                 </Grid>
-            </Box>
+            </main>  
         </div>
     )
 }

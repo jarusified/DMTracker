@@ -1,7 +1,7 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Box, Typography } from "@material-ui/core";
+import { Grid, Paper, Typography } from "@material-ui/core";
 import * as d3 from "d3";
 
 import { fetchEnsemble, fetchMetrics } from "../actions";
@@ -35,7 +35,7 @@ function MetricsWrapper() {
 	}, [metrics]);
 
 	return (
-		<Box sx={{ p: 1 }} id="ensemble-view">
+		<Paper id="ensemble-view">
 			<Typography variant="overline" style={{ fontWeight: "bold" }}>
 				Metrics View
 			</Typography>
@@ -46,7 +46,7 @@ function MetricsWrapper() {
 					<ProblemSizeMetrics /> */}
 				</Grid>
 			</Grid>
-		</Box>
+		</Paper>
 	);
 }
 

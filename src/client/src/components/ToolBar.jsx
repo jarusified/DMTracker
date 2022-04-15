@@ -123,7 +123,7 @@ export default function ToolBar() {
 
 	return (
         <>
-            <AppBar open={open} elevation={1}>
+            <AppBar open={open} elevation={1} position="absolute">
                 <Toolbar className={classes.toolbar}>
                     <IconButton
                         color="inherit"

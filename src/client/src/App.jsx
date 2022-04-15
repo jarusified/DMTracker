@@ -45,7 +45,7 @@ function App() {
 		<Provider store={store}>
 			<Router>
 				<Routes>
-					<Route path="/summary" element={<SummaryWrapper />} />
+					<Route path="/" element={<SummaryWrapper />} />
 					<Route path="/dashboard" element={<DashboardWrapper />} />
 				</Routes>
 			</Router>

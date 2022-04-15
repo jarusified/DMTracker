@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import { Box, Typography, List, ListItem, ListItemText } from '@material-ui/core';
+import { Paper, Typography, List, ListItem, ListItemText } from '@material-ui/core';
 import { fetchKernels } from "../actions";
 
 
@@ -29,7 +29,7 @@ function KernelWrapper() {
     }, [kernels]);
 
     return (
-        <Box sx={{ p: 1 }}>
+        <Paper>
             <Typography variant='overline' style={{ fontWeight: 'bold' }}>
                 Kernels view ({kernels.length} Kernels)
             </Typography>
@@ -41,7 +41,7 @@ function KernelWrapper() {
                     </ListItem>
                 ))}
             </List>
-        </Box>
+        </Paper>
     )
 }
 
