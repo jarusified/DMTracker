@@ -1,30 +1,50 @@
-import React, {Fragment} from 'react'
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid } from '@material-ui/core';
+import {
+    Grid,
+    CssBaseline
+} from "@mui/material";
+
+import ToolBar from "./components/ToolBar";
+import KernelWrapper from './components/KernelWrapper';
+import MetricsWrapper from './components/MetricsWrapper';
 
 const useStyles = makeStyles((theme) => ({
-    contentContainer: {
-        padding: theme.spacing(1),
-        height: '100%',
-        flexGrow: 1,
-        alignItems: 'stretch',
-        flexWrap: 'nowrap',
+    root: {
+        display: "flex",
     },
+    paper: {
+        textAlign: 'center',
+        color: theme.palette.text.secondary,
+    },
+    content: {
+		flexGrow: 1,
+		height: "100vh",
+		overflow: "auto",
+	},
+	appBarSpacer: theme.mixins.toolbar,
 }))
 
 export default function SummaryWrapper() {
     const classes = useStyles();
-    
+
     return (
-        <Fragment>
-            <Grid container className={classes.contentContainer} spacing={1}>
-                <Grid container item sm={8} md={8} lg={9} xl={9}>
-                </Grid>
-                <Grid container item sm md lg xl direction='column' spacing={2}>
-                    <Grid container item sm md lg xl>
+        <div className={classes.root}>
+            <CssBaseline />
+            <ToolBar />
+            <main className={classes.content}>
+                <div className={classes.appBarSpacer} />
+                <Grid>
+                    <Grid container spacing={1} m={1}>
+                        <Grid item xs={6}>
+                            <KernelWrapper />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <MetricsWrapper />
+                        </Grid>
                     </Grid>
                 </Grid>
-            </Grid>
-        </Fragment>
+            </main>  
+        </div>
     )
 }

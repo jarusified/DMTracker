@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { Grid, Box, Typography } from "@material-ui/core";
+import { Grid, Paper, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Timeline } from "vis-timeline";
 import { DataSet } from "vis-data";
@@ -41,15 +41,19 @@ function TimelineWrapper() {
 		const tx = new Timeline(container, items, options);
 	}, [timeline]);
 	return (
-		<Box sx={{ p: 1, border: "1px dashed grey" }}>
+		<Paper>
 			<Typography variant="overline" style={{ fontWeight: "bold" }}>
 				Execution Timeline
 			</Typography>
-			<Grid item>
-				<div id="timeline-view" className={classes.timeline}></div>
+			<Grid container>
+				<Grid item>
+					<div id="timeline-view" className={classes.timeline}></div>
+				</Grid>
+				<Grid item>
+
+				</Grid>
 			</Grid>
-			<Grid item></Grid>
-		</Box>
+		</Paper>
 	);
 }
 

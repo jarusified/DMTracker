@@ -60,8 +60,8 @@ export const fetchMetrics = () => async (dispatch) => {
   });
 };  
 
-export const fetchKernels = (experiment_tag) => async (dispatch) => {
-  const data = await POSTWrapper("fetch_kernels", {experiment: experiment_tag});
+export const fetchKernels = () => async (dispatch) => {
+  const data = await POSTWrapper("fetch_kernels", {});
   dispatch({
     type: FETCH_KERNELS,
     payload: data,

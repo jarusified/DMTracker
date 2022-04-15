@@ -117,9 +117,7 @@ class HTTPServer:
         @app.route("/fetch_kernels", methods=["POST"])
         @cross_origin()
         def fetch_kernels():
-            request_context = request.json
-            experiment = request_context["experiment"]
-            kernels = self.metrics_interface.get_kernels(experiment)
+            kernels = self.metrics_interface.get_kernels()
             return jsonify({'kernels': kernels})
 
         @app.route("/fetch_timeline", methods=["POST"])

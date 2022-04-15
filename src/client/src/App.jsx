@@ -46,7 +46,7 @@ function App() {
 			<Router>
 				<Routes>
 					<Route path="/" element={<SummaryWrapper />} />
-					<Route path="/" element={<DashboardWrapper />} />
+					<Route path="/dashboard" element={<DashboardWrapper />} />
 				</Routes>
 			</Router>
 		</Provider>

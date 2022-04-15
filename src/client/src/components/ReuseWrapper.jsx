@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { Fragment, useEffect, useState, useRef } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import * as d3 from "d3";
-import { Grid, Paper, Box, Typography } from "@material-ui/core";
+import { Grid, Paper, Typography } from "@material-ui/core";
 import { useSelector } from "react-redux";
 import { useResizeObserver } from "beautiful-react-hooks";
 
@@ -15,12 +15,6 @@ const margins = {
 };
 
 const useStyles = makeStyles((theme) => ({
-	rowContainer: {
-        display: "grid",
-        gridAutoFlow: "column",
-        alignItems: "center",
-        padding: 0,
-    }
 }));
 
 function ReuseWrapper() {
@@ -29,7 +23,7 @@ function ReuseWrapper() {
 	const gpu = useSelector((store) => store.gpuData);
 
 	return (
-		<Box sx={{ p: 1, border: "1px dashed grey" }}>
+		<Paper>
 			<Typography variant="overline" style={{ fontWeight: "bold" }}>
 				Reuse Analysis
 			</Typography>
@@ -41,7 +35,7 @@ function ReuseWrapper() {
 					<OperationGlyph data={gpu} name={"gpu"} />
 				</Grid> */}
 			</Grid>
-		</Box>
+		</Paper>
 	);
 }
 
@@ -165,18 +159,11 @@ function OperationGlyph({ data, name }) {
 	}
 
 	return (
-			<Paper>
-				<Grid item>
-					{/* <Typography variant="overline" style={{ fontWeight: "bold" }}>
-						{name} {data ? data.op_id : ""}
-					</Typography> */}
-				</Grid>
-				<Grid item>
-					<div ref={glyphRef}>
-						<svg id={`operation-${name}-svg`}></svg>
-					</div>
-				</Grid>
-			</Paper>
+		<Fragment>
+            <svg>
+                <g id="container"></g>
+            </svg>
+        </Fragment>
 	);
 }
 

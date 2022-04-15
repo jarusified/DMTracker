@@ -1,10 +1,10 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Box, Typography } from "@material-ui/core";
+import { Grid, Paper, Typography } from "@material-ui/core";
 import * as d3 from "d3";
 
-import { fetchEnsemble } from "../actions";
+import { fetchEnsemble, fetchMetrics } from "../actions";
 
 const useStyles = makeStyles((theme) => ({
 	path: {
@@ -20,6 +20,7 @@ function MetricsWrapper() {
 	const dispatch = useDispatch();
 	const selectedMetric = useSelector((store) => store.selected_metric);
 	const kernels = useSelector((store) => store.kernels);
+	const metrics = useSelector((store) => store.metrics);
 
 	useEffect(() => {
 		if (selectedMetric !== "") {
@@ -27,10 +28,16 @@ function MetricsWrapper() {
 		}
 	}, [selectedMetric]);
 
+	useEffect(() => {
+		if (metrics.length == 0) {
+			dispatch(fetchMetrics());
+		}
+	}, [metrics]);
+
 	return (
-		<Box sx={{ p: 1, border: "1px dashed grey" }} id="ensemble-view">
+		<Paper id="ensemble-view">
 			<Typography variant="overline" style={{ fontWeight: "bold" }}>
-				Ensemble Performance ({kernels.length} Kernels)
+				Metrics View
 			</Typography>
 			<Grid item>
 				<Grid item>
@@ -39,7 +46,7 @@ function MetricsWrapper() {
 					<ProblemSizeMetrics /> */}
 				</Grid>
 			</Grid>
-		</Box>
+		</Paper>
 	);
 }
 

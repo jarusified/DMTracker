@@ -1,7 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import {
-    Grid, Box, Typography, Paper
+    Grid, Typography, Paper
 } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
@@ -15,23 +15,23 @@ const useStyles = makeStyles((theme) => ({
 function CommWrapper() {
     const classes = useStyles();
     return (
-        <Box sx={{ p: 1, border: '1px dashed grey' }}>
+        <Paper>
             <Typography variant='overline' style={{ fontWeight: 'bold' }}>
                 Data movement Matrix
             </Typography>
 
-            <Grid className={classes.rowContainer}>
-                <Grid item>
+            <Grid container spacing={2}>
+                <Grid item xs={4}>
                     <Matrix name={"CPU-GPU comm"} />
                 </Grid>
-                <Grid item>
+                <Grid item xs={4}>
                     <Matrix name={"GPU-GPU comm"} />
                 </Grid>
-                <Grid item>
+                <Grid item xs={4}>
                     <Matrix name={"Warps-Threads"} />
                 </Grid>
             </Grid>
-        </Box>
+        </Paper>
     )
 }
 
@@ -41,7 +41,7 @@ function Matrix({ name }) {
             <Typography variant="overline" style={{ fontWeight: "bold" }}>
                 {name}
 			</Typography>
-            <svg height={window.innerHeight/5}></svg>
+            <svg width={200} height={250}></svg>
         </Paper>
     )
 }
