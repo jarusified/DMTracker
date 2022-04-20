@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
 
 function CommWrapper() {
     const classes = useStyles();
+
     return (
         <Paper>
             <Typography variant='overline' style={{ fontWeight: 'bold' }}>
@@ -23,10 +24,10 @@ function CommWrapper() {
 
             <Grid container spacing={2}>
                 <Grid item xs={4}>
-                    <Matrix name={"CPU-GPU comm"} />
+                    <Matrix name={"CPU-GPU"} />
                 </Grid>
                 <Grid item xs={4}>
-                    <Matrix name={"GPU-GPU comm"} />
+                    <Matrix name={"GPU-GPU"} />
                 </Grid>
                 <Grid item xs={4}>
                     <Matrix name={"Warps-Threads"} />

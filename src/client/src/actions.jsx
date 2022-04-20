@@ -1,4 +1,4 @@
-import { FETCH_EXPERIMENTS, FETCH_CCT, FETCH_TIMELINE, FETCH_METRICS, FETCH_KERNELS, FETCH_ENSEMBLE, UPDATE_EXPERIMENT, UPDATE_KERNEL, UPDATE_METRIC } from "./helpers/types";
+import { FETCH_EXPERIMENTS, FETCH_CCT, FETCH_TIMELINE, FETCH_METRICS, FETCH_KERNELS, FETCH_ENSEMBLE, TEST_FETCH_JSON, UPDATE_EXPERIMENT, UPDATE_KERNEL, UPDATE_METRIC } from "./helpers/types";
 import { SERVER_URL } from "./helpers/utils";
 
 async function POSTWrapper(url_path, json_data) {
@@ -72,6 +72,15 @@ export const fetchEnsemble = (metric) => async (dispatch) => {
   const data = await POSTWrapper("fetch_ensemble", {metric: metric});
   dispatch({
     type: FETCH_ENSEMBLE,
+    payload: data,
+  });
+};
+
+
+export const fetchJSON = (filename) => async (dispatch) => {
+  const data = await GETWrapper(`static/${filename}`);
+  dispatch({
+    type: TEST_FETCH_JSON,
     payload: data,
   });
 };

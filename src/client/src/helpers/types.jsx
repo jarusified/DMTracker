@@ -9,3 +9,6 @@ export const FETCH_ENSEMBLE = 'FETCH_ENSEMBLE';
 export const UPDATE_EXPERIMENT = 'UPDATE_EXPERIMENT';
 export const UPDATE_KERNEL = 'UPDATE_KERNEL';
 export const UPDATE_METRIC = 'UPDATE_METRIC';
+
+// Testing variables
+export const TEST_FETCH_JSON = 'TEST_FETCH_JSON';

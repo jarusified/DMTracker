@@ -7,6 +7,7 @@ import {
     FETCH_METRICS, 
     FETCH_KERNELS,
     FETCH_ENSEMBLE,
+    TEST_FETCH_JSON,
     UPDATE_EXPERIMENT,
     UPDATE_KERNEL,
     UPDATE_METRIC,
@@ -27,6 +28,7 @@ const initialState = {
     selected_kernel: '',
     metrics: [],
     selected_metric: '',
+    testJSON: null,
 };
 
 export default function Reducer(state=initialState, action){
@@ -77,6 +79,11 @@ export default function Reducer(state=initialState, action){
                 ...state,
                 kernels: action.payload.kernels,
                 selected_kernel: action.payload.kernels[0],
+            }
+        case TEST_FETCH_JSON:
+            return {
+                ...state,
+                testJSON: action.payload,
             }
         case UPDATE_EXPERIMENT:
             return {
