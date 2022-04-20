@@ -1,7 +1,7 @@
 import os
 import warnings
 
-from flask import Flask, json, jsonify, request
+from flask import Flask, json, jsonify, request, send_from_directory
 from flask_cors import CORS, cross_origin
 
 from logger import get_logger
@@ -10,12 +10,12 @@ from generators import *
 
 # Globals
 FOLDER_PATH = os.path.abspath(os.path.dirname(__file__))
-STATIC_FOLDER_PATH = os.path.join(FOLDER_PATH, "app/")
+STATIC_FOLDER_PATH = os.path.join(FOLDER_PATH, "static")
 LOGGER = get_logger(__name__)
 
 
 # Create a Flask server.
-app = Flask(__name__, static_url_path="", static_folder=STATIC_FOLDER_PATH)
+app = Flask(__name__, static_url_path='/static')
 
 # Enable CORS
 cors = CORS(app, automatic_options=True)
@@ -136,3 +136,7 @@ class HTTPServer:
             if len(metric) > 0:
                 data = self.metrics_interface.get_data(metric)
                 return jsonify(data)
+
+        @app.route('/static/<filename>', methods=['GET'])
+        def get_json(filename):
+            return send_from_directory(STATIC_FOLDER_PATH, filename)
