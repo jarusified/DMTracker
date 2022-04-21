@@ -119,7 +119,7 @@ class Tracer:
         os.remove(f)
 
         LOGGER.info("[Tracer] Caliper Hatchet region profile")
-        caliper_configs ="hatchet-region-profile"
+        caliper_configs ="Hatchet-region-profile"
         caliper_metrics_cmd = f'CALI_CONFIG={caliper_configs},output=stdout {self.cmd} >> {self.region_profile_file}'
         subprocess.run([caliper_metrics_cmd], shell=True)
 
