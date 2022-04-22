@@ -1,5 +1,5 @@
 exp_name=$1
-sizes=(1 2 3 4)
+sizes=(1)
 memAlloc=("exp" "uvm" "uvm-prefetch" "uvm-advise" "uvm-prefetch-advise")
 
 for s in ${sizes[@]}; do 
@@ -10,6 +10,6 @@ for s in ${sizes[@]}; do
         if [ $exp = "exp" ]; then 
             cmd="../../../bin/cublas-gemm/cublas-gemm -s $s"
         fi 
-        python3 ../../../../src/main.py --app_name $exp_name,s=$s,$exp --data_dir ../../data/gemm-new --cmd "$cmd"
+        python3 ../../../../src/main.py --app_name $exp_name,s=$s,$exp --data_dir ../../data/$exp_name --cmd "$cmd"
     done
 done

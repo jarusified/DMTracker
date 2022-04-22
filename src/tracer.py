@@ -59,6 +59,7 @@ class Tracer:
             "shared_st_bank_conflict",
             "active_cycles",
         ]
+
         self.events_summary_file = os.path.join(self.output_dir, "events_summary.csv")
 
         self.runtime_metrics_file = os.path.join(self.output_dir, "runtime_metrics.csv")
@@ -69,6 +70,7 @@ class Tracer:
         self.nvbit_trace_file = os.path.join(self.output_dir, "nvbit_trace.json")
         self.region_profile_file = os.path.join(self.output_dir, "region_profile.json")
         self.runtime_report_file = os.path.join(self.output_dir, "runtime_report.txt")
+        self.nvprof_gpu_trace = os.path.join(self.output_dir, "nvprof_gpu_trace.csv")
 
         create_dir_after_check(self.output_dir)
         
@@ -93,8 +95,13 @@ class Tracer:
 
         if(len(self.events) > 0):
             LOGGER.info("[Tracer] Events summary")
-            event_summary_cmd = f'nvprof --events {",".join(self.events)} --csv --log-file{self.events_summary_file} {self.cmd}'
+            event_summary_cmd = f'nvprof --events {",".join(self.events)} --csv --log-file {self.events_summary_file} {self.cmd}'
             subprocess.run([event_summary_cmd], shell=True)
+
+        LOGGER.info('[Tracer] NVPROF GPU Trace')
+        nvprof_gpu_trace_cmd = f'nvprof --print-gpu-trace --csv --log-file {self.nvprof_gpu_trace} {self.cmd}'
+        subprocess.run([nvprof_gpu_trace_cmd], shell=True)
+
 
         LOGGER.info("[Tracer] Nsys trace summary")
         nsys_metrics_cmd = f'nsys profile --trace=cuda,nvtx -d 20 --sample=none -o {self.nsys_trace_qdrep_file} {self.cmd}'
@@ -124,14 +131,14 @@ class Tracer:
         subprocess.run([caliper_metrics_cmd], shell=True)
 
         LOGGER.info("[Tracer] Caliper Hatchet runtime-report")
-        caliper_configs ="runtime-report"
+        caliper_configs ='runtime-report'
         caliper_metrics_cmd = f'CALI_CONFIG={caliper_configs},output=stdout {self.cmd} >> {self.runtime_report_file}'
         subprocess.run([caliper_metrics_cmd], shell=True)
 
         LOGGER.info("[Tracer] LSTOPO SVG dump")
         topology_cmd = f'lstopo --of svg >> {self.lstopo_svg_file}'
         subprocess.run([topology_cmd], shell=True)
-    
+
     @staticmethod
     def merge_matrices(matrix1, matrix2):
         """
