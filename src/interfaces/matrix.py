@@ -29,9 +29,11 @@ class Matrix():
             p2p_et_num_bytes_comm_matrix, p2p_et_num_times_comm_matrix = p2p_et_memcpy_comm.generate_comm_matrix(self.gpu_trace_paths[exp])
 
             print("Host-device communication (explicit) matrix:")
-            print(h2d_et_num_bytes_comm_matrix, h2d_et_num_times_comm_matrix)
+            print(h2d_et_num_bytes_comm_matrix)
+            print(h2d_et_num_times_comm_matrix)
             print("Peer-Peer communication (explicit) matrix:")
-            print(p2p_et_num_bytes_comm_matrix, p2p_et_num_times_comm_matrix)
+            print(p2p_et_num_bytes_comm_matrix)
+            print(p2p_et_num_times_comm_matrix)
 
         if (os.path.exists(self.metric_trace_paths[exp])):
             zc_comm = ZeroCopyInfoGenerator(self.num_devices)
@@ -79,9 +81,8 @@ class Matrix():
         edges = []
         print("Matrix size:", len(matrix), len(matrix[0]))
         for i in range(len(matrix)):
+            nodes.append({"name": str(i), "group": 0})
             for j in range(len(matrix[i])):
-                # print(i, j)
-                nodes.append({"name": str(i) + "-" + str(j), "group": 0})
                 edges.append({"source": i, "target": j, "value": matrix[i][j]})
         print("\n")
         return {"nodes": nodes, "edges": edges}

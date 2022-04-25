@@ -9,7 +9,7 @@ function AdjacencyMatrix() {
 		nodes = [],
 		edges = [],
 		edgeWeight = function (d) {
-			return 1;
+			return d.value;
 		},
 		nodeID = function (d) {
 			return d.id;
@@ -190,7 +190,7 @@ function Matrix({ name, data }) {
 			edges = data[mode][metric].edges;
 		}
 		const adjacencyMatrix = AdjacencyMatrix()
-			.size([300, 300])
+			.size([250, 250])
 			.nodes(nodes)
 			.links(edges)
 			.directed(false)
@@ -205,9 +205,13 @@ function Matrix({ name, data }) {
 	}
 
 	function visualize(wrapper, data) {
-		// const colors = d3.scaleOrdinal(d3.schemeCategory10);
-		const colors = d3.scaleLinear().domain([-1, 0, 1])
-  			.range(["orange", "white", "green"]);
+		const min = d3.min(data, function (d) {
+			return d.weight;
+		});
+		const max = d3.max(data, function (d) {
+			return d.weight;
+		});
+		const colors = d3.scaleOrdinal(d3.schemeBlues[9]);
 
 		d3.select("#" + id)
 			.append("g")
@@ -217,22 +221,18 @@ function Matrix({ name, data }) {
 			.data(data)
 			.enter()
 			.append("rect")
-			.attr("width", function (d) {
-				return d.width;
-			})
-			.attr("height", function (d) {
-				return d.height;
-			})
-			.attr("x", function (d) {
-				return d.x;
-			})
-			.attr("y", function (d) {
-				return d.y;
-			})
+			.attr("width", (d) => d.width)
+			.attr("height", (d) => d.height)
+			.attr("x", (d) => d.x)
+			.attr("y", (d) => d.y)
 			.style("stroke", "black")
 			.style("stroke-width", "1px")
 			.style("fill", function (d) {
-				return colors(d.weight);
+				if(max !== min) {
+					return colors(d.weight / (max - min));
+				} else {
+					return colors(0);
+				}
 			})
 
 		d3.select("#" + id)
@@ -249,7 +249,7 @@ function Matrix({ name, data }) {
 			<Typography variant="overline" style={{ fontWeight: "bold" }}>
 				{name}
 			</Typography>
-			<svg id={id} width={300} height={300}></svg>
+			<svg id={id} width={310} height={310}></svg>
 		</Paper>
 	);
 }
