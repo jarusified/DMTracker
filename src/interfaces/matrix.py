@@ -79,11 +79,9 @@ class Matrix():
         """
         nodes = []
         edges = []
-        print("Matrix size:", len(matrix), len(matrix[0]))
         for i in range(len(matrix)):
             nodes.append({"name": str(i), "group": 0})
             for j in range(len(matrix[i])):
                 edges.append({"source": i, "target": j, "value": matrix[i][j]})
-        print("\n")
         return {"nodes": nodes, "edges": edges}
     

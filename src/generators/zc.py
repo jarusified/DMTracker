@@ -3,6 +3,8 @@ import re
 class ZeroCopyInfoGenerator():
     
     def __init__(self, num_devices):
+        # TODO: Need to verify this is true for nvlink. Harsh says its more
+        # general. 
         # Needed headers for zerocopy memory
         self.headers = [
             'Device', 'nvlink_user_data_received',

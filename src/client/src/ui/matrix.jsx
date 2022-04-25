@@ -178,7 +178,6 @@ function Matrix({ name, data }) {
 	const id = "matrix-" + name;
 	const [mode, setMode] = useState("unified");
 	const [metric, setMetric] = useState("bytes");
-	console.log("name", name);
 
 	if (Object.keys(data).length !== 0) {
 		let nodes = [], edges = [];
@@ -199,8 +198,6 @@ function Matrix({ name, data }) {
 			});
 
 		const matrixData = adjacencyMatrix();
-		console.log(matrixData)
-
 		visualize(adjacencyMatrix, matrixData);
 	}
 
