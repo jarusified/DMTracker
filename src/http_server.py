@@ -51,8 +51,8 @@ class HTTPServer:
 
     
     def load(self) -> None:
-        # self.metrics_interface = Metrics(data_dir=self.data_dir)
-        self.cct_interface = CCT(data_dir=self.data_dir)
+        self.metrics_interface = Metrics(data_dir=self.data_dir)
+        # self.cct_interface = CCT(data_dir=self.data_dir)
         self.matrix_interface = Matrix(data_dir=self.data_dir)
         # self.timeline_interface = Timeline(data_dir=self.data_dir)
 
@@ -99,7 +99,7 @@ class HTTPServer:
         @cross_origin()
         def fetch_experiments():
             sorted_experiments = self.metrics_interface.sort_by_runtime(self.experiments)
-            return jsonify(experiments=list(sorted_experiments.keys()))
+            return jsonify(experiments=sorted_experiments)
 
         @app.route("/fetch_cct", methods=["POST"])
         @cross_origin()
@@ -137,6 +137,15 @@ class HTTPServer:
             if len(metric) > 0:
                 data = self.metrics_interface.get_data(metric)
                 return jsonify(data)
+
+        @app.route("/fetch_comm", methods=["POST"])
+        @cross_origin()
+        def fetch_comm():
+            request_context = request.json
+            print(request_context)
+            experiment = request_context["experiment"]
+            comm = self.matrix_interface.get_comm(experiment)
+            return jsonify(comm)
 
         @app.route('/static/<filename>', methods=['GET'])
         def get_json(filename):

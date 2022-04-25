@@ -149,4 +149,6 @@ class Metrics():
         return self.metrics.tolist()
 
     def sort_by_runtime(self, exps):
-        return dict(sorted(self.total_runtime.items(), key=lambda item: item[1], reverse=True))
+        if len(self.total_runtime) == 0:
+            return self.experiments
+        return list(dict(sorted(self.total_runtime.items(), key=lambda item: item[1], reverse=True)).keys())

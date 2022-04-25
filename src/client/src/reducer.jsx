@@ -19,7 +19,6 @@ const initialState = {
     selected_experiment: '',
     cct: {},
     timeline: {},
-    comm: {},
     runtime_metrics: {},
     transfer_metrics: {},
     atts: {},
@@ -29,6 +28,7 @@ const initialState = {
     metrics: [],
     selected_metric: '',
     testJSON: null,
+    comm_matrix: {},
 };
 
 export default function Reducer(state=initialState, action){
@@ -43,11 +43,6 @@ export default function Reducer(state=initialState, action){
             return {
                 ...state,
                 reuse: action.payload.data,
-            }
-        case FETCH_COMM:
-            return {
-                ...state,
-                comm: action.payload,
             }
         case FETCH_CCT:
             return {
@@ -79,6 +74,11 @@ export default function Reducer(state=initialState, action){
                 ...state,
                 kernels: action.payload.kernels,
                 selected_kernel: action.payload.kernels[0],
+            }
+        case FETCH_COMM:
+            return {
+                ...state,
+                comm_matrix: action.payload,
             }
         case TEST_FETCH_JSON:
             return {
