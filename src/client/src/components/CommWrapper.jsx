@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 
 import Matrix from "../ui/matrix";
-import { fetchJSON, fetchComm } from "../actions";
+import { fetchComm } from "../actions";
 
 const useStyles = makeStyles((theme) => ({
 	rowContainer: {
@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
 		padding: 20,
 		justifyContent: "flex-end",
 		textColor: "white",
+		minWidth: 120
 	},
 }));
 
@@ -34,7 +35,7 @@ function CommWrapper() {
 	const [h2d, set_h2d] = useState({});
 	const [p2p, set_p2p] = useState({});
 	const [zc, set_zc] = useState({});
-	const modes = ["unified", "explicit", "implicit"];
+	const modes = ["unified", "explicit"];
 	const [mode, set_mode] = useState(modes[0]);
 	const metrics = ["bytes", "times"];
 	const [metric, set_metric] = useState(metrics[0]);
@@ -47,11 +48,11 @@ function CommWrapper() {
 
 	useEffect(() => {
 		if (Object.keys(comm_matrix).length !== 0) {
-			set_h2d(comm_matrix.H2D);
-			set_p2p(comm_matrix.P2P);
-			set_zc(comm_matrix.ZC);
+			set_h2d(comm_matrix.H2D[mode][metric]);
+			set_p2p(comm_matrix.P2P[mode][metric]);
+			set_zc(comm_matrix.ZC[metric]);
 		}
-	}, [comm_matrix]);
+	}, [comm_matrix, mode, metric]);
 
 	return (
 		<Paper>
@@ -69,9 +70,9 @@ function CommWrapper() {
 								labelId="dataset-label"
 								id="dataset-select"
 								value={metric}
-								// onChange={(e) => {
-								//     dispatch(updateCommMetric(e.target.value));
-								// }}
+								onChange={(e) => {
+								    set_metric(e.target.value);
+								}}
 							>
 								{metrics.map((cc) => (
 									<MenuItem key={cc} value={cc}>
@@ -79,7 +80,6 @@ function CommWrapper() {
 									</MenuItem>
 								))}
 							</Select>
-							<FormHelperText>Metric</FormHelperText>
 						</FormControl>
 					) : (
 						<></>
@@ -93,9 +93,9 @@ function CommWrapper() {
                                 labelId="dataset-label"
                                 id="dataset-select"
                                 value={mode}
-                                // onChange={(e) => {
-                                //     dispatch(updateCommMetric(e.target.value));
-                                // }}
+                                onChange={(e) => {
+                                   set_mode(e.target.value);
+                                }}
                             >
                                 {modes.map((cc) => (
                                     <MenuItem key={cc} value={cc}>
@@ -103,7 +103,6 @@ function CommWrapper() {
                                     </MenuItem>
                                 ))}
                             </Select>
-                            <FormHelperText>Mode</FormHelperText>
                         </FormControl>
                     ) : (
                         <></>
@@ -113,13 +112,13 @@ function CommWrapper() {
 
 			<Grid container spacing={2}>
 				<Grid item xs={4}>
-					<Matrix name={"Host-Device"} data={h2d} />
+					<Matrix name={"Host-Device"} data={h2d} mode={mode} metric={metric} />
 				</Grid>
 				<Grid item xs={4}>
-					<Matrix name={"Peer-Peer"} data={p2p} />
+					<Matrix name={"Peer-Peer"} data={p2p} mode={mode} metric={metric} />
 				</Grid>
 				<Grid item xs={4}>
-					<Matrix name={"Zero-copy"} data={zc} />
+					<Matrix name={"Zero-copy"} data={zc} mode={mode} metric={metric} />
 				</Grid>
 			</Grid>
 		</Paper>

@@ -176,18 +176,10 @@ function AdjacencyMatrix() {
 
 function Matrix({ name, data }) {
 	const id = "matrix-" + name;
-	const [mode, setMode] = useState("unified");
-	const [metric, setMetric] = useState("bytes");
 
 	if (Object.keys(data).length !== 0) {
-		let nodes = [], edges = [];
-		if(name == "Zero-copy") {
-			nodes = data[metric].nodes
-			edges = data[metric].edges
-		} else {
-			nodes = data[mode][metric].nodes;
-			edges = data[mode][metric].edges;
-		}
+		let { nodes, edges}  = data;
+
 		const adjacencyMatrix = AdjacencyMatrix()
 			.size([250, 250])
 			.nodes(nodes)
