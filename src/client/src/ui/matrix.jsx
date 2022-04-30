@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { Typography, Paper } from "@material-ui/core";
 
@@ -162,7 +162,7 @@ function AdjacencyMatrix() {
 
 function Matrix({ name, data }) {
 	const id = "matrix-" + name;
-
+	
 	if (Object.keys(data).length !== 0) {
 		let { nodes, edges}  = data;
 
@@ -177,10 +177,10 @@ function Matrix({ name, data }) {
 			.nodes(nodes)
 			.links(edges)
 			.directed(false)
-			
+		
 
 		const matrixData = adjacencyMatrix();
-		visualize(adjacencyMatrix, matrixData);
+		visualize(adjacencyMatrix, matrixData);	
 	}
 
 	function visualize(wrapper, data) {
@@ -190,10 +190,14 @@ function Matrix({ name, data }) {
 		const max = d3.max(data, function (d) {
 			return d.weight;
 		});
-		const colors = d3.scaleOrdinal(d3.schemeBlues[9]).domain([0, 1]);
 
-		d3.select("#" + id)
-			.append("g")
+		const svg = d3.select('#' + id);
+
+		svg.selectAll('rect').remove();
+		
+		const colors = d3.scaleOrdinal(d3.schemeBlues[9]).domain([min, max]);
+
+		svg.append("g")
 			.attr("transform", "translate(50,50)")
 			.attr("id", "adjacencyG")
 			.selectAll("rect")
@@ -208,17 +212,17 @@ function Matrix({ name, data }) {
 			.style("stroke-width", "1px")
 			.style("fill", function (d) {
 				if(max !== min) {
-					return colors(d.weight / (max - min));
+					return colors(d.weight);
 				} else {
 					return colors(0);
 				}
 			})
 
-		const xAxisLine = d3.select("#" + id)
+		const xAxisLine = svg
 			.select("#adjacencyG")
 			.call(wrapper.xAxis);
 
-		const yAxisLine = d3.select("#" + id)
+		const yAxisLine = svg
 			.select("#adjacencyG")
 			.call(wrapper.yAxis);
 
@@ -236,6 +240,64 @@ function Matrix({ name, data }) {
 			.style("font-size", "12px")
 			.style("font-family", "sans-serif")
 			.style("font-weight", "lighter");
+
+		// // ColorMap.
+		// const colormap_width = 10;
+		// const colormap_height = 10;
+		// let splits = 9;
+		// let dcolor = (max - min) / (splits - 1);
+		// for (let i = 0; i < splits; i += 1) {
+		// 	let splitColor = min + dcolor * (splits - 1 - i);
+		// 	svg.append("rect")
+		// 		.attrs({
+		// 			"width": colormap_width / splits,
+		// 			"height": colormap_height,
+		// 			"x": (splits - i - 1) * (colormap_width / splits),
+		// 			"class": "colormap",
+		// 			"transform": `translate(${x}, ${y})`,
+		// 			"fill": colors(splitColor)
+		// 		});
+		// }
+
+		// 	this.svg.append("text")
+		// 		.style("fill", "black")
+		// 		.style("font-size", "14px")
+		// 		.attrs({
+		// 			"dy": ".35em",
+		// 			"y": 10,
+		// 			"x": -165,
+		// 			"text-anchor": "middle",
+		// 			"class": "colormap-text",
+		// 			"transform": `translate(${x}, ${y})`,
+		// 		})
+		// 		.text(text);
+
+		// 	// draw the element
+		// 	this.svg.append("text")
+		// 		.style("fill", "black")
+		// 		.style("font-size", "14px")
+		// 		.attrs({
+		// 			"dy": ".35em",
+		// 			"text-anchor": "middle",
+		// 			"y": 10,
+		// 			"x": -40,
+		// 			"class": "colormap-text",
+		// 			"transform": `translate(${x}, ${y})`,
+		// 		})
+		// 		.text(this.colorMinText);
+
+		// 	this.svg.append("text")
+		// 		.style("fill", "black")
+		// 		.style("font-size", "14px")
+		// 		.attrs({
+		// 			"dy": ".35em",
+		// 			"text-anchor": "middle",
+		// 			"y": 10,
+		// 			"x": 40,
+		// 			"class": "colormap-text",
+		// 			"transform": `translate(${x + this.width}, ${y})`,
+		// 		})
+		// 		.text(this.colorMaxText);
 	}
 
 	return (
