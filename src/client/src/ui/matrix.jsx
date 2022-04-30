@@ -131,7 +131,7 @@ function AdjacencyMatrix() {
 
 	matrix.xAxis = function (calledG) {
 		const nameScale = d3
-			.scaleOrdinal()
+			.scaleBand()
 			.domain(nodes.map(nodeID))
 			.range([0, size[0]]);
 
@@ -148,7 +148,7 @@ function AdjacencyMatrix() {
 
 	matrix.yAxis = function (calledG) {
 		var nameScale = d3
-			.scaleOrdinal()
+			.scaleBand()
 			.domain(nodes.map(nodeID))
 			.range([0, size[1]]);
 
