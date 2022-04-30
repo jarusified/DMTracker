@@ -80,7 +80,7 @@ class Matrix():
         nodes = []
         edges = []
         for i in range(len(matrix)):
-            nodes.append({"name": str(i), "group": 0})
+            nodes.append({"id": i, "name": str(i), "group": 0})
             for j in range(len(matrix[i])):
                 edges.append({"source": i, "target": j, "value": matrix[i][j]})
         return {"nodes": nodes, "edges": edges}

@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import React, { useState } from "react";
+import React from "react";
 
 import { Typography, Paper } from "@material-ui/core";
 
@@ -31,7 +31,7 @@ function AdjacencyMatrix() {
 		});
 
 		edges.forEach(function (edge) {
-			var constructedEdge = {
+			const constructedEdge = {
 				source: edge.source,
 				target: edge.target,
 				weight: edgeWeight(edge),
@@ -42,21 +42,10 @@ function AdjacencyMatrix() {
 			if (typeof edge.target == "number") {
 				constructedEdge.target = nodes[edge.target];
 			}
-			var id =
+			const id =
 				nodeID(constructedEdge.source) + "-" + nodeID(constructedEdge.target);
-
-			if (
-				directed === false &&
-				constructedEdge.source.sortedIndex < constructedEdge.target.sortedIndex
-			) {
-				id =
-					nodeID(constructedEdge.target) + "-" + nodeID(constructedEdge.source);
-			}
-			if (!edgeHash[id]) {
-				edgeHash[id] = constructedEdge;
-			} else {
-				edgeHash[id].weight = edgeHash[id].weight + constructedEdge.weight;
-			}
+	
+			edgeHash[id] = constructedEdge;
 		});
 
 		nodes.forEach(function (sourceNode, a) {
@@ -76,22 +65,19 @@ function AdjacencyMatrix() {
 					edgeWeight = edgeHash[grid.id].weight;
 					grid.weight = edgeWeight;
 				}
-				if (directed === true || b < a) {
-					matrix.push(grid);
-					if (directed === false) {
-						var mirrorGrid = {
-							id: nodeID(sourceNode) + "-" + nodeID(targetNode),
-							source: sourceNode,
-							target: targetNode,
-							x: xScale(a),
-							y: yScale(b),
-							weight: 0,
-							height: nodeHeight,
-							width: nodeWidth,
-						};
-						mirrorGrid.weight = edgeWeight;
-						matrix.push(mirrorGrid);
-					}
+				matrix.push(grid);
+				if (directed === false) {
+					var mirrorGrid = {
+						id: nodeID(sourceNode) + "-" + nodeID(targetNode),
+						source: sourceNode,
+						target: targetNode,
+						x: xScale(a),
+						y: yScale(b),
+						weight: edgeWeight,
+						height: nodeHeight,
+						width: nodeWidth,
+					};
+					matrix.push(mirrorGrid);
 				}
 			});
 		});
@@ -149,7 +135,7 @@ function AdjacencyMatrix() {
 			.domain(nodes.map(nodeID))
 			.range([0, size[0]]);
 
-		const xAxis = d3.axisTop(nameScale);
+		const xAxis = d3.axisTop(nameScale).tickSize(4);
 
 		calledG
 			.append("g")
@@ -157,7 +143,7 @@ function AdjacencyMatrix() {
 			.call(xAxis)
 			.selectAll("text")
 			.style("text-anchor", "end")
-			.attr("transform", "translate(-10,-10) rotate(90)");
+			.attr("transform", (d) => { `translate(-10,-10) rotate(90)` });
 	};
 
 	matrix.yAxis = function (calledG) {
@@ -182,12 +168,16 @@ function Matrix({ name, data }) {
 
 		const adjacencyMatrix = AdjacencyMatrix()
 			.size([250, 250])
+			.nodeID(function (d) {
+				return d.id;
+			})
+			.edgeWeight((d) => {
+				return d.value;
+			})
 			.nodes(nodes)
 			.links(edges)
 			.directed(false)
-			.nodeID(function (d) {
-				return d.name;
-			});
+			
 
 		const matrixData = adjacencyMatrix();
 		visualize(adjacencyMatrix, matrixData);
@@ -200,7 +190,7 @@ function Matrix({ name, data }) {
 		const max = d3.max(data, function (d) {
 			return d.weight;
 		});
-		const colors = d3.scaleOrdinal(d3.schemeBlues[9]);
+		const colors = d3.scaleOrdinal(d3.schemeBlues[9]).domain([0, 1]);
 
 		d3.select("#" + id)
 			.append("g")
@@ -224,13 +214,28 @@ function Matrix({ name, data }) {
 				}
 			})
 
-		d3.select("#" + id)
+		const xAxisLine = d3.select("#" + id)
 			.select("#adjacencyG")
 			.call(wrapper.xAxis);
 
-		d3.select("#" + id)
+		const yAxisLine = d3.select("#" + id)
 			.select("#adjacencyG")
 			.call(wrapper.yAxis);
+
+		xAxisLine.selectAll("path")
+			.style("fill", "none")
+			.style("stroke", "black")
+			.style("stroke-width", "1px");
+
+		xAxisLine.selectAll("line")
+			.style("fill", "none")
+			.style("stroke", "black")
+			.style("stroke-width", "1px");
+
+		xAxisLine.selectAll("text")
+			.style("font-size", "12px")
+			.style("font-family", "sans-serif")
+			.style("font-weight", "lighter");
 	}
 
 	return (
