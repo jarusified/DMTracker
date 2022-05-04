@@ -1,7 +1,7 @@
 import os
 import warnings
 
-from flask import Flask, json, jsonify, request
+from flask import Flask, json, jsonify, request, send_from_directory
 from flask_cors import CORS, cross_origin
 
 from logger import get_logger
@@ -10,12 +10,12 @@ from generators import *
 
 # Globals
 FOLDER_PATH = os.path.abspath(os.path.dirname(__file__))
-STATIC_FOLDER_PATH = os.path.join(FOLDER_PATH, "app/")
+STATIC_FOLDER_PATH = os.path.join(FOLDER_PATH, "static")
 LOGGER = get_logger(__name__)
 
 
 # Create a Flask server.
-app = Flask(__name__, static_url_path="", static_folder=STATIC_FOLDER_PATH)
+app = Flask(__name__, static_url_path='/static')
 
 # Enable CORS
 cors = CORS(app, automatic_options=True)
@@ -52,7 +52,8 @@ class HTTPServer:
     
     def load(self) -> None:
         self.metrics_interface = Metrics(data_dir=self.data_dir)
-        self.cct_interface = CCT(data_dir=self.data_dir)
+        # self.cct_interface = CCT(data_dir=self.data_dir)
+        self.matrix_interface = Matrix(data_dir=self.data_dir)
         # self.timeline_interface = Timeline(data_dir=self.data_dir)
 
     def start(self, host: str, port: int) -> None:
@@ -98,7 +99,7 @@ class HTTPServer:
         @cross_origin()
         def fetch_experiments():
             sorted_experiments = self.metrics_interface.sort_by_runtime(self.experiments)
-            return jsonify(experiments=list(sorted_experiments.keys()))
+            return jsonify(experiments=sorted_experiments)
 
         @app.route("/fetch_cct", methods=["POST"])
         @cross_origin()
@@ -136,3 +137,16 @@ class HTTPServer:
             if len(metric) > 0:
                 data = self.metrics_interface.get_data(metric)
                 return jsonify(data)
+
+        @app.route("/fetch_comm", methods=["POST"])
+        @cross_origin()
+        def fetch_comm():
+            request_context = request.json
+            print(request_context)
+            experiment = request_context["experiment"]
+            comm = self.matrix_interface.get_comm(experiment)
+            return jsonify(comm)
+
+        @app.route('/static/<filename>', methods=['GET'])
+        def get_json(filename):
+            return send_from_directory(STATIC_FOLDER_PATH, filename)

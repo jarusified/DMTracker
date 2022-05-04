@@ -20,6 +20,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <chrono>
 
 // Include caliper instrumentation.
 #ifdef USE_CALIPER
@@ -91,12 +92,14 @@ inline void devGEMM(cublasHandle_t handle,
 
 template <class T> void fill(T *A, int n, int maxi) {
   for (int j = 0; j < n; j++) {
-      if (std::is_same<T, float>::value || std::is_same<T, double>::value)
-          A[j] = T((rand() % (maxi * 2 + 1)) - maxi) / T(maxi + 1.);
-      else if (std::is_same<T, half>::value)
-          A[j] = __float2half(float((rand() % (maxi * 2 + 1)) - maxi) / (maxi + 1.));
-      else
-          safe_exit(-1);
+      // if (std::is_same<T, float>::value || std::is_same<T, double>::value)
+      //     A[j] = T((rand() % (maxi * 2 + 1)) - maxi) / T(maxi + 1.);
+      // else if (std::is_same<T, half>::value)
+      //     A[j] = __float2half(float((rand() % (maxi * 2 + 1)) - maxi) / (maxi + 1.));
+      // else
+      //     safe_exit(-1);
+
+      A[j] = rand();
   }
 }
 
@@ -163,7 +166,9 @@ void addBenchmarkSpecOptions(OptionParser &op) {}
 //
 // ****************************************************************************
 void RunBenchmark(ResultDatabase &resultDB, OptionParser &op) {
-   cout << "Running GEMM" << endl;
+  std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
+  cout << "Running GEMM" << endl;
   int device;
   CALI_MARK_FUNCTION_BEGIN;
 
@@ -205,6 +210,9 @@ void RunBenchmark(ResultDatabase &resultDB, OptionParser &op) {
     RunTest<half>("HGEMM", resultDB, op);
   }
 
+  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+  resultDB.AddResult("TotalTime", "", "microsec", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
   CALI_MARK_FUNCTION_END;
 }
 

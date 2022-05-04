@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Paper, Typography } from '@material-ui/core';
-import DagreGraph from 'dagre-d3-react'
+import DagreGraph from 'dagre-d3-react';
 import { fetchCCT } from "../actions";
 
 const useStyles = makeStyles((theme) => ({
