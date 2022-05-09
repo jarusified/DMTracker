@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Typography, Paper } from "@material-ui/core";
 
@@ -31,7 +31,7 @@ function AdjacencyMatrix() {
 		});
 
 		edges.forEach(function (edge) {
-			var constructedEdge = {
+			const constructedEdge = {
 				source: edge.source,
 				target: edge.target,
 				weight: edgeWeight(edge),
@@ -42,21 +42,10 @@ function AdjacencyMatrix() {
 			if (typeof edge.target == "number") {
 				constructedEdge.target = nodes[edge.target];
 			}
-			var id =
+			const id =
 				nodeID(constructedEdge.source) + "-" + nodeID(constructedEdge.target);
-
-			if (
-				directed === false &&
-				constructedEdge.source.sortedIndex < constructedEdge.target.sortedIndex
-			) {
-				id =
-					nodeID(constructedEdge.target) + "-" + nodeID(constructedEdge.source);
-			}
-			if (!edgeHash[id]) {
-				edgeHash[id] = constructedEdge;
-			} else {
-				edgeHash[id].weight = edgeHash[id].weight + constructedEdge.weight;
-			}
+	
+			edgeHash[id] = constructedEdge;
 		});
 
 		nodes.forEach(function (sourceNode, a) {
@@ -76,22 +65,19 @@ function AdjacencyMatrix() {
 					edgeWeight = edgeHash[grid.id].weight;
 					grid.weight = edgeWeight;
 				}
-				if (directed === true || b < a) {
-					matrix.push(grid);
-					if (directed === false) {
-						var mirrorGrid = {
-							id: nodeID(sourceNode) + "-" + nodeID(targetNode),
-							source: sourceNode,
-							target: targetNode,
-							x: xScale(a),
-							y: yScale(b),
-							weight: 0,
-							height: nodeHeight,
-							width: nodeWidth,
-						};
-						mirrorGrid.weight = edgeWeight;
-						matrix.push(mirrorGrid);
-					}
+				matrix.push(grid);
+				if (directed === false) {
+					var mirrorGrid = {
+						id: nodeID(sourceNode) + "-" + nodeID(targetNode),
+						source: sourceNode,
+						target: targetNode,
+						x: xScale(a),
+						y: yScale(b),
+						weight: edgeWeight,
+						height: nodeHeight,
+						width: nodeWidth,
+					};
+					matrix.push(mirrorGrid);
 				}
 			});
 		});
@@ -145,11 +131,11 @@ function AdjacencyMatrix() {
 
 	matrix.xAxis = function (calledG) {
 		const nameScale = d3
-			.scaleOrdinal()
+			.scaleBand()
 			.domain(nodes.map(nodeID))
 			.range([0, size[0]]);
 
-		const xAxis = d3.axisTop(nameScale);
+		const xAxis = d3.axisTop(nameScale).tickSize(4);
 
 		calledG
 			.append("g")
@@ -157,12 +143,12 @@ function AdjacencyMatrix() {
 			.call(xAxis)
 			.selectAll("text")
 			.style("text-anchor", "end")
-			.attr("transform", "translate(-10,-10) rotate(90)");
+			.attr("transform", (d) => { `translate(-10,-10) rotate(90)` });
 	};
 
 	matrix.yAxis = function (calledG) {
 		var nameScale = d3
-			.scaleOrdinal()
+			.scaleBand()
 			.domain(nodes.map(nodeID))
 			.range([0, size[1]]);
 
@@ -176,21 +162,25 @@ function AdjacencyMatrix() {
 
 function Matrix({ name, data }) {
 	const id = "matrix-" + name;
-
+	
 	if (Object.keys(data).length !== 0) {
 		let { nodes, edges}  = data;
 
 		const adjacencyMatrix = AdjacencyMatrix()
 			.size([250, 250])
+			.nodeID(function (d) {
+				return d.id;
+			})
+			.edgeWeight((d) => {
+				return d.value;
+			})
 			.nodes(nodes)
 			.links(edges)
 			.directed(false)
-			.nodeID(function (d) {
-				return d.name;
-			});
+		
 
 		const matrixData = adjacencyMatrix();
-		visualize(adjacencyMatrix, matrixData);
+		visualize(adjacencyMatrix, matrixData);	
 	}
 
 	function visualize(wrapper, data) {
@@ -200,10 +190,14 @@ function Matrix({ name, data }) {
 		const max = d3.max(data, function (d) {
 			return d.weight;
 		});
-		const colors = d3.scaleOrdinal(d3.schemeBlues[9]);
 
-		d3.select("#" + id)
-			.append("g")
+		const svg = d3.select('#' + id);
+
+		svg.selectAll('rect').remove();
+		
+		const colors = d3.scaleOrdinal(d3.schemeBlues[9]).domain([min, max]);
+
+		svg.append("g")
 			.attr("transform", "translate(50,50)")
 			.attr("id", "adjacencyG")
 			.selectAll("rect")
@@ -218,19 +212,92 @@ function Matrix({ name, data }) {
 			.style("stroke-width", "1px")
 			.style("fill", function (d) {
 				if(max !== min) {
-					return colors(d.weight / (max - min));
+					return colors(d.weight);
 				} else {
 					return colors(0);
 				}
 			})
 
-		d3.select("#" + id)
+		const xAxisLine = svg
 			.select("#adjacencyG")
 			.call(wrapper.xAxis);
 
-		d3.select("#" + id)
+		const yAxisLine = svg
 			.select("#adjacencyG")
 			.call(wrapper.yAxis);
+
+		xAxisLine.selectAll("path")
+			.style("fill", "none")
+			.style("stroke", "black")
+			.style("stroke-width", "1px");
+
+		xAxisLine.selectAll("line")
+			.style("fill", "none")
+			.style("stroke", "black")
+			.style("stroke-width", "1px");
+
+		xAxisLine.selectAll("text")
+			.style("font-size", "12px")
+			.style("font-family", "sans-serif")
+			.style("font-weight", "lighter");
+
+		// // ColorMap.
+		// const colormap_width = 10;
+		// const colormap_height = 10;
+		// let splits = 9;
+		// let dcolor = (max - min) / (splits - 1);
+		// for (let i = 0; i < splits; i += 1) {
+		// 	let splitColor = min + dcolor * (splits - 1 - i);
+		// 	svg.append("rect")
+		// 		.attrs({
+		// 			"width": colormap_width / splits,
+		// 			"height": colormap_height,
+		// 			"x": (splits - i - 1) * (colormap_width / splits),
+		// 			"class": "colormap",
+		// 			"transform": `translate(${x}, ${y})`,
+		// 			"fill": colors(splitColor)
+		// 		});
+		// }
+
+		// 	this.svg.append("text")
+		// 		.style("fill", "black")
+		// 		.style("font-size", "14px")
+		// 		.attrs({
+		// 			"dy": ".35em",
+		// 			"y": 10,
+		// 			"x": -165,
+		// 			"text-anchor": "middle",
+		// 			"class": "colormap-text",
+		// 			"transform": `translate(${x}, ${y})`,
+		// 		})
+		// 		.text(text);
+
+		// 	// draw the element
+		// 	this.svg.append("text")
+		// 		.style("fill", "black")
+		// 		.style("font-size", "14px")
+		// 		.attrs({
+		// 			"dy": ".35em",
+		// 			"text-anchor": "middle",
+		// 			"y": 10,
+		// 			"x": -40,
+		// 			"class": "colormap-text",
+		// 			"transform": `translate(${x}, ${y})`,
+		// 		})
+		// 		.text(this.colorMinText);
+
+		// 	this.svg.append("text")
+		// 		.style("fill", "black")
+		// 		.style("font-size", "14px")
+		// 		.attrs({
+		// 			"dy": ".35em",
+		// 			"text-anchor": "middle",
+		// 			"y": 10,
+		// 			"x": 40,
+		// 			"class": "colormap-text",
+		// 			"transform": `translate(${x + this.width}, ${y})`,
+		// 		})
+		// 		.text(this.colorMaxText);
 	}
 
 	return (
