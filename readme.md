@@ -9,29 +9,22 @@ A large number of code bases have started exploiting the collaborative execution
 
 ## Setup
 
-- Ensure you have a CUDA-capable system and [CUPTI] installed (https://docs.nvidia.com/cuda/cupti/index.html). We can use [spack](https://github.com/spack/spack) to check this. 
+- Ensure you have a CUDA-capable system with [CUDA](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html) and [CUPTI](https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=20.04&target_type=deb_network) installed. 
 
+- Export the CUDA_INSTALL_PATH to global env. 
 ```bash
-spack load cuda
+export CUDA_INSTALL_PATh=/path/to/cuda
 ```
-
-
-If it fails, install cuda compiler and CUPTI using [spack](https://github.com/spack/spack)
-```bash
-spack install cuda
-```
-
-
-All commands have been tested on GeForce GTX 1050 TI. Large scale experiments were run on ECP
-
-* NVIDIA-SMI 440.33.01    
-* Driver Version: 440.33.01    
-* CUDA Version: 10.2
 
 ## Installation
-
 TBD
 
 ## Usage examples
-
 TBD
+
+
+All commands have been tested on GeForce GTX 1050 TI.
+
+* NVIDIA-SMI 515/48.07    
+* Driver Version: 515.48.07    
+* CUDA Version: 11.7
