@@ -1,9 +1,8 @@
 #
 # Copyright 2011-2015 NVIDIA Corporation. All rights reserved
 # 
-CUDA_HOME=$(which nvcc)
-CUDATOOLKIT_HOME=/home/suraj/Work/llnl/spack/opt/spack/linux-ubuntu20.04-skylake/gcc-9.3.0/cuda-11.1.0-5zknzvukfvdi2ihfhj25fcqj4gktqesr/
-CUPTI_PATH=$(CUDATOOLKIT_HOME)/extras/CUPTI
+CUDA_INSTALL_PATH ?= "/usr/local/cuda-11.7"
+CUPTI_PATH=$(CUDA_INSTALL_PATH)/extras/CUPTI
 INCLUDES=-I$(CUPTI_PATH)/include
 
 ifndef OS

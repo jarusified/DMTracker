@@ -13,10 +13,10 @@ A large number of code bases have started exploiting the collaborative execution
 
 - Export the CUDA_INSTALL_PATH to global env. 
 ```bash
-export CUDA_INSTALL_PATh=/path/to/cuda
+export CUDA_INSTALL_PATH=/path/to/cuda
 ```
 
-## Installation
+ ## Installation
 TBD
 
 ## Usage examples
