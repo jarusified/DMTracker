@@ -1,0 +1,4 @@
+# ignore common items
+.idea
+.vscode
+tb_plugin
