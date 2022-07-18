@@ -7,6 +7,7 @@
 *.deb
 *.cali
 *.h5
+.vscode/*
 .metadata/*
 
 timemory*
