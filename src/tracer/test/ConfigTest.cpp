@@ -3,7 +3,7 @@
 // This source code is licensed under the BSD-style license found in the
 // LICENSE file in the root directory of this source tree.
 
-#include "include/Config.h"
+#include "Config.h"
 
 #include <fmt/format.h>
 #include <gtest/gtest.h>
@@ -13,7 +13,7 @@
 using namespace std::chrono;
 using namespace KINETO_NAMESPACE;
 
-TEST(ParseTest, Whitespace) {
+TEST(ConfigTest, Whitespace) {
   Config cfg;
   // Check that various types of whitespace is ignored
   EXPECT_TRUE(cfg.parse(""));
@@ -26,7 +26,7 @@ TEST(ParseTest, Whitespace) {
   EXPECT_FALSE(cfg.parse("\r\n"));
 }
 
-TEST(ParseTest, Comment) {
+TEST(ConfigTest, Comment) {
   Config cfg;
   // Anything following a '#' should be ignored, up to a newline
   EXPECT_TRUE(cfg.parse("# comment"));
@@ -43,7 +43,7 @@ TEST(ParseTest, Comment) {
   EXPECT_EQ(cfg.samplePeriod(), milliseconds(1));
 }
 
-TEST(ParseTest, Format) {
+TEST(ConfigTest, Format) {
   Config cfg;
   // The basic format is just "name = value".
   // Where both value and name can be almost anything.
@@ -67,7 +67,7 @@ TEST(ParseTest, Format) {
   EXPECT_EQ(cfg.metricNames(), std::set<std::string>({"4", "5", "s i x"}));
 }
 
-TEST(ParseTest, DefaultActivityTypes) {
+TEST(ConfigTest, DefaultActivityTypes) {
   Config cfg;
   cfg.validate(std::chrono::system_clock::now());
   auto default_activities = defaultActivityTypes();
@@ -75,7 +75,7 @@ TEST(ParseTest, DefaultActivityTypes) {
     std::set<ActivityType>(default_activities.begin(), default_activities.end()));
 }
 
-TEST(ParseTest, ActivityTypes) {
+TEST(ConfigTest, ActivityTypes) {
   Config cfg;
   EXPECT_FALSE(cfg.parse("ACTIVITY_TYPES"));
   EXPECT_TRUE(cfg.parse("ACTIVITY_TYPES="));
@@ -113,7 +113,7 @@ TEST(ParseTest, ActivityTypes) {
     std::set<ActivityType>({ActivityType::CPU_OP}));
 }
 
-TEST(ParseTest, SamplePeriod) {
+TEST(ConfigTest, SamplePeriod) {
   Config cfg;
   EXPECT_TRUE(cfg.parse("SAMPLE_PERIOD_MSECS=10"));
   EXPECT_EQ(cfg.samplePeriod(), milliseconds(10));
@@ -129,7 +129,7 @@ TEST(ParseTest, SamplePeriod) {
   EXPECT_EQ(cfg.samplePeriod(), milliseconds(1));
 }
 
-TEST(ParseTest, MultiplexPeriod) {
+TEST(ConfigTest, MultiplexPeriod) {
   Config cfg;
   auto now = std::chrono::system_clock::now();
 
@@ -151,7 +151,7 @@ TEST(ParseTest, MultiplexPeriod) {
   EXPECT_EQ(cfg.multiplexPeriod(), milliseconds(800));
 }
 
-TEST(ParseTest, ReportPeriod) {
+TEST(ConfigTest, ReportPeriod) {
   Config cfg;
   EXPECT_TRUE(cfg.parse("REPORT_PERIOD_SECS=1"));
   EXPECT_EQ(cfg.reportPeriod(), seconds(1));
@@ -163,7 +163,7 @@ TEST(ParseTest, ReportPeriod) {
   EXPECT_EQ(cfg.reportPeriod(), seconds(100));
 }
 
-TEST(ParseTest, SamplesPerReport) {
+TEST(ConfigTest, SamplesPerReport) {
   Config cfg;
   auto now = std::chrono::system_clock::now();
 
@@ -217,7 +217,7 @@ TEST(ParseTest, SamplesPerReport) {
   EXPECT_EQ(cfg.samplesPerReport(), 1);
 }
 
-TEST(ParseTest, EnableSigUsr2) {
+TEST(ConfigTest, EnableSigUsr2) {
   Config cfg;
   EXPECT_TRUE(cfg.parse("ENABLE_SIGUSR2=yes"));
   EXPECT_TRUE(cfg.sigUsr2Enabled());
@@ -245,7 +245,7 @@ TEST(ParseTest, EnableSigUsr2) {
   EXPECT_FALSE(cfg.parse("ENABLE_SIGUSR2=yep"));
 }
 
-TEST(ParseTest, DeviceMask) {
+TEST(ConfigTest, DeviceMask) {
   Config cfg;
   // Single device
   EXPECT_TRUE(cfg.parse("EVENTS_ENABLED_DEVICES = 0"));
@@ -291,7 +291,7 @@ TEST(ParseTest, DeviceMask) {
   EXPECT_FALSE(cfg.parse("EVENTS_ENABLED_DEVICES = 1.0"));
 }
 
-TEST(ParseTest, RequestTime) {
+TEST(ConfigTest, RequestTime) {
   Config cfg;
   system_clock::time_point now = system_clock::now();
   int64_t tgood_ms =
@@ -315,7 +315,7 @@ TEST(ParseTest, RequestTime) {
   EXPECT_FALSE(cfg.parse(fmt::format("REQUEST_TIMESTAMP = {}", tbad_ms)));
 }
 
-TEST(ParseTest, ProfileStartTime) {
+TEST(ConfigTest, ProfileStartTime) {
   Config cfg;
   system_clock::time_point now = system_clock::now();
   int64_t tgood_ms =

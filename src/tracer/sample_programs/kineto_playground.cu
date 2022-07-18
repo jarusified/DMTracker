@@ -8,7 +8,7 @@
 #include "kineto_playground.cuh"
 
 
-namespace kineto {
+namespace kineto_playground {
 
 void warmup(void) {
   // Inititalizing CUDA can take a while which we normally do not want to see in Kineto traces.
@@ -83,4 +83,4 @@ void compute(void) {
   }
 }
 
-} // namespace kineto
+} // namespace kineto_playground

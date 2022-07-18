@@ -2,22 +2,18 @@
 
 // This source code is licensed under the BSD-style license found in the
 // LICENSE file in the root directory of this source tree.
-
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
 
-#include <common/logging/logging.h>
 #include <libkineto.h>
-
-#include "kineto/libkineto/sample_programs/kineto_playground.cuh"
-
-using namespace kineto;
+#include "kineto_playground.cuh"
 
 static const std::string kFileName = "/tmp/kineto_playground_trace.json";
 
 int main() {
-  warmup();
+  kineto::warmup();
 
   // Kineto config
 
@@ -29,12 +25,12 @@ int main() {
   profiler.prepareTrace(types);
 
   // Good to warm up after prepareTrace to get cupti initialization to settle
-  warmup();
+  kineto::warmup();
   profiler.startTrace();
-  playground();
+  kineto::playground();
 
   auto trace = profiler.stopTrace();
-  LOG(INFO) << "Stopped and processed trace. Got " << trace->activities()->size() << " activities.";
+  std::cout << "Stopped and processed trace. Got " << trace->activities()->size() << " activities.";
   trace->save(kFileName);
   return 0;
 }

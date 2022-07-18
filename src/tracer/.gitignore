@@ -1,0 +1,11 @@
+# Ignore CMake created files.
+CMakeFiles/*
+test/CMakeFiles/*
+sample_programs/CMakeFiles/*
+Makefile
+*.cmake
+
+# Folders to ignore
+fmt/*
+googletest*
+Testing*

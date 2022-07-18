@@ -9,7 +9,7 @@
 #include <set>
 #include <deque>
 
-#include "include/IActivityProfiler.h"
+#include "IActivityProfiler.h"
 #include "output_base.h"
 
 namespace libkineto {
