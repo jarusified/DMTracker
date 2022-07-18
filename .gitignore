@@ -27,3 +27,4 @@ src/data/*
 *.pyc
 
 *.svg
+CMakeFiles/*

@@ -1,0 +1,6 @@
+CMakeFiles/*
+test/CMakeFiles/*
+sample_programs/CMakeFiles/*
+fmt/CMakeFiles/*
+Makefile
+*.cmake
