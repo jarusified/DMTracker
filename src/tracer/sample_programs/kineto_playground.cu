@@ -7,10 +7,7 @@
 
 #include "kineto_playground.cuh"
 
-
-namespace kineto_playground {
-
-void warmup(void) {
+void kineto::warmup(void) {
   // Inititalizing CUDA can take a while which we normally do not want to see in Kineto traces.
   // This is done in various ways that take Kineto as dependency. This is our way of doing warmup
   // for kineto_playground
@@ -82,5 +79,3 @@ void compute(void) {
     square<<<blocksPerGrid, threadsPerBlock>>> (dA, num);
   }
 }
-
-} // namespace kineto_playground
