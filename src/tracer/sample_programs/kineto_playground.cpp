@@ -16,15 +16,19 @@ int main() {
   kineto::warmup();
 
   // Kineto config
-
-  // Empty types set defaults to all types
-  std::set<libkineto::ActivityType> types;
-
+ std::set<libkineto::ActivityType> types = {
+    libkineto::ActivityType::CONCURRENT_KERNEL,
+    libkineto::ActivityType::GPU_MEMCPY,
+    libkineto::ActivityType::GPU_MEMSET,
+    libkineto::ActivityType::CUDA_RUNTIME,
+    libkineto::ActivityType::EXTERNAL_CORRELATION,
+    libkineto::ActivityType::OVERHEAD
+  };
   auto& profiler = libkineto::api().activityProfiler();
   libkineto::api().initProfilerIfRegistered();
   profiler.prepareTrace(types);
 
-  // Good to warm up after prepareTrace to get cupti initialization to settle
+  // // Good to warm up after prepareTrace to get cupti initialization to settle
   kineto::warmup();
   profiler.startTrace();
   kineto::playground();

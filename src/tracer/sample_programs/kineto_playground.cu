@@ -25,7 +25,7 @@ void kineto::warmup(void) {
 float *hA, *dA, *hOut;
 int num = 50'000;
 
-void basicMemcpyToDevice(void) {
+void kineto::basicMemcpyToDevice(void) {
   size_t size = num * sizeof(float);
   cudaError_t err;
 
@@ -45,7 +45,7 @@ void basicMemcpyToDevice(void) {
   }
 }
 
-void basicMemcpyFromDevice(void) {
+void kineto::basicMemcpyFromDevice(void) {
 
   size_t size = num * sizeof(float);
   cudaError_t err;
@@ -68,11 +68,11 @@ __global__ void square(float* A, int N) {
   }
 }
 
-void playground(void) {
+void kineto::playground(void) {
   // Add your experimental CUDA implementation here.
 }
 
-void compute(void) {
+void kineto::compute(void) {
   int threadsPerBlock = 256;
   int blocksPerGrid = (num + threadsPerBlock - 1) / threadsPerBlock;
   for (int i = 0; i < 10; i++) {
