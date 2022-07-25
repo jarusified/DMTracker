@@ -17,7 +17,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "kineto/libkineto/sample_programs/random_ops_stress_test.cuh"
+#include "random_ops_stress_test.cuh"
 
 using namespace kineto_stress_test;
 

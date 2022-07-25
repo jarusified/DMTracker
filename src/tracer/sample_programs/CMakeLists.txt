@@ -24,12 +24,11 @@ set(LIBS_SAMPLE_PROGRAM_SRC kineto_playground.cpp kineto_playground.cu kineto_pl
 message(STATUS ${INCLUDE_DIRS})
 message(STATUS ${LIBS_SAMPLE_PROGRAM_SRC})
 
-add_library(kineto SHARED IMPORTED)
+add_library(kineto STATIC IMPORTED)
 set_target_properties(kineto PROPERTIES
     IMPORTED_LOCATION "/home/suraj/Work/llnl/nvidia-data-movement-experiments/src/tracer/libkineto.a"
 )
 
 add_executable(kineto_playground ${LIBS_SAMPLE_PROGRAM_SRC})
-
 include_directories(kineto_playground ${INCLUDE_DIRS})
 target_link_libraries(kineto_playground kineto)

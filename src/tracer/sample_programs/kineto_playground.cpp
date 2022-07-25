@@ -26,6 +26,7 @@ int main() {
   };
   auto& profiler = libkineto::api().activityProfiler();
   libkineto::api().initProfilerIfRegistered();
+  auto isActive = profiler.isActive();
   profiler.prepareTrace(types);
 
   // // Good to warm up after prepareTrace to get cupti initialization to settle

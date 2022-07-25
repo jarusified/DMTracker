@@ -37,7 +37,7 @@ int main() {
     "CUPTI_PROFILER_ENABLE_PER_KERNEL=true";
 
   auto& profiler = libkineto::api().activityProfiler();
-  profiler.prepareTrace(types_cupti_prof, profiler_config);
+  profiler.prepareTrace();
 
   // Good to warm up after prepareTrace to get cupti initialization to settle
   warmup();
