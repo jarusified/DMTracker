@@ -16,17 +16,17 @@
 #include <fcntl.h>
 #endif
 
-#include "include/libkineto.h"
-#include "include/Config.h"
-#include "src/CuptiActivityProfiler.h"
-#include "src/ActivityTrace.h"
-#include "src/CuptiActivityApi.h"
-#include "src/output_base.h"
-#include "src/output_json.h"
-#include "src/output_membuf.h"
+#include "libkineto.h"
+#include "Config.h"
+#include "CuptiActivityProfiler.h"
+#include "ActivityTrace.h"
+#include "CuptiActivityApi.h"
+#include "output_base.h"
+#include "output_json.h"
+#include "output_membuf.h"
 
-#include "src/Logger.h"
-#include "test/MockActivitySubProfiler.h"
+#include "Logger.h"
+#include "MockActivitySubProfiler.h"
 
 using namespace std::chrono;
 using namespace KINETO_NAMESPACE;

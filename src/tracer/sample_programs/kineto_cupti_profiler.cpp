@@ -3,16 +3,16 @@
 // This source code is licensed under the BSD-style license found in the
 // LICENSE file in the root directory of this source tree.
 
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
 #include <chrono>
 #include <thread>
 
-#include <common/logging/logging.h>
 #include <libkineto.h>
 
-#include "kineto/libkineto/sample_programs/kineto_playground.cuh"
+#include "kineto_playground.cuh"
 
 using namespace kineto;
 
@@ -37,7 +37,7 @@ int main() {
     "CUPTI_PROFILER_ENABLE_PER_KERNEL=true";
 
   auto& profiler = libkineto::api().activityProfiler();
-  profiler.prepareTrace(types_cupti_prof, profiler_config);
+  profiler.prepareTrace();
 
   // Good to warm up after prepareTrace to get cupti initialization to settle
   warmup();
@@ -48,7 +48,7 @@ int main() {
   basicMemcpyFromDevice();
 
   auto trace = profiler.stopTrace();
-  LOG(INFO) << "Stopped and processed trace. Got " << trace->activities()->size() << " activities.";
+  std::cout << "Stopped and processed trace. Got " << trace->activities()->size() << " activities.";
   trace->save(kFileName);
   return 0;
 }

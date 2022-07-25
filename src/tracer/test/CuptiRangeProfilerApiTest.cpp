@@ -7,8 +7,8 @@
 #include <array>
 #include <set>
 
-#include "include/libkineto.h"
-#include "include/Config.h"
+#include "libkineto.h"
+#include "Config.h"
 #include "src/CuptiRangeProfilerApi.h"
 
 #include "src/Logger.h"

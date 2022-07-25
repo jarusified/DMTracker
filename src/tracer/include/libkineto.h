@@ -82,6 +82,7 @@ class LibkinetoApi {
   }
 
   ActivityProfilerInterface& activityProfiler() {
+    libkineto_init(false, false);
     return *activityProfiler_;
   }
 
@@ -91,14 +92,14 @@ class LibkinetoApi {
 
   void initProfilerIfRegistered() {
     static std::once_flag once;
-    if (activityProfiler_) {
+    // if (activityProfiler_) {
       std::call_once(once, [this] {
         if (!activityProfiler_->isInitialized()) {
           activityProfiler_->init();
           initChildActivityProfilers();
         }
       });
-    }
+    // }
   }
 
   bool isProfilerInitialized() const {

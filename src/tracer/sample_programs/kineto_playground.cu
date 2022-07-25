@@ -7,10 +7,7 @@
 
 #include "kineto_playground.cuh"
 
-
-namespace kineto {
-
-void warmup(void) {
+void kineto::warmup(void) {
   // Inititalizing CUDA can take a while which we normally do not want to see in Kineto traces.
   // This is done in various ways that take Kineto as dependency. This is our way of doing warmup
   // for kineto_playground
@@ -28,7 +25,7 @@ void warmup(void) {
 float *hA, *dA, *hOut;
 int num = 50'000;
 
-void basicMemcpyToDevice(void) {
+void kineto::basicMemcpyToDevice(void) {
   size_t size = num * sizeof(float);
   cudaError_t err;
 
@@ -48,7 +45,7 @@ void basicMemcpyToDevice(void) {
   }
 }
 
-void basicMemcpyFromDevice(void) {
+void kineto::basicMemcpyFromDevice(void) {
 
   size_t size = num * sizeof(float);
   cudaError_t err;
@@ -71,16 +68,14 @@ __global__ void square(float* A, int N) {
   }
 }
 
-void playground(void) {
+void kineto::playground(void) {
   // Add your experimental CUDA implementation here.
 }
 
-void compute(void) {
+void kineto::compute(void) {
   int threadsPerBlock = 256;
   int blocksPerGrid = (num + threadsPerBlock - 1) / threadsPerBlock;
   for (int i = 0; i < 10; i++) {
     square<<<blocksPerGrid, threadsPerBlock>>> (dA, num);
   }
 }
-
-} // namespace kineto

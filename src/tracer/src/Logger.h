@@ -134,8 +134,8 @@ class Logger {
   static std::atomic_int severityLevel_;
   static std::atomic_int verboseLogLevel_;
   static std::atomic<uint64_t> verboseLogModules_;
-  static std::set<ILoggerObserver*>& loggerObservers() {
-    static auto* inst = new std::set<ILoggerObserver*>();
+  static std::set<libkineto::ILoggerObserver*>& loggerObservers() {
+    static auto* inst = new std::set<libkineto::ILoggerObserver*>();
     return *inst;
   }
   static std::mutex loggerObserversMutex_;
