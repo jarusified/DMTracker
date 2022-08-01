@@ -59,26 +59,26 @@ IF (NOT ROCM_SOURCE_DIR AND NOT ROCTRACER_INCLUDE_DIR)
 endif()
 
 # Define file lists
-if (LIBKINETO_NOCUPTI AND LIBKINETO_NOROCTRACER)
+if (NOT LIBKINETO_NOCUPTI)
     get_filelist("get_libkineto_cpu_only_srcs(with_api=False)" LIBKINETO_SRCS)
     message(INFO " CUPTI unavailable or disabled - not building GPU profilers")
 elseif(NOT LIBKINETO_NOROCTRACER)
     get_filelist("get_libkineto_roctracer_srcs(with_api=False)" LIBKINETO_SRCS)
     message(INFO " Building with roctracer")
 else()
-    get_filelist("get_libkineto_cupti_srcs(with_api=False)" LIBKINETO_SRCS)
+    get_filelist("get_libkineto_cupti_srcs(with_api=True)" LIBKINETO_SRCS)
 endif()
 get_filelist("get_libkineto_public_headers()" LIBKINETO_PUBLIC_HEADERS)
 get_filelist("get_libkineto_api_srcs()" LIBKINETO_API_SRCS)
 
 add_library(base OBJECT ${LIBKINETO_SRCS})
-add_library(_api OBJECT ${LIBKINETO_API_SRCS})
+add_library(api OBJECT ${LIBKINETO_API_SRCS})
 
 # Make libraries depend on libkineto_defs.bzl
 # add_custom_target(libkineto_defs.bzl DEPENDS libkineto_defs.bzl)
 # add_dependencies(base libkineto_defs.bzl)
 
-set_target_properties(base _api PROPERTIES
+set_target_properties(base api PROPERTIES
       CXX_STANDARD 14
       CXX_STANDARD_REQUIRED YES
       CXX_EXTENSIONS NO)
@@ -92,9 +92,11 @@ else()
   list(APPEND KINETO_COMPILE_OPTIONS "-DWIN32_LEAN_AND_MEAN")
   list(APPEND KINETO_COMPILE_OPTIONS "-DNOGDI")
 endif()
-if (NOT LIBKINETO_NOCUPTI)
+if (LIBKINETO_NOCUPTI)
     list(APPEND KINETO_COMPILE_OPTIONS "-DHAS_CUPTI")
 endif()
+message(STATUS "CUPTI=${LIBKINETO_NOCUPTI}")
+
 if (NOT LIBKINETO_NOROCTRACER)
     target_compile_options(base PRIVATE "-DHAS_ROCTRACER")
     target_compile_options(base PRIVATE "-D__HIP_PLATFORM_HCC__")
@@ -102,7 +104,7 @@ if (NOT LIBKINETO_NOROCTRACER)
 endif()
 
 target_compile_options(base PRIVATE "${KINETO_COMPILE_OPTIONS}")
-target_compile_options(_api PRIVATE "${KINETO_COMPILE_OPTIONS}")
+target_compile_options(api PRIVATE "${KINETO_COMPILE_OPTIONS}")
 
 if(NOT TARGET fmt)
   if(NOT FMT_SOURCE_DIR)
@@ -125,8 +127,10 @@ endif()
 set(FMT_INCLUDE_DIR "${FMT_SOURCE_DIR}/include")
 message(STATUS "Kineto: FMT_SOURCE_DIR = ${FMT_SOURCE_DIR}")
 message(STATUS "Kineto: FMT_INCLUDE_DIR = ${FMT_INCLUDE_DIR}")
+message(STATUS "Kineto: CUPTI_INCLUDE_DIR = ${CUPTI_INCLUDE_DIR}")
+
 if (NOT CUPTI_INCLUDE_DIR)
-    set(CUPTI_INCLUDE_DIR "${CUDA_SOURCE_DIR}/extras/CUPTI/include")
+    set(CUPTI_INCLUDE_DIR "${CUDA_SOURCE_DIR}/targets/x86_64-linux/include")
 endif()
 if (NOT CUDA_INCLUDE_DIRS)
     set(CUDA_INCLUDE_DIRS "${CUDA_SOURCE_DIR}/include")
@@ -150,16 +154,16 @@ target_include_directories(base PUBLIC
       $<BUILD_INTERFACE:${ROCTRACER_INCLUDE_DIR}>
       $<BUILD_INTERFACE:${ROCM_INCLUDE_DIRS}>)
 
-target_include_directories(_api PUBLIC
+target_include_directories(api PUBLIC
       $<BUILD_INTERFACE:${FMT_INCLUDE_DIR}>
       $<BUILD_INTERFACE:${LIBKINETO_INCLUDE_DIR}>)
 
 if(KINETO_LIBRARY_TYPE STREQUAL "default")
-  add_library(kineto $<TARGET_OBJECTS:base> $<TARGET_OBJECTS:_api>)
+  add_library(kineto $<TARGET_OBJECTS:base> $<TARGET_OBJECTS:api>)
 elseif(KINETO_LIBRARY_TYPE STREQUAL "static")
   add_library(kineto STATIC
     $<TARGET_OBJECTS:base>
-    $<TARGET_OBJECTS:_api>)
+    $<TARGET_OBJECTS:api>)
 elseif(KINETO_LIBRARY_TYPE STREQUAL "shared")
   add_library(kineto SHARED
     $<TARGET_OBJECTS:base>)
