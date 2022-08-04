@@ -21,7 +21,7 @@ function(add_test template_name)
     endif()
 endfunction() 
 
-add_test(Config)
+# add_test(Config)
 # add_test(CuptiActivityProfiler)
 # add_test(CuptiCallbackApi)
 # add_cuda_test(CuptiProfilerApi)

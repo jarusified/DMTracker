@@ -130,7 +130,7 @@ message(STATUS "Kineto: FMT_INCLUDE_DIR = ${FMT_INCLUDE_DIR}")
 message(STATUS "Kineto: CUPTI_INCLUDE_DIR = ${CUPTI_INCLUDE_DIR}")
 
 if (NOT CUPTI_INCLUDE_DIR)
-    set(CUPTI_INCLUDE_DIR "${CUDA_SOURCE_DIR}/targets/x86_64-linux/include")
+    set(CUPTI_INCLUDE_DIR "${CUDA_SOURCE_DIR}/targets/ppc64le-linux/include")
 endif()
 if (NOT CUDA_INCLUDE_DIRS)
     set(CUDA_INCLUDE_DIRS "${CUDA_SOURCE_DIR}/include")
