@@ -4,13 +4,16 @@
 // LICENSE file in the root directory of this source tree.
 #include <string>
 #include <iostream>
+#include <filesystem>
 
 #include "libkineto.h"
 #include "kineto_playground.cuh"
 
-static const std::string kFileName = "/home/suraj/Work/llnl/nvidia-data-movement-experiments/data/kineto-basic-playground/perf.json";
+namespace fs = std::filesystem;
 
 int main() {
+  std::string kFileName = "kineto-basic-playground_perf.json";
+
   kineto::warmup();
 
   // Kineto config
@@ -46,7 +49,9 @@ int main() {
 
     auto trace = profiler.stopTrace();
     std::cout << "Stopped and processed trace. Got " << trace->activities()->size() << " activities.\n";
-    trace->save(kFileName);
+    std::string currDirPath = fs::current_path();
+    std::string filePath = currDirPath + "/" + kFileName;
+    trace->save(filePath);
   }
   return 0;
 }
