@@ -1,7 +1,7 @@
 # Ignore CMake created files.
-src/CMakeFiles/*
-src/test/CMakeFiles/*
-src/examples/CMakeFiles/*
+CMakeFiles/*
+test/CMakeFiles/*
+examples/CMakeFiles/*
 Makefile
 *.cmake
 
@@ -11,3 +11,4 @@ googletest*
 Testing*
 
 src/bin/*
+*~
