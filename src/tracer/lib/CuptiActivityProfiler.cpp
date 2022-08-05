@@ -140,9 +140,10 @@ CuptiActivityProfiler::CuptiActivityProfiler(CuptiActivityApi& cupti, bool cpuOn
       currentRunloopState_{RunloopState::WaitForRequest} {
 
 #ifdef HAS_CUPTI
-    if (isGpuAvailable()) {
+    // TODO (SURAJ) Fix the linking issue with isGpuAvailable.
+    // if (libkineto::isGpuAvailable()) {
       logCudaVersions();
-    }
+    // }
 #endif
   }
 

@@ -88,6 +88,7 @@ extern "C" {
 // Return true if no CUPTI errors occurred during init
 void libkineto_init(bool cpuOnly, bool logOnError) {
 #ifdef HAS_CUPTI
+  LOG (INFO) << "CUPTI instrumentation enabled.";
   if (!cpuOnly) {
     // libcupti will be lazily loaded on this call.
     // If it is not available (e.g. CUDA is not installed),

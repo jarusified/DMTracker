@@ -1,7 +1,7 @@
 # Ignore CMake created files.
 CMakeFiles/*
 test/CMakeFiles/*
-sample_programs/CMakeFiles/*
+examples/CMakeFiles/*
 Makefile
 *.cmake
 
@@ -9,3 +9,6 @@ Makefile
 fmt/*
 googletest*
 Testing*
+
+src/bin/*
+*~

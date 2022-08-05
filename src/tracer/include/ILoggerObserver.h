@@ -12,7 +12,7 @@ constexpr char kWarmUpStage[] = "Warm Up";
 constexpr char kCollectionStage[] = "Collection";
 constexpr char kPostProcessingStage[] = "Post Processing";
 
-#if !USE_GOOGLE_LOG
+#ifndef USE_GOOGLE_LOG
 
 #include <map>
 #include <vector>
@@ -52,4 +52,4 @@ class ILoggerObserver {
 
 } // namespace libkineto
 
-#endif // !USE_GOOGLE_LOG
+#endif // USE_GOOGLE_LOG

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <iostream>
 #include <atomic>
 #include <chrono>
 #include <functional>
@@ -19,13 +20,12 @@
 #include <deque>
 
 #include "ActivityProfilerInterface.h"
+#include "ActivityTraceInterface.h"
 #include "ActivityType.h"
 #include "ClientInterface.h"
 #include "GenericTraceActivity.h"
-#include "TraceSpan.h"
 #include "IActivityProfiler.h"
-#include "ActivityTraceInterface.h"
-
+#include "TraceSpan.h"
 #include "ThreadUtil.h"
 
 extern "C" {
@@ -77,12 +77,14 @@ class LibkinetoApi {
 
   // Called by libkineto on init
   void registerProfiler(std::unique_ptr<ActivityProfilerInterface> profiler) {
+    // LOG (INFO) << "Registering profiler";
     activityProfiler_ = std::move(profiler);
     initClientIfRegistered();
   }
 
   ActivityProfilerInterface& activityProfiler() {
-    libkineto_init(false, false);
+    // LOG (INFO) << "Return the pointer";
+    libkineto_init(false, true);
     return *activityProfiler_;
   }
 
@@ -91,15 +93,16 @@ class LibkinetoApi {
   }
 
   void initProfilerIfRegistered() {
+    // LOG (INFO) << "Init profiler";
     static std::once_flag once;
-    // if (activityProfiler_) {
+    if (activityProfiler_) {
       std::call_once(once, [this] {
         if (!activityProfiler_->isInitialized()) {
           activityProfiler_->init();
           initChildActivityProfilers();
         }
       });
-    // }
+    }
   }
 
   bool isProfilerInitialized() const {

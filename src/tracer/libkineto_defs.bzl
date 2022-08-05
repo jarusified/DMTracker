@@ -5,51 +5,51 @@
 
 def get_libkineto_api_srcs():
     return [
-        "src/ThreadUtil.cpp",
-        "src/libkineto_api.cpp",
+        "lib/ThreadUtil.cpp",
+        "lib/libkineto_api.cpp",
     ]
 
 def get_libkineto_cupti_srcs(with_api = True):
     return [
-        "src/CudaDeviceProperties.cpp",
-        "src/CuptiActivityApi.cpp",
-        "src/CuptiActivityPlatform.cpp",
-        "src/CuptiCallbackApi.cpp",
-        "src/CuptiEventApi.cpp",
-        "src/CuptiMetricApi.cpp",
-        "src/CuptiRangeProfiler.cpp",
-        "src/CuptiRangeProfilerApi.cpp",
-        "src/CuptiRangeProfilerConfig.cpp",
-        "src/CuptiNvPerfMetric.cpp",
-        "src/Demangle.cpp",
-        "src/EventProfiler.cpp",
-        "src/EventProfilerController.cpp",
-        "src/WeakSymbols.cpp",
-        "src/cupti_strings.cpp",
+        "lib/CudaDeviceProperties.cpp",
+        "lib/CuptiActivityApi.cpp",
+        "lib/CuptiActivityPlatform.cpp",
+        "lib/CuptiCallbackApi.cpp",
+        "lib/CuptiEventApi.cpp",
+        "lib/CuptiMetricApi.cpp",
+        "lib/CuptiRangeProfiler.cpp",
+        "lib/CuptiRangeProfilerApi.cpp",
+        "lib/CuptiRangeProfilerConfig.cpp",
+        "lib/CuptiNvPerfMetric.cpp",
+        "lib/Demangle.cpp",
+        "lib/EventProfiler.cpp",
+        "lib/EventProfilerController.cpp",
+        "lib/WeakSymbols.cpp",
+        "lib/cupti_strings.cpp",
     ] + (get_libkineto_cpu_only_srcs(with_api))
 
 def get_libkineto_roctracer_srcs(with_api = True):
     return [
-        "src/RoctracerActivityApi.cpp",
+        "lib/RoctracerActivityApi.cpp",
     ] + (get_libkineto_cpu_only_srcs(with_api))
 
 def get_libkineto_cpu_only_srcs(with_api = True):
     return [
-        "src/AbstractConfig.cpp",
-        "src/CuptiActivityProfiler.cpp",
-        "src/ActivityProfilerController.cpp",
-        "src/ActivityProfilerProxy.cpp",
-        "src/ActivityType.cpp",
-        "src/Config.cpp",
-        "src/ConfigLoader.cpp",
-        "src/CuptiActivityApi.cpp",
-        "src/Demangle.cpp",
-        "src/GenericTraceActivity.cpp",
-        "src/ILoggerObserver.cpp",
-        "src/Logger.cpp",
-        "src/init.cpp",
-        "src/output_csv.cpp",
-        "src/output_json.cpp",
+        "lib/AbstractConfig.cpp",
+        "lib/CuptiActivityProfiler.cpp",
+        "lib/ActivityProfilerController.cpp",
+        "lib/ActivityProfilerProxy.cpp",
+        "lib/ActivityType.cpp",
+        "lib/Config.cpp",
+        "lib/ConfigLoader.cpp",
+        "lib/CuptiActivityApi.cpp",
+        "lib/Demangle.cpp",
+        "lib/GenericTraceActivity.cpp",
+        "lib/ILoggerObserver.cpp",
+        "lib/Logger.cpp",
+        "lib/init.cpp",
+        "lib/output_csv.cpp",
+        "lib/output_json.cpp",
     ] + (get_libkineto_api_srcs() if with_api else [])
 
 def get_libkineto_public_headers():
