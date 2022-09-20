@@ -4,6 +4,7 @@ test/CMakeFiles/*
 examples/CMakeFiles/*
 Makefile
 *.cmake
+bin/*
 
 # Folders to ignore
 fmt/*
