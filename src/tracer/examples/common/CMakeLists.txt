@@ -1,6 +1,7 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(common_source_files
     ResultDatabase.cpp
@@ -8,8 +9,6 @@ set(common_source_files
     OptionParser.cpp
     OptionParser.h
     Option.cpp
-    Option.h
-    ProgressBar.cpp
-    ProgressBar.h)
+    Option.h)
 
 add_library(Common STATIC ${common_source_files})
