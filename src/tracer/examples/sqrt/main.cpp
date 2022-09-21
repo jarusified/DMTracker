@@ -7,7 +7,7 @@
 #include <filesystem>
 
 #include "libkineto.h"
-#include "kineto_playground.cuh"
+#include "main.cuh"
 
 namespace fs = std::filesystem;
 
