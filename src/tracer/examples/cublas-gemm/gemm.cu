@@ -16,8 +16,6 @@
 #include <string>
 #include <chrono>
 
-#include "libkineto.h"
-
 #define SEED 7
 /// <summary>	Length of the object field. </summary>
 static const int FIELD_LENGTH = 128;
@@ -153,29 +151,7 @@ void addBenchmarkSpecOptions(OptionParser &op) {}
 void RunBenchmark(ResultDatabase &resultDB, OptionParser &op) {
   std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-  std::string kFileName = "kineto-basic-playground_perf.json";
-
-  // Kineto config
-  std::set<libkineto::ActivityType> types = {
-      libkineto::ActivityType::CONCURRENT_KERNEL,
-      libkineto::ActivityType::GPU_MEMCPY,
-      libkineto::ActivityType::GPU_MEMSET,
-      libkineto::ActivityType::CUDA_RUNTIME,
-      libkineto::ActivityType::EXTERNAL_CORRELATION,
-  };
-
-  std::string profiler_config = "ACTIVITIES_WARMUP_PERIOD_SECS=0\n "
-                                "CUPTI_PROFILER_METRICS=kineto__cuda_core_flops\n "
-                                "CUPTI_PROFILER_ENABLE_PER_KERNEL=true\n "
-                                "ACTIVITIES_DURATION_SECS=0";
-
-  auto &profiler = libkineto::api().activityProfiler();
-  libkineto::api().initProfilerIfRegistered();
-  profiler.prepareTrace(types, profiler_config);
-  auto isActive = profiler.isActive();
-
-  profiler.startTrace();
-
+  
   cout << "Running GEMM" << endl;
   int device;
   
@@ -194,30 +170,24 @@ void RunBenchmark(ResultDatabase &resultDB, OptionParser &op) {
 
 
   // Test to see if this device supports double precision
-  if ((deviceProp.major == 1 && deviceProp.minor >= 3) ||
-      (deviceProp.major >= 2)) {
-    if(!quiet) {
-        cout << "Running double precision test" << endl;
-    }
-    RunTest<double>("DGEMM", resultDB, op);
-  }
+  // if ((deviceProp.major == 1 && deviceProp.minor >= 3) ||
+  //     (deviceProp.major >= 2)) {
+  //   if(!quiet) {
+  //       cout << "Running double precision test" << endl;
+  //   }
+  //   RunTest<double>("DGEMM", resultDB, op);
+  // }
 
-  if ((deviceProp.major >= 6)) {
-    if (!quiet) {
-        cout << "Running half preicsion test" << endl;
-    }
-    RunTest<half>("HGEMM", resultDB, op);
-  }
+  // if ((deviceProp.major >= 6)) {
+  //   if (!quiet) {
+  //       cout << "Running half preicsion test" << endl;
+  //   }
+  //   RunTest<half>("HGEMM", resultDB, op);
+  // }
 
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
   resultDB.AddResult("TotalTime", "", "microsec", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
-
-  auto trace = profiler.stopTrace();
-  std::cout << "Stopped and processed trace. Got " << trace->activities()->size() << " activities.\n";
-  // std::string currDirPath = fs::current_path();
-  // std::string filePath = currDirPath + "/" + kFileName;
-  trace->save("./GEMM.json");
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

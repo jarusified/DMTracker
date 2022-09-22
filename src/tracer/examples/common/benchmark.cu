@@ -10,6 +10,7 @@
 #include "OptionParser.h"
 #include "Utility.h"
 #include "cudacommon.h"
+#include "libkineto.h"
 
 using namespace std;
 
@@ -235,8 +236,35 @@ int main(int argc, char *argv[])
 
         ResultDatabase resultDB;
 
+        // Add Profiler 
+        // Kineto config
+        std::set<libkineto::ActivityType> types = {
+            libkineto::ActivityType::CONCURRENT_KERNEL,
+            libkineto::ActivityType::GPU_MEMCPY,
+            libkineto::ActivityType::GPU_MEMSET,
+            libkineto::ActivityType::CUDA_RUNTIME,
+            libkineto::ActivityType::EXTERNAL_CORRELATION,
+        };
+
+        std::string profiler_config = "ACTIVITIES_WARMUP_PERIOD_SECS=0\n "
+                                    "CUPTI_PROFILER_METRICS=kineto__cuda_core_flops\n "
+                                    "CUPTI_PROFILER_ENABLE_PER_KERNEL=true\n "
+                                    "ACTIVITIES_DURATION_SECS=0";
+
+        auto &profiler = libkineto::api().activityProfiler();
+        libkineto::api().initProfilerIfRegistered();
+        profiler.prepareTrace(types, profiler_config);
+        auto isActive = profiler.isActive();
+
+        profiler.startTrace();
+
         // Run the benchmark
         RunBenchmark(resultDB, op);
+
+        auto trace = profiler.stopTrace();
+        std::cout << "Stopped and processed trace. Got " << trace->activities()->size() << " activities.\n";
+        std::string file_path = "/home/suraj/Work/llnl/nvidia-data-movement-experiments/src/tracer/examples/cublas-gemm/GEMM.json";
+        trace->save(file_path);
 
         // If quiet, output overall result
         // else output metrics
