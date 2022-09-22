@@ -5,7 +5,7 @@
 
 #include <stdio.h>
 
-#include "kineto_playground.cuh"
+#include "main.cuh"
 
 void kineto::warmup(void) {
   // Inititalizing CUDA can take a while which we normally do not want to see in Kineto traces.
