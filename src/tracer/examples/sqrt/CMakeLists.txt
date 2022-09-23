@@ -7,5 +7,5 @@ set(LIBS_SAMPLE_PROGRAM_SRC
 message(STATUS "Compiling: ${LIBS_SAMPLE_PROGRAM_SRC}")
 
 add_executable(main ${LIBS_SAMPLE_PROGRAM_SRC})
-target_link_libraries(main KINETO_LIBRARY cupti stdc++ stdc++fs)
+target_link_libraries(main ${KINETO_LIBRARY} cupti stdc++ stdc++fs)
 target_include_directories(main PRIVATE ${KINETO_INCLUDE_DIR} ${CUPTI_INCLUDE_DIR} ${FMT_INCLUDE_DIR})
