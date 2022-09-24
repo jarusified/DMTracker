@@ -28,11 +28,6 @@ def get_libkineto_cupti_srcs(with_api = True):
         "lib/cupti_strings.cpp",
     ] + (get_libkineto_cpu_only_srcs(with_api))
 
-def get_libkineto_roctracer_srcs(with_api = True):
-    return [
-        "lib/RoctracerActivityApi.cpp",
-    ] + (get_libkineto_cpu_only_srcs(with_api))
-
 def get_libkineto_cpu_only_srcs(with_api = True):
     return [
         "lib/AbstractConfig.cpp",
