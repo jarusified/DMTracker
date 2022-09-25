@@ -21,7 +21,6 @@ PLAT_TO_CMAKE = {
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=""):
         Extension.__init__(self, name, sources=[])
-        print("sdsdfdfd")
         self.sourcedir = os.path.abspath(sourcedir)
 
 
@@ -47,6 +46,9 @@ class CMakeBuild(build_ext):
             f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={extdir}",
             f"-DPYTHON_EXECUTABLE={sys.executable}",
             f"-DCMAKE_BUILD_TYPE={cfg}",  # not used on MSVC, but no harm
+            f"-DCUDA_SOURCE_DIR={os.environ['CUDA_SOURCE_DIR']}",
+            f"-DFMT_SOURCE_DIR={os.environ['FMT_SOURCE_DIR']}",
+            f"-DGOOGLETEST_SOURCE_DIR={os.environ['GOOGLETEST_SOURCE_DIR']}"
         ]
         build_args = []
         # Adding CMake arguments set as environment variable
@@ -111,18 +113,19 @@ class CMakeBuild(build_ext):
                 # CMake 3.12+ only.
                 build_args += [f"-j{self.parallel}"]
 
-        build_temp = os.path.join(self.build_temp, ext.name)
-        if not os.path.exists(build_temp):
-            os.makedirs(build_temp)
+        # build_temp = os.path.join(self.build_temp, ext.name)
+        # if not os.path.exists(build_temp):
+        #     os.makedirs(build_temp)
 
-        print(ext, cmake_args, build_temp)
+        build_temp = self.build_temp
+        # print(build_temp)
 
-        # try: 
-        #     subprocess.check_call(["cmake", ext.sourcedir] + cmake_args, cwd=build_temp)
-        #     subprocess.check_call(["cmake", "--build", ".", "-DFMT_SOURCE_DIR=$FMT_SOURCE_DIR -DGOOGLETEST_SOURCE_DIR=$GOOGLETEST_SOURCE_DIR -DCUDA_SOURCE_DIR=$CUDA_SOURCE_DIR -DPYBIND_SOURCE_DIR=$PYBIND_SOURCE_DIR"] + build_args, cwd=build_temp)
-        # except subprocess.CalledProcessError as e:
-        #     print(e)
-        #     return
+        try: 
+            subprocess.check_call(["cmake"] + cmake_args, cwd=build_temp)
+            # subprocess.check_call(["cmake", "--build", "."] + build_args, cwd=build_temp)
+        except subprocess.CalledProcessError as e:
+            print(e)
+            return
 
 # The information here can also be placed in setup.cfg - better separation of
 # logic and declaration, and simpler if you include description/version in a file.
