@@ -21,6 +21,7 @@ PLAT_TO_CMAKE = {
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=""):
         Extension.__init__(self, name, sources=[])
+        print("sdsdfdfd")
         self.sourcedir = os.path.abspath(sourcedir)
 
 
@@ -114,9 +115,14 @@ class CMakeBuild(build_ext):
         if not os.path.exists(build_temp):
             os.makedirs(build_temp)
 
-        subprocess.check_call(["cmake", ext.sourcedir] + cmake_args, cwd=build_temp)
-        subprocess.check_call(["cmake", "--build", "."] + build_args, cwd=build_temp)
+        print(ext, cmake_args, build_temp)
 
+        # try: 
+        #     subprocess.check_call(["cmake", ext.sourcedir] + cmake_args, cwd=build_temp)
+        #     subprocess.check_call(["cmake", "--build", ".", "-DFMT_SOURCE_DIR=$FMT_SOURCE_DIR -DGOOGLETEST_SOURCE_DIR=$GOOGLETEST_SOURCE_DIR -DCUDA_SOURCE_DIR=$CUDA_SOURCE_DIR -DPYBIND_SOURCE_DIR=$PYBIND_SOURCE_DIR"] + build_args, cwd=build_temp)
+        # except subprocess.CalledProcessError as e:
+        #     print(e)
+        #     return
 
 # The information here can also be placed in setup.cfg - better separation of
 # logic and declaration, and simpler if you include description/version in a file.
@@ -127,7 +133,7 @@ setup(
     author_email="jarus3001@gmail.com",
     description="Data movement profiler that works for CUDA-profiling",
     long_description="",
-    ext_modules=[CMakeExtension("cmake_example")],
+    ext_modules=[CMakeExtension("dmv_profiler")],
     cmdclass={"build_ext": CMakeBuild},
     zip_safe=False,
     extras_require={"test": ["pytest>=6.0"]},
