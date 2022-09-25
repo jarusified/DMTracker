@@ -5,8 +5,7 @@
 
 def get_libkineto_api_srcs():
     return [
-        "lib/ThreadUtil.cpp",
-        "lib/libkineto_api.cpp",
+        "lib/libkineto_api.cpp"
     ]
 
 def get_libkineto_cupti_srcs(with_api = True):
@@ -28,11 +27,6 @@ def get_libkineto_cupti_srcs(with_api = True):
         "lib/cupti_strings.cpp",
     ] + (get_libkineto_cpu_only_srcs(with_api))
 
-def get_libkineto_roctracer_srcs(with_api = True):
-    return [
-        "lib/RoctracerActivityApi.cpp",
-    ] + (get_libkineto_cpu_only_srcs(with_api))
-
 def get_libkineto_cpu_only_srcs(with_api = True):
     return [
         "lib/AbstractConfig.cpp",
@@ -50,6 +44,7 @@ def get_libkineto_cpu_only_srcs(with_api = True):
         "lib/init.cpp",
         "lib/output_csv.cpp",
         "lib/output_json.cpp",
+        "lib/pybind.cpp",
     ] + (get_libkineto_api_srcs() if with_api else [])
 
 def get_libkineto_public_headers():

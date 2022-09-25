@@ -1,7 +1,0 @@
-CMakeFiles
-common/CMakeFiles
-cublas-gemm/CMakeFiles
-sqrt/CMakeFiles
-
-libCommon.a
-libkineto.a

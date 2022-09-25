@@ -10,14 +10,14 @@ find_package(PythonInterp)
 function(get_filelist name outputvar)
   execute_process(
     COMMAND "${PYTHON_EXECUTABLE}" -c
-            "exec(open('libkineto_defs.bzl').read());print(';'.join(${name}))"
+            "exec(open('main.bzl').read());print(';'.join(${name}))"
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     OUTPUT_VARIABLE _tempvar)
   string(REPLACE "\n" "" _tempvar "${_tempvar}")
   set(${outputvar} ${_tempvar} PARENT_SCOPE)
 endfunction()
 
-project(kineto VERSION 0.1 LANGUAGES CXX C CUDA)
+project(dmv_profiler VERSION 0.1 LANGUAGES CXX C CUDA)
 
 message("Compiler Version: ${CMAKE_CXX_COMPILER_VERSION}")
 
@@ -59,8 +59,6 @@ endif()
 get_filelist("get_libkineto_public_headers()" LIBKINETO_PUBLIC_HEADERS)
 get_filelist("get_libkineto_api_srcs()" LIBKINETO_API_SRCS)
 
-message(STATUS ${LIBKINETO_API_SRCS})
-
 add_library(base OBJECT ${LIBKINETO_SRCS})
 add_library(api OBJECT ${LIBKINETO_API_SRCS})
 
@@ -75,13 +73,7 @@ set_target_properties(base api PROPERTIES
 
 set(KINETO_COMPILE_OPTIONS "-DKINETO_NAMESPACE=libkineto")
 list(APPEND KINETO_COMPILE_OPTIONS "-DFMT_HEADER_ONLY")
-if(NOT MSVC)
-  list(APPEND KINETO_COMPILE_OPTIONS "-std=c++14")
-else()
-  list(APPEND KINETO_COMPILE_OPTIONS "/std:c++14")
-  list(APPEND KINETO_COMPILE_OPTIONS "-DWIN32_LEAN_AND_MEAN")
-  list(APPEND KINETO_COMPILE_OPTIONS "-DNOGDI")
-endif()
+list(APPEND KINETO_COMPILE_OPTIONS "-std=c++14")
 if (LIBKINETO_NOCUPTI)
     list(APPEND KINETO_COMPILE_OPTIONS "-DHAS_CUPTI")
 endif()
@@ -90,48 +82,32 @@ message(STATUS "CUPTI=${LIBKINETO_NOCUPTI}")
 target_compile_options(base PRIVATE "${KINETO_COMPILE_OPTIONS}")
 target_compile_options(api PRIVATE "${KINETO_COMPILE_OPTIONS}")
 
-if(NOT TARGET fmt)
-  if(NOT FMT_SOURCE_DIR)
-    set(FMT_SOURCE_DIR "${LIBKINETO_THIRDPARTY_DIR}/fmt"
-      CACHE STRING "fmt source directory from submodules")
-  endif()
-
-  # Build FMT.
-  # FMT and some other libraries use BUILD_SHARED_LIBS to control
-  # the library type.
-  # Save and restore the value after configuring FMT
-  set(TEMP_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
-  set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libs" FORCE)
-  set(FMT_LIBRARY_TYPE static CACHE STRING "Set lib type to static")
-  add_subdirectory("${FMT_SOURCE_DIR}" "${LIBKINETO_BINARY_DIR}/fmt")
-  set_property(TARGET fmt PROPERTY POSITION_INDEPENDENT_CODE ON)
-  set(BUILD_SHARED_LIBS ${TEMP_BUILD_SHARED_LIBS} CACHE BOOL "Build shared libs" FORCE)
-endif()
-
 set(FMT_INCLUDE_DIR "${FMT_SOURCE_DIR}/include")
 message(STATUS "Kineto: FMT_SOURCE_DIR = ${FMT_SOURCE_DIR}")
 message(STATUS "Kineto: FMT_INCLUDE_DIR = ${FMT_INCLUDE_DIR}")
-message(STATUS "Kineto: CUPTI_INCLUDE_DIR = ${CUPTI_INCLUDE_DIR}")
 
 if (NOT CUPTI_INCLUDE_DIR)
     set(CUPTI_INCLUDE_DIR "${CUDA_SOURCE_DIR}/targets/x86_64-linux/include")
+    message(STATUS "Kineto: CUPTI_INCLUDE_DIR = ${CUPTI_INCLUDE_DIR}")
 endif()
 if (NOT CUDA_INCLUDE_DIRS)
     set(CUDA_INCLUDE_DIRS "${CUDA_SOURCE_DIR}/include")
 endif()
 
-message(INFO " CUPTI_INCLUDE_DIR = ${CUPTI_INCLUDE_DIR}")
+set(PYBIND_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/pybind11/include")
 
 target_include_directories(base PUBLIC
       $<BUILD_INTERFACE:${LIBKINETO_INCLUDE_DIR}>
       $<BUILD_INTERFACE:${LIBKINETO_SOURCE_DIR}>
       $<BUILD_INTERFACE:${FMT_INCLUDE_DIR}>
+      $<BUILD_INTERFACE:${PYBIND_INCLUDE_DIR}>
       $<BUILD_INTERFACE:${CUPTI_INCLUDE_DIR}>
       $<BUILD_INTERFACE:${CUDA_INCLUDE_DIRS}>)
 
 target_include_directories(api PUBLIC
+      $<BUILD_INTERFACE:${LIBKINETO_INCLUDE_DIR}>
       $<BUILD_INTERFACE:${FMT_INCLUDE_DIR}>
-      $<BUILD_INTERFACE:${LIBKINETO_INCLUDE_DIR}>)
+)
 
 if(KINETO_LIBRARY_TYPE STREQUAL "default")
   add_library(kineto $<TARGET_OBJECTS:base> $<TARGET_OBJECTS:api>)
@@ -152,8 +128,8 @@ endif()
 if(NOT LIBKINETO_NOCUPTI)
   target_link_libraries(kineto "${CUDA_cupti_LIBRARY}")
 endif()
-target_link_libraries(kineto $<BUILD_INTERFACE:fmt::fmt-header-only>)
-add_dependencies(kineto fmt::fmt-header-only)
+# target_link_libraries(kineto $<BUILD_INTERFACE:fmt::fmt-header-only>)
+# add_dependencies(kineto fmt::fmt-header-only)
 
 install(TARGETS kineto EXPORT kinetoLibraryConfig
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -164,40 +140,3 @@ install(FILES ${LIBKINETO_PUBLIC_HEADERS}
 
 install(EXPORT kinetoLibraryConfig DESTINATION share/cmake/kineto
   FILE kinetoLibraryConfig.cmake)
-
-if(KINETO_BUILD_TESTS)
-  # Download and unpack googletest at configure time
-  configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
-  execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
-    RESULT_VARIABLE result
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
-  if(result)
-    message(FATAL_ERROR "CMake step for googletest failed: ${result}")
-  endif()
-  execute_process(COMMAND ${CMAKE_COMMAND} --build .
-    RESULT_VARIABLE result
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
-  if(result)
-    message(FATAL_ERROR "Build step for googletest failed: ${result}")
-  endif()
-
-  # Prevent overriding the parent project's compiler/linker
-  # settings on Windows
-  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-
-  # Add googletest directly to our build. This defines
-  # the gtest and gtest_main targets.
-  add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
-                  ${CMAKE_CURRENT_BINARY_DIR}/googletest-build
-                  EXCLUDE_FROM_ALL)
-
-  # The gtest/gtest_main targets carry header search path
-  # dependencies automatically when using CMake 2.8.11 or
-  # later. Otherwise we have to add them here ourselves.
-  if (CMAKE_VERSION VERSION_LESS 2.8.11)
-    include_directories("${gtest_SOURCE_DIR}/include")
-  endif()
-
-  enable_testing()
-  add_subdirectory(test)
-endif(KINETO_BUILD_TESTS)
