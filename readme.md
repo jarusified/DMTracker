@@ -11,16 +11,34 @@ A large number of code bases have started exploiting the collaborative execution
 
 - Ensure you have a CUDA-capable system with [CUDA](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html) and [CUPTI](https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=20.04&target_type=deb_network) installed. 
 
-- Export the CUDA_INSTALL_PATH to global env. 
-```bash
-export CUDA_INSTALL_PATH=/path/to/cuda
+Furthermore, the setup requires `spack` to be installed. Refer to the
+documentation [spack](https://github.com/spack/spack).
+```
+source linux-setup.sh
 ```
 
  ## Installation
-TBD
 
-## Usage examples
-TBD
+```
+cmake . -DFMT_SOURCE_DIR=$FMT_SOURCE_DIR -DGOOGLETEST_SOURCE_DIR=$GOOGLETEST_SOURCE_DIR -DCUDA_SOURCE_DIR=$CUDA_SOURCE_DIR -DPYBIND_SOURCE_DIR=$PYBIND_SOURCE_DIR
+make
+```
+
+TODO: enable pip installation.
+```
+pip install .
+```
+
+## Usage examples (c++)
+```
+export KINETO_SOURCE_DIR=/path/to/the/dmv_profiler
+cd examples
+cmake . -DFMT_SOURCE_DIR=$FMT_SOURCE_DIR  -DCUDA_SOURCE_DIR=$CUDA_SOURCE_DIR -DPYBIND_SOURCE_DIR=$PYBIND_SOURCE_DIR 
+make
+```
+
+This should install the binaries for the different experiments. Refer the
+internal `readme` files inside each experiment.
 
 
 All commands have been tested on GeForce GTX 1050 TI.
