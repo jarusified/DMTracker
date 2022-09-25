@@ -37,15 +37,15 @@ class CMakeBuild(build_ext):
 
         # CMake lets you override the generator - we need to check this.
         # Can be set with Conda-Build, for example.
-        cmake_generator = os.environ.get("CMAKE_GENERATOR", "")
+        cmake_generator = os.environ.get("CMAKE_GENERATOR", "cmake")
 
         # Set Python_EXECUTABLE instead if you use PYBIND11_FINDPYTHON
         # EXAMPLE_VERSION_INFO shows you how to pass a value into the C++ code
         # from Python.
         cmake_args = [
-            f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={extdir}",
-            f"-DPYTHON_EXECUTABLE={sys.executable}",
-            f"-DCMAKE_BUILD_TYPE={cfg}",  # not used on MSVC, but no harm
+            # f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={extdir}",
+            # f"-DPYTHON_EXECUTABLE={sys.executable}",
+            # f"-DCMAKE_BUILD_TYPE={cfg}",  # not used on MSVC, but no harm
             f"-DCUDA_SOURCE_DIR={os.environ['CUDA_SOURCE_DIR']}",
             f"-DFMT_SOURCE_DIR={os.environ['FMT_SOURCE_DIR']}",
             f"-DGOOGLETEST_SOURCE_DIR={os.environ['GOOGLETEST_SOURCE_DIR']}"
@@ -70,17 +70,17 @@ class CMakeBuild(build_ext):
                     import ninja  # noqa: F401
 
                     ninja_executable_path = os.path.join(ninja.BIN_DIR, "ninja")
-                    cmake_args += [
-                        "-GNinja",
-                        f"-DCMAKE_MAKE_PROGRAM:FILEPATH={ninja_executable_path}",
-                    ]
+                    # cmake_args += [
+                    #     "-GNinja",
+                    #     f"-DCMAKE_MAKE_PROGRAM:FILEPATH={ninja_executable_path}",
+                    # ]
                 except ImportError:
                     pass
 
         else:
 
             # Single config generators are handled "normally"
-            single_config = any(x in cmake_generator for x in {"NMake", "Ninja"})
+            single_config = any(x in cmake_generator for x in {"NMake", "Ninja", "CMake"})
 
             # CMake allows an arch-in-generator style for backward compatibility
             contains_arch = any(x in cmake_generator for x in {"ARM", "Win64"})
@@ -93,9 +93,9 @@ class CMakeBuild(build_ext):
 
             # Multi-config generators have a different way to specify configs
             if not single_config:
-                cmake_args += [
-                    f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={extdir}"
-                ]
+                # cmake_args += [
+                #     f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={extdir}"
+                # ]
                 build_args += ["--config", cfg]
 
         if sys.platform.startswith("darwin"):
@@ -113,19 +113,12 @@ class CMakeBuild(build_ext):
                 # CMake 3.12+ only.
                 build_args += [f"-j{self.parallel}"]
 
-        # build_temp = os.path.join(self.build_temp, ext.name)
-        # if not os.path.exists(build_temp):
-        #     os.makedirs(build_temp)
-
         build_temp = self.build_temp
-        # print(build_temp)
-
-        try: 
-            subprocess.check_call(["cmake"] + cmake_args, cwd=build_temp)
-            # subprocess.check_call(["cmake", "--build", "."] + build_args, cwd=build_temp)
-        except subprocess.CalledProcessError as e:
-            print(e)
-            return
+        if not os.path.exists(build_temp):
+            os.makedirs(build_temp)
+        
+        subprocess.check_call(["cmake", "."] + cmake_args)
+        subprocess.check_call(["cmake", "--build", "."])
 
 # The information here can also be placed in setup.cfg - better separation of
 # logic and declaration, and simpler if you include description/version in a file.
