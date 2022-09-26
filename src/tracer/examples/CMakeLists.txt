@@ -13,12 +13,16 @@ set(FMT_INCLUDE_DIR "${FMT_SOURCE_DIR}/include")
 message(STATUS "FMT include dir: ${FMT_INCLUDE_DIR}")
 
 # TODO: Need to generalize the directory path for all os.
-set(CUPTI_INCLUDE_DIR "${CUDA_SOURCE_DIR}/targets/ppc64le-linux/include")
+set(CUPTI_INCLUDE_DIR "${CUDA_SOURCE_DIR}/targets/x86_64-linux/include")
 message(STATUS "CUPTI include dir: ${CUPTI_INCLUDE_DIR}")
 
 message(STATUS "Kineto source dir: ${KINETO_SOURCE_DIR}")
 
+<<<<<<< HEAD
 set(KINETO_INCLUDE_DIR ${KINETO_SOURCE_DIR}include)
+=======
+set(KINETO_INCLUDE_DIR ${KINETO_SOURCE_DIR}/include)
+>>>>>>> 53d73f2e7ef1b6aa6164b10e3054a69523548017
 message(STATUS "Kineto include dir: ${KINETO_INCLUDE_DIR}")
 
 set(KINETO_LIB_PATH "${KINETO_SOURCE_DIR}/libkineto.a")
@@ -33,8 +37,8 @@ if(NOT ${KINETO_LIBRARY})
   message(FATAL_ERROR "Kineto library not found")
 endif()
 
-
 add_subdirectory(common)
 add_subdirectory(sqrt)
 add_subdirectory(cublas-gemm)
-add_subdirectory(marbl-matprops-miniapp)
+# add_subdirectory(marbl-matprops-miniapp)
+add_subdirectory(cutlass-gemm)
