@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.16)
+
+set(LIBS_SAMPLE_PROGRAM_SRC 
+    main.cpp 
+    utils.cu 
+    main.cuh)
+message(STATUS "Compiling: ${LIBS_SAMPLE_PROGRAM_SRC}")
+
+add_executable(main ${LIBS_SAMPLE_PROGRAM_SRC})
+target_link_libraries(main KINETO_LIBRARY cupti stdc++ stdc++fs)
+target_include_directories(main PRIVATE ${KINETO_INCLUDE_DIR} ${CUPTI_INCLUDE_DIR} ${FMT_INCLUDE_DIR})
