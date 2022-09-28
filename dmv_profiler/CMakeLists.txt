@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.16)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 
@@ -128,8 +128,10 @@ endif()
 if(NOT LIBKINETO_NOCUPTI)
   target_link_libraries(kineto "${CUDA_cupti_LIBRARY}")
 endif()
-# target_link_libraries(kineto $<BUILD_INTERFACE:fmt::fmt-header-only>)
-# add_dependencies(kineto fmt::fmt-header-only)
+
+add_subdirectory(pybind11)
+pybind11_add_module(dmv_profiler "lib/pybind.cpp")
+target_link_libraries(dmv_profiler PRIVATE kineto)
 
 install(TARGETS kineto EXPORT kinetoLibraryConfig
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

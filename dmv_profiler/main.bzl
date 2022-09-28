@@ -44,7 +44,6 @@ def get_libkineto_cpu_only_srcs(with_api = True):
         "lib/init.cpp",
         "lib/output_csv.cpp",
         "lib/output_json.cpp",
-        "lib/pybind.cpp",
     ] + (get_libkineto_api_srcs() if with_api else [])
 
 def get_libkineto_public_headers():
