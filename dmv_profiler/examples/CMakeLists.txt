@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 3.16)
 
 #install libraries into correct locations on all platforms
@@ -22,6 +21,9 @@ set(CUPTI_LIB_DIR "${CUDA_SOURCE_DIR}targets/${TARGET_NAME}/lib")
 # target_link_libraries(cupti ${CUPTI_LIB_DIR})
 message(STATUS "CUPTI include dir: ${CUPTI_INCLUDE_DIR}")
 
+find_library(CUPTI_LIBRARY cupti HINTS "${CUPTI_LIB_DIR}")
+find_library(CUDA_LIBRARY cudart HINTS "${CUPTI_LIB_DIR}")
+
 message(STATUS "Kineto source dir: ${KINETO_SOURCE_DIR}")
 
 set(KINETO_INCLUDE_DIR ${KINETO_SOURCE_DIR}/include)
@@ -35,7 +37,7 @@ add_library(KINETO_LIBRARY STATIC IMPORTED)
 set_target_properties(KINETO_LIBRARY PROPERTIES 
   IMPORTED_LOCATION "${KINETO_SOURCE_DIR}/libkineto.a")
 
-if(NOT KINETO_LIBRARY)
+if(NOT ${KINETO_LIBRARY})
   message(FATAL_ERROR "Kineto library not found")
 endif()
 
