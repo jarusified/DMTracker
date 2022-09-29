@@ -3,11 +3,6 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-def get_libkineto_api_srcs():
-    return [
-        "lib/libkineto_api.cpp"
-    ]
-
 def get_libkineto_cupti_srcs(with_api = True):
     return [
         "lib/CudaDeviceProperties.cpp",
@@ -29,6 +24,7 @@ def get_libkineto_cupti_srcs(with_api = True):
 
 def get_libkineto_cpu_only_srcs(with_api = True):
     return [
+        "lib/libkineto_api.cpp",
         "lib/AbstractConfig.cpp",
         "lib/CuptiActivityProfiler.cpp",
         "lib/ActivityProfilerController.cpp",
@@ -44,7 +40,8 @@ def get_libkineto_cpu_only_srcs(with_api = True):
         "lib/init.cpp",
         "lib/output_csv.cpp",
         "lib/output_json.cpp",
-    ] + (get_libkineto_api_srcs() if with_api else [])
+        "lib/ThreadUtil.cpp",
+    ]
 
 def get_libkineto_public_headers():
     return [
@@ -71,4 +68,5 @@ KINETO_COMPILER_FLAGS = [
     "-Wno-deprecated-declarations",
     "-Wno-unused-function",
     "-Wno-unused-private-field",
+    "-fPIC",
 ]
