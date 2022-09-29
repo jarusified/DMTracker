@@ -1,3 +1,4 @@
+from logging import exception
 import os
 import re
 import subprocess
@@ -69,9 +70,17 @@ class CMakeBuild(build_ext):
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
 
-        FMT_SOURCE_DIR = os.environ["FMT_SOURCE_DIR"]
+        if os.environ.get('FMT_SOURCE_DIR') is None:
+            raise exception("environment variable, ${FMT_SOURCE_DIR} is not set!")
+        else:
+            FMT_SOURCE_DIR = os.environ["FMT_SOURCE_DIR"]
+        
+        if os.environ.get('CUDA_SOURCE_DIR') is None:
+            raise exception("environment variable, ${CUDA_SOURCE_DIR} is not set!")
+        else:
+            CUDA_SOURCE_DIR = os.environ["CUDA_SOURCE_DIR"]
+        
         GOOGLETEST_SOURCE_DIR = os.environ["GOOGLETEST_SOURCE_DIR"]
-        CUDA_SOURCE_DIR = os.environ["CUDA_SOURCE_DIR"]
 
         cmake_args += [f"-DFMT_SOURCE_DIR={FMT_SOURCE_DIR}", f"-DGOOGLETEST_SOURCE_DIR={GOOGLETEST_SOURCE_DIR}", f"-DCUDA_SOURCE_DIR={CUDA_SOURCE_DIR}"]
 

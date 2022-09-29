@@ -61,10 +61,6 @@ get_filelist("get_libkineto_public_headers()" LIBKINETO_PUBLIC_HEADERS)
 
 add_library(base OBJECT ${LIBKINETO_SRCS})
 
-# Make libraries depend on libkineto_defs.bzl
-# add_custom_target(libkineto_defs.bzl DEPENDS libkineto_defs.bzl)
-# add_dependencies(base libkineto_defs.bzl)
-
 set_target_properties(base PROPERTIES
       CXX_STANDARD 14
       CXX_STANDARD_REQUIRED YES
