@@ -6,9 +6,6 @@ include(GNUInstallDirs)
 
 project(use-case VERSION 0.1 LANGUAGES CXX C CUDA)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
 set(exe_files
     ${CMAKE_CURRENT_LIST_DIR}/common/benchmark.cu
 )
@@ -43,9 +40,9 @@ if(NOT KINETO_LIBRARY)
 endif()
 
 
-
 add_subdirectory(common)
 # add_subdirectory(sqrt)
 # add_subdirectory(cublas-gemm)
 # add_subdirectory(cutlass-gemm)
 add_subdirectory(marbl-matprops-miniapp)
+add_subdirectory(cublas-gemm)

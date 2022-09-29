@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
+set(CMAKE_CXX_FLAGS "-fPIC")
 
 #install libraries into correct locations on all platforms
 include(GNUInstallDirs)
@@ -57,16 +58,10 @@ else()
     get_filelist("get_libkineto_cupti_srcs(with_api=True)" LIBKINETO_SRCS)
 endif()
 get_filelist("get_libkineto_public_headers()" LIBKINETO_PUBLIC_HEADERS)
-get_filelist("get_libkineto_api_srcs()" LIBKINETO_API_SRCS)
 
 add_library(base OBJECT ${LIBKINETO_SRCS})
-add_library(api OBJECT ${LIBKINETO_API_SRCS})
 
-# Make libraries depend on libkineto_defs.bzl
-# add_custom_target(libkineto_defs.bzl DEPENDS libkineto_defs.bzl)
-# add_dependencies(base libkineto_defs.bzl)
-
-set_target_properties(base api PROPERTIES
+set_target_properties(base PROPERTIES
       CXX_STANDARD 14
       CXX_STANDARD_REQUIRED YES
       CXX_EXTENSIONS NO)
@@ -80,7 +75,6 @@ endif()
 message(STATUS "CUPTI=${LIBKINETO_NOCUPTI}")
 
 target_compile_options(base PRIVATE "${KINETO_COMPILE_OPTIONS}")
-target_compile_options(api PRIVATE "${KINETO_COMPILE_OPTIONS}")
 
 set(FMT_INCLUDE_DIR "${FMT_SOURCE_DIR}/include")
 message(STATUS "Kineto: FMT_SOURCE_DIR = ${FMT_SOURCE_DIR}")
@@ -103,21 +97,16 @@ target_include_directories(base PUBLIC
       $<BUILD_INTERFACE:${LIBKINETO_INCLUDE_DIR}>
       $<BUILD_INTERFACE:${LIBKINETO_SOURCE_DIR}>
       $<BUILD_INTERFACE:${FMT_INCLUDE_DIR}>
-      $<BUILD_INTERFACE:${PYBIND_INCLUDE_DIR}>
       $<BUILD_INTERFACE:${CUPTI_INCLUDE_DIR}>
       $<BUILD_INTERFACE:${CUDA_INCLUDE_DIRS}>)
 
-target_include_directories(api PUBLIC
-      $<BUILD_INTERFACE:${LIBKINETO_INCLUDE_DIR}>
-      $<BUILD_INTERFACE:${FMT_INCLUDE_DIR}>
-)
+add_subdirectory(pybind)
 
 if(KINETO_LIBRARY_TYPE STREQUAL "default")
-  add_library(kineto $<TARGET_OBJECTS:base> $<TARGET_OBJECTS:api>)
+  add_library(kineto $<TARGET_OBJECTS:base>)
 elseif(KINETO_LIBRARY_TYPE STREQUAL "static")
   add_library(kineto STATIC
-    $<TARGET_OBJECTS:base>
-    $<TARGET_OBJECTS:api>)
+    $<TARGET_OBJECTS:base>)
 elseif(KINETO_LIBRARY_TYPE STREQUAL "shared")
   add_library(kineto SHARED
     $<TARGET_OBJECTS:base>)
@@ -129,10 +118,9 @@ else()
 endif()
 
 if(NOT LIBKINETO_NOCUPTI)
-  target_link_libraries(kineto "${CUDA_cupti_LIBRARY}")
+  target_link_libraries(kineto cupti)
 endif()
-# target_link_libraries(kineto $<BUILD_INTERFACE:fmt::fmt-header-only>)
-# add_dependencies(kineto fmt::fmt-header-only)
+
 
 install(TARGETS kineto EXPORT kinetoLibraryConfig
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
