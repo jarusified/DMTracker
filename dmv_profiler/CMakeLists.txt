@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.16)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 
@@ -86,8 +86,11 @@ set(FMT_INCLUDE_DIR "${FMT_SOURCE_DIR}/include")
 message(STATUS "Kineto: FMT_SOURCE_DIR = ${FMT_SOURCE_DIR}")
 message(STATUS "Kineto: FMT_INCLUDE_DIR = ${FMT_INCLUDE_DIR}")
 
+set(TARGET_NAME "ppc64le-linux")
+# set(TARGET_NAME "x86_64-linux")
+
 if (NOT CUPTI_INCLUDE_DIR)
-    set(CUPTI_INCLUDE_DIR "${CUDA_SOURCE_DIR}/targets/x86_64-linux/include")
+    set(CUPTI_INCLUDE_DIR "${CUDA_SOURCE_DIR}/targets/${TARGET_NAME}/include")
     message(STATUS "Kineto: CUPTI_INCLUDE_DIR = ${CUPTI_INCLUDE_DIR}")
 endif()
 if (NOT CUDA_INCLUDE_DIRS)

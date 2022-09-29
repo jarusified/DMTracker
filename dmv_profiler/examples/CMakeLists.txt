@@ -1,6 +1,10 @@
+
 cmake_minimum_required(VERSION 3.16)
 
-project(use-case LANGUAGES CXX CUDA)
+#install libraries into correct locations on all platforms
+include(GNUInstallDirs)
+
+project(use-case VERSION 0.1 LANGUAGES CXX C CUDA)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -13,7 +17,12 @@ set(FMT_INCLUDE_DIR "${FMT_SOURCE_DIR}/include")
 message(STATUS "FMT include dir: ${FMT_INCLUDE_DIR}")
 
 # TODO: Need to generalize the directory path for all os.
-set(CUPTI_INCLUDE_DIR "${CUDA_SOURCE_DIR}/targets/x86_64-linux/include")
+set(TARGET_NAME "ppc64le-linux")
+# set(TARGET_NAME "x86_64-linux")
+
+set(CUPTI_INCLUDE_DIR "${CUDA_SOURCE_DIR}targets/${TARGET_NAME}/include")
+set(CUPTI_LIB_DIR "${CUDA_SOURCE_DIR}targets/${TARGET_NAME}/lib")
+# target_link_libraries(cupti ${CUPTI_LIB_DIR})
 message(STATUS "CUPTI include dir: ${CUPTI_INCLUDE_DIR}")
 
 message(STATUS "Kineto source dir: ${KINETO_SOURCE_DIR}")
@@ -29,13 +38,14 @@ add_library(KINETO_LIBRARY STATIC IMPORTED)
 set_target_properties(KINETO_LIBRARY PROPERTIES 
   IMPORTED_LOCATION "${KINETO_SOURCE_DIR}/libkineto.a")
 
-if(NOT ${KINETO_LIBRARY})
+if(NOT KINETO_LIBRARY)
   message(FATAL_ERROR "Kineto library not found")
 endif()
 
 
 
 add_subdirectory(common)
-add_subdirectory(sqrt)
-add_subdirectory(cublas-gemm)
-add_subdirectory(cutlass-gemm)
+# add_subdirectory(sqrt)
+# add_subdirectory(cublas-gemm)
+# add_subdirectory(cutlass-gemm)
+add_subdirectory(marbl-matprops-miniapp)
