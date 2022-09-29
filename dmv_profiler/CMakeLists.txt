@@ -88,6 +88,8 @@ if (NOT CUDA_INCLUDE_DIRS)
     set(CUDA_INCLUDE_DIRS "${CUDA_SOURCE_DIR}/include")
 endif()
 
+set(PYBIND_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/pybind11/include")
+
 target_include_directories(base PUBLIC
       $<BUILD_INTERFACE:${LIBKINETO_INCLUDE_DIR}>
       $<BUILD_INTERFACE:${LIBKINETO_SOURCE_DIR}>

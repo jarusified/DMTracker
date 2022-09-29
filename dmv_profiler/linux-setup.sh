@@ -15,7 +15,7 @@ spack install fmt googletest py-pybind11
 
 spack load fmt googletest py-pybind11
 
-# TODO (surajk): Add pybind.
+# TODO (surajk): Add pybind as a git-submodule.
 
 export CUDA_SOURCE_DIR=/usr/local/cuda-11.7
 export FMT_SOURCE_DIR=`spack location -i fmt`
