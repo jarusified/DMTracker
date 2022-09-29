@@ -1,0 +1,4 @@
+include lib/pybind.cpp
+include CMakeLists.txt
+graft test
+graft lib
