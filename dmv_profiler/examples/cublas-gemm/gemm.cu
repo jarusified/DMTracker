@@ -18,7 +18,7 @@
 
 #define SEED 7
 /// <summary>	Length of the object field. </summary>
-static const int FIELD_LENGTH = 128;
+// static const int FIELD_LENGTH = 8;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// <summary>	Executes the test operation. </summary>
@@ -203,11 +203,14 @@ template <class T>
 void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
   int passes = op.getOptionInt("passes");
   int device = op.getOptionInt("device");
+  int field_length = op.getOptionInt("field-length");
   const bool uvm = op.getOptionBool("uvm");
   const bool uvm_prefetch = op.getOptionBool("uvm-prefetch");
   const bool uvm_advise = op.getOptionBool("uvm-advise");
   const bool uvm_prefetch_advise = op.getOptionBool("uvm-prefetch-advise");
   int kib;
+
+  std::cout<<"Field length: " <<field_length<<std::endl;
 
   // #ifdef USE_CALIPER
   //   CALI_MARK_BEGIN("Initialize Matrix data");
@@ -215,12 +218,14 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
   // Use preset problem size or read data from input file
   string filename = op.getOptionString("inputFile");
   if (filename == "") {
-    int probSizes[7] = {1, 2, 4, 8, 16, 32, 64};
+    int probSizes[10] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512};
+
+ //   int probSizes[7] = {1, 2, 4, 8, 16, 32, 64};
     kib = probSizes[op.getOptionInt("size") - 1];
   } else {
     std::ifstream mfs(filename.c_str());
     std::string line;
-    char object[FIELD_LENGTH];
+    char object[field_length];
     sscanf(line.c_str(), "%s %d", object, &kib);
   }
 
@@ -344,7 +349,7 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
   #ifdef USE_CALIPER
     CALI_CXX_MARK_LOOP_BEGIN(passesloop, "passes.loop");
   #endif
-  for (int j = 0; j < passes; j++) {
+  for (int j = 0; j < 1; j++) {
     #ifdef USE_CALIPER
       CALI_CXX_MARK_LOOP_BEGIN(cublas_n_loop, "cublas_t.loop");
     #endif
@@ -364,7 +369,7 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
       }
       const cublasOperation_t transa = CUBLAS_OP_N;
       const cublasOperation_t transb = i ? CUBLAS_OP_T : CUBLAS_OP_N;
-      const int nb = 128;
+      const int nb = field_length;
       const int idim = N / nb;
 
       int dim = idim * nb;
@@ -544,4 +549,3 @@ inline void devGEMM<half>(cublasHandle_t handle,
                           half *C, int ldc) {
   cublasHgemm(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
 }
-
