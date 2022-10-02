@@ -30,6 +30,8 @@
  #include "cutlass/layout/matrix.h"
  #include "cutlass/gemm/device/gemm_array.h"
  #include "cutlass/gemm/device/gemm_batched.h"
+
+ #include "libkineto.h"
  
  #pragma warning( disable : 4503)
  
@@ -443,9 +445,32 @@
  }
  
  int main() {
+
+  // Add Profiler 
+  // Kineto config
+  std::set<libkineto::ActivityType> types = {
+      libkineto::ActivityType::CONCURRENT_KERNEL,
+      libkineto::ActivityType::GPU_MEMCPY,
+      libkineto::ActivityType::GPU_MEMSET,
+      libkineto::ActivityType::CUDA_RUNTIME,
+      libkineto::ActivityType::EXTERNAL_CORRELATION,
+  };
+
+  std::string profiler_config = "ACTIVITIES_WARMUP_PERIOD_SECS=0\n "
+                              "CUPTI_PROFILER_METRICS=kineto__cuda_core_flops\n "
+                              "CUPTI_PROFILER_ENABLE_PER_KERNEL=true\n "
+                              "ACTIVITIES_DURATION_SECS=0";
+
+  auto &profiler = libkineto::api().activityProfiler();
+  libkineto::api().initProfilerIfRegistered();
+  profiler.prepareTrace(types, profiler_config);
+  auto isActive = profiler.isActive();
+
+  profiler.startTrace();
+
  
    cudaError_t result = cudaSuccess;
-   for (bool use_array : {false, true}) {
+   for (bool use_array : {true}) {
      result = run_batched_gemm(use_array);
      if (result == cudaSuccess) {
        std::cout << "Passed." << std::endl;
@@ -453,7 +478,12 @@
        break;
      }
    }
- 
+
+  auto trace = profiler.stopTrace();
+  std::cout << "Stopped and processed trace. Got " << trace->activities()->size() << " activities.\n";
+  std::string file_path = "./cutlass-gemm/data/perf.json";
+  trace->save(file_path);
+
    // Exit.
    return result == cudaSuccess ? 0 : -1;
  }

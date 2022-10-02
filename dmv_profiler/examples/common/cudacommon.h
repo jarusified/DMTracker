@@ -223,6 +223,24 @@ static inline int warp_size(int device)
     return prop.warpSize;
 }
 
+inline void gpuMemReport(size_t * avail, size_t * total, 
+        const char * title = 0, const size_t * free = 0, const bool sense = true) 
+{
+    char tstring[32] = { '\0' };
+    checkCudaErrors( cudaMemGetInfo(avail, total) );  
+
+    if (free) {
+        if (title) {
+            strncpy(tstring, title, 31);
+        }
+        printf("%s Memory avaliable: Free: %zu, Total: %zu, %s: %zu\n",
+                tstring, *avail, *total, (sense) ? "Allocated\0" : "Freed\0", 
+                (sense) ? (*free - *avail) : (*avail - *free));
+    } else {
+        printf("Memory avaliable: Free: %zu, Total: %zu\n", *avail, *total);  
+    }
+}
+
 // Alleviate aliasing issues
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

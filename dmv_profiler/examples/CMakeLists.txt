@@ -13,16 +13,16 @@ set(FMT_INCLUDE_DIR "${FMT_SOURCE_DIR}/include")
 message(STATUS "FMT include dir: ${FMT_INCLUDE_DIR}")
 
 # TODO: Need to generalize the directory path for all os.
-set(TARGET_NAME "ppc64le-linux")
-# set(TARGET_NAME "x86_64-linux")
+# set(TARGET_NAME "ppc64le-linux")
+set(TARGET_NAME "x86_64-linux")
 
-set(CUPTI_INCLUDE_DIR "${CUDA_SOURCE_DIR}targets/${TARGET_NAME}/include")
-set(CUPTI_LIB_DIR "${CUDA_SOURCE_DIR}targets/${TARGET_NAME}/lib")
+set(CUDA_TARGETS_INCLUDE_DIR "${CUDA_SOURCE_DIR}targets/${TARGET_NAME}/include")
+set(CUDA_TARGETS_LIB_DIR "${CUDA_SOURCE_DIR}targets/${TARGET_NAME}/lib")
 # target_link_libraries(cupti ${CUPTI_LIB_DIR})
-message(STATUS "CUPTI include dir: ${CUPTI_INCLUDE_DIR}")
+message(STATUS "CUPTI include dir: ${CUDA_TARGETS_INCLUDE_DIR}")
 
-find_library(CUPTI_LIBRARY cupti HINTS "${CUPTI_LIB_DIR}")
-find_library(CUDA_LIBRARY cudart HINTS "${CUPTI_LIB_DIR}")
+find_library(CUPTI_LIBRARY cupti HINTS "${CUDA_TARGETS_LIB_DIR}")
+find_library(CUDA_LIBRARY cudart HINTS "${CUDA_TARGETS_LIB_DIR}")
 
 message(STATUS "Kineto source dir: ${KINETO_SOURCE_DIR}")
 
@@ -45,6 +45,6 @@ endif()
 add_subdirectory(common)
 # add_subdirectory(sqrt)
 # add_subdirectory(cublas-gemm)
-# add_subdirectory(cutlass-gemm)
-add_subdirectory(marbl-matprops-miniapp)
+add_subdirectory(cutlass-gemm)
+# add_subdirectory(marbl-matprops-miniapp)
 add_subdirectory(cublas-gemm)
