@@ -3,7 +3,7 @@
 #include "Utility.h"
 #include "cudacommon.h"
 
-//#include "cublas.h"
+// #include "cublas.h"
 #include "cublas_v2.h"
 #include "cuda.h"
 #include "cuda_runtime.h"
@@ -73,16 +73,29 @@ inline void devGEMM(cublasHandle_t handle,
 /// <param name="maxi">	The maxi. </param>
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template <class T> void fill(T *A, int n, int maxi) {
-  for (int j = 0; j < n; j++) {
-      // if (std::is_same<T, float>::value || std::is_same<T, double>::value)
-      //     A[j] = T((rand() % (maxi * 2 + 1)) - maxi) / T(maxi + 1.);
-      // else if (std::is_same<T, half>::value)
-      //     A[j] = __float2half(float((rand() % (maxi * 2 + 1)) - maxi) / (maxi + 1.));
-      // else
-      //     safe_exit(-1);
-
+template <class T> void fill(T *A, int m, int n, int maxi) {
+  for (int j = 0; j < m * n; j++) {
       A[j] = rand();
+  }
+}
+
+#define IDX2F(i,j,ld) ((((j)-1)*(ld))+((i)-1))
+#define IDX2C(i,j,ld) (((j)*(ld))+(i))
+
+template <class T> void fill_1_index(T *A, int m, int n, int maxi) {
+  for (int j = 1; j <= n; j++) {        
+    for (int i = 1; i <= m; i++) {            
+      std::cout<<i <<" "<<j <<" "<<IDX2F(i, j, m)<<IDX2C(i, j, m)<<std::endl;
+      A[IDX2F(i, j, m)] = (float)((i - 1) * m + j);        
+    }    
+  }
+}
+
+template <class T> void fill_0_index(T *A, int m, int n, int maxi) {
+  for (int j = 0; j < n; j++) {        
+    for (int i = 0; i < m; i++) {            
+      A[IDX2C(i, j, m)] = (float)(i * m + j + 1);        
+    }    
   }
 }
 
@@ -215,7 +228,7 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
   // Use preset problem size or read data from input file
   string filename = op.getOptionString("inputFile");
   if (filename == "") {
-    int probSizes[7] = {1, 2, 4, 8, 16, 32, 64};
+    int probSizes[10] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512};
     kib = probSizes[op.getOptionInt("size") - 1];
   } else {
     std::ifstream mfs(filename.c_str());
@@ -225,21 +238,23 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
   }
 
   // Dimensions of matrix
-  int N = kib * 1024;
+  int N = kib * 10;
 
   cout<<"Dimensions of matrix: "<< N << ", "<< kib<< "\n";
 
-  // #ifdef USE_CALIPER
-  //   CALI_MARK_END("Initialize Matrix data");
-  // #endif
+  // size_t freeMem = 0;
+  // size_t totalMem = 0;
+  // size_t allocMem = 0;
+  // checkCudaErrors(cudaFree(0));
+  // gpuMemReport(&freeMem, &totalMem);
 
   // Initialize the cublas library
   cublasHandle_t handle; // CUBLAS context
   cublasStatus_t stat = cublasCreate(&handle);
-  if (stat != CUBLAS_STATUS_SUCCESS) {
-        std::cerr << "CUBLAS initialization failed" << std::endl;
-        safe_exit(-1);
-  }
+  // if (stat != CUBLAS_STATUS_SUCCESS) {
+  //       std::cerr << "CUBLAS initialization failed" << std::endl;
+  //       safe_exit(-1);
+  // }
 
   // Allocate GPU memory
   T *dA, *dB, *dC;
@@ -260,9 +275,9 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
           #ifdef USE_CALIPER
             CALI_MARK_BEGIN("Fill matrix (file)");
           #endif
-          fill<T>(dA, N * N, 31);
-          fill<T>(dB, N * N, 31);
-          fill<T>(dC, N * N, 31);
+          fill_1_index<T>(dA, N, N, 31);
+          fill_1_index<T>(dB, N, N, 31);
+          fill_1_index<T>(dC, N, N, 31);
           #ifdef USE_CALIPER
             CALI_MARK_END("Fill matrix (file)");
           #endif
@@ -287,9 +302,9 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
 
       // Fill matrix or read from input file
       if (filename == "") {
-          fill<T>(A, N * N, 31);
-          fill<T>(B, N * N, 31);
-          fill<T>(C, N * N, 31);
+          fill_1_index<T>(A, N, N, 31);
+          fill_1_index<T>(B, N, N, 31);
+          fill_1_index<T>(C, N, N, 31);
       } else {
         readMatrix(A, B, C, N * N, filename);
       }
@@ -344,7 +359,7 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
   #ifdef USE_CALIPER
     CALI_CXX_MARK_LOOP_BEGIN(passesloop, "passes.loop");
   #endif
-  for (int j = 0; j < passes; j++) {
+  for (int j = 0; j < 1; j++) {
     #ifdef USE_CALIPER
       CALI_CXX_MARK_LOOP_BEGIN(cublas_n_loop, "cublas_t.loop");
     #endif
@@ -458,7 +473,7 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
   checkCudaErrors(cudaFree(dA));
   checkCudaErrors(cudaFree(dB));
   checkCudaErrors(cudaFree(dC));
-
+  
   if (!uvm && !uvm_prefetch && !uvm_advise && !uvm_prefetch_advise) {
     checkCudaErrors(cudaFreeHost(A));
     checkCudaErrors(cudaFreeHost(B));
