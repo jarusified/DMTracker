@@ -201,6 +201,8 @@ int main(int argc, char *argv[])
         op.addOption("coop", OPT_BOOL, "0", "enable CUDA Cooperative Groups");
         op.addOption("dyn", OPT_BOOL, "0", "enable CUDA Dynamic Parallelism");
         op.addOption("graph", OPT_BOOL, "0", "enable CUDA Graphs");
+	op.addOption("traceFile", OPT_STRING, "./perf.json", "path to trace json", 't');
+	op.addOption("field-length", OPT_INT, "128", "Field length for GEMM");
 
         addBenchmarkSpecOptions(op);
 
@@ -213,6 +215,7 @@ int main(int argc, char *argv[])
         bool properties = op.getOptionBool("properties");
         bool quiet = op.getOptionBool("quiet");
         string metricsfile = op.getOptionString("metricsFile");
+	string traceFile = op.getOptionString("traceFile");
 
         int device;
         device = op.getOptionVecInt("device")[0];
@@ -263,8 +266,7 @@ int main(int argc, char *argv[])
 
         auto trace = profiler.stopTrace();
         std::cout << "Stopped and processed trace. Got " << trace->activities()->size() << " activities.\n";
-        std::string file_path = "/home/suraj/Work/llnl/nvidia-data-movement-experiments/src/tracer/examples/cublas-gemm/GEMM.json";
-        trace->save(file_path);
+        trace->save(traceFile);
 
         // If quiet, output overall result
         // else output metrics

@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(binding)
 
-set(CUPTI_INCLUDE_DIR "${CUDA_SOURCE_DIR}/targets/x86_64-linux/include")
-set(CUPTI_LIB_DIR ${CUDA_SOURCE_DIR}/targets/x86_64-linux/lib)
-
 add_subdirectory(pybind11)
 pybind11_add_module(dmv_profiler "main.cpp")
 target_link_directories(dmv_profiler PUBLIC "${CUDA_LIB_DIR}")
