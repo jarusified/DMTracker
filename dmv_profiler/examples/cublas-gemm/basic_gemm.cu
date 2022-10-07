@@ -27,7 +27,7 @@ inline void basicGEMM(int version,
 					T *C, int N);
 
 template <class T>
-void fill(T *A, int m, int n, int maxi) {
+void fill(T *A, int m, int n) {
   for (int j = 0; j < m * n; j++) {
 	  A[j] = rand();
   }
@@ -84,6 +84,8 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
   int passes = op.getOptionInt("passes");
   int device = op.getOptionInt("device");
   int field_length = op.getOptionInt("field-length");
+  int kernel_version = op.getOptionInt("kernel-version");
+  string fill_strategy = op.getOptionString("fill-strategy");
   const bool uvm = op.getOptionBool("uvm");
   const bool uvm_prefetch = op.getOptionBool("uvm-prefetch");
   const bool uvm_advise = op.getOptionBool("uvm-advise");
@@ -122,14 +124,6 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
 		CALI_DATATRACKER_TRACK(dA, sizeof(T)* N * N);
 		CALI_DATATRACKER_TRACK(dA, sizeof(T)* N * N);
 	  #endif
-
-	  if (filename == "") {
-		  fill_1_index<T>(dA, N, N);
-		  fill_1_index<T>(dB, N, N);
-		  fill_1_index<T>(dC, N, N);
-	  } else {
-		//   readMatrix(dA, dB, dC, N * N, filename);
-	  }
   }
   else {
 	  checkCudaErrors(cudaMalloc(&dA, N * N * sizeof(T)));
@@ -139,16 +133,18 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
 	  checkCudaErrors(cudaMallocHost(&A, N * N * sizeof(T)));
 	  checkCudaErrors(cudaMallocHost(&B, N * N * sizeof(T)));
 	  checkCudaErrors(cudaMallocHost(&C, N * N * sizeof(T)));
-
-	  // Fill matrix or read from input file
-	  if (filename == "") {
-		  fill_1_index<T>(A, N, N);
-		  fill_1_index<T>(B, N, N);
-		  fill_1_index<T>(C, N, N);
-	  } else {
-		// readMatrix(A, B, C, N * N, filename);
-	  }
   }
+  // Fill matrix or read from input file
+  if (fill_strategy == "column-format") {
+    fill_1_index<T>(A, N, N);
+    fill_1_index<T>(B, N, N);
+    fill_1_index<T>(C, N, N);
+  } else if (fill_strategy == "default") {
+    fill<T>(A, N, N);
+    fill<T>(B, N, N);
+    fill<T>(C, N, N);
+  }
+ 
 
   // Copy input to GPU
   cudaEvent_t start, stop;
@@ -198,7 +194,7 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
   float alpha = 1.0f, beta = 0.0f;
 
   checkCudaErrors(cudaEventRecord(start, 0));
-  basicGEMM<T>(0, alpha, dA, dB, beta, dC, N);
+  basicGEMM<T>(kernel_version, alpha, dA, dB, beta, dC, N);
   checkCudaErrors(cudaEventRecord(stop, 0));
   checkCudaErrors(cudaEventSynchronize(stop));
   float currTime = 0.0f;
@@ -267,6 +263,8 @@ inline void basicGEMM<float>(int version,
 							float beta,
 							float *dC,
 							int N) {
+
+	std::cout<<"Kernel version: "<<version<<std::endl;
 	if(version == 0)
 	{
 		dim3 blocks(N/32, N/32);
@@ -279,31 +277,30 @@ inline void basicGEMM<float>(int version,
 		dim3 threads(32, 32);
 		sgemm_v1<<<blocks, threads>>>(N, N, N, alpha, dA, dB, beta, dC);
 	}
-	// else if(version == 2)
-	// {
-	// 	dim3 blocks(N/32, N/32);
-	// 	dim3 threads(32, 32);
-	// 	sgemm_v2<<<blocks, threads>>>(N, N, N, alpha, dA, dB, beta, dC, N);
-	// }
-	// else if(version == 3)
-	// {
-	// 	dim3 blocks(N/32, N/32);
-	// 	dim3 threads(8, 32);
-	// 	sgemm_v3<<<blocks, threads>>>(N, N, N, alpha, dA, dB, beta, dC, N);
-	// }
-	// else if(version == 4)
-	// {
-	// 	dim3 blocks(N/32, N/32);
-	// 	dim3 threads(8, 32);
-	// 	sgemm_v4<<<blocks, threads>>>(N, N, N, alpha, dA, dB, beta, dC, N);
-	// }
-	// else if(version == 5)
-	// {
-	// 	dim3 blocks(N/64, N/64);
-	// 	dim3 threads(16, 16);
-
-	// 	sgemm_v5<<<blocks, threads>>>(N, N, N, alpha, dA, dB, beta, dC, N);
-	// }
+	else if(version == 2)
+	{
+		dim3 blocks(N/32, N/32);
+	 	dim3 threads(32, 32);
+		sgemm_v2<<<blocks, threads>>>(N, N, N, alpha, dA, dB, beta, dC);
+	}
+	else if(version == 3)
+	{
+		dim3 blocks(N/32, N/32);
+		dim3 threads(8, 32);
+	 	sgemm_v3<<<blocks, threads>>>(N, N, N, alpha, dA, dB, beta, dC);
+	}
+	else if(version == 4)
+	{
+		dim3 blocks(N/32, N/32);
+		dim3 threads(8, 32);
+		sgemm_v4<<<blocks, threads>>>(N, N, N, alpha, dA, dB, beta, dC);
+	}
+	else if(version == 5)
+	{
+		dim3 blocks(N/128, N/128);
+	 	int threads = 256;
+	 	sgemm_v5<<<blocks, threads>>>(N, N, N, alpha, dA, dB, beta, dC);
+	}
 	// else if(version == 6)
 	// {
 	// 	dim3 blocks(N/128, N/128);

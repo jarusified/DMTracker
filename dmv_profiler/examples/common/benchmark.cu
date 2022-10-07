@@ -202,7 +202,11 @@ int main(int argc, char *argv[])
         op.addOption("dyn", OPT_BOOL, "0", "enable CUDA Dynamic Parallelism");
         op.addOption("graph", OPT_BOOL, "0", "enable CUDA Graphs");
 	op.addOption("traceFile", OPT_STRING, "./perf.json", "path to trace json", 't');
+
+	// TODO: (surajk) move this to GEMM specific folder.
 	op.addOption("field-length", OPT_INT, "128", "Field length for GEMM");
+	op.addOption("kernel-version", OPT_INT, "0", "Kernel version for basic-gemm");
+	op.addOption("fill-strategy", OPT_STRING, "default", "Filling strategy for GEMM");
 
         addBenchmarkSpecOptions(op);
 
