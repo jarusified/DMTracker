@@ -22,6 +22,7 @@ def get_libdmv_cupti_srcs(with_api = True):
         "lib/CuptiCallbackApi.cpp",
         "lib/CuptiEventApi.cpp",
         "lib/CuptiMetricApi.cpp",
+	"lib/CuptiNvmlGpuUtilization.cpp",
         "lib/CuptiRangeProfiler.cpp",
         "lib/CuptiRangeProfilerApi.cpp",
         "lib/CuptiRangeProfilerConfig.cpp",
@@ -29,7 +30,7 @@ def get_libdmv_cupti_srcs(with_api = True):
         "lib/EventProfiler.cpp",
         "lib/EventProfilerController.cpp",
         "lib/WeakSymbols.cpp",
-        "lib/cupti_strings.cpp",
+        "lib/cupti_strings.cpp"
     ] + (get_libdmv_cpu_only_srcs(with_api))
 
 def get_libdmv_cpu_only_srcs(with_api = True):
