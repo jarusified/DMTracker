@@ -7,6 +7,7 @@
 #include "CuptiCallbackApi.h"
 #include "CuptiActivityApi.h"
 #include "CuptiRangeProfiler.h"
+#include "CuptiNvmlGpuUtilization.h"
 #include "EventProfilerController.h"
 #endif
 #include "cupti_call.h"
@@ -19,7 +20,6 @@ namespace libdmv {
 #ifdef HAS_CUPTI
 static bool initialized = false;
 static std::mutex initMutex;
-
 static void initProfilers(
     CUpti_CallbackDomain /*domain*/,
     CUpti_CallbackId /*cbid*/,
@@ -125,6 +125,10 @@ void libdmv_init(bool cpuOnly, bool logOnError) {
 
   if (shouldPreloadCuptiInstrumentation()) {
     CuptiActivityApi::forceLoadCupti();
+  }
+
+  if (initGpuUtilization) {
+    gpuUtilizationInit = std::make_unique<CuptiNvmlGpuUtilization>();
   }
 #endif // HAS_CUPTI
 

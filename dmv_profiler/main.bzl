@@ -22,7 +22,7 @@ def get_libdmv_cupti_srcs(with_api = True):
         "lib/CuptiCallbackApi.cpp",
         "lib/CuptiEventApi.cpp",
         "lib/CuptiMetricApi.cpp",
-	"lib/CuptiNvmlGpuUtilization.cpp",
+	    "lib/CuptiNvmlGpuUtilization.cpp",
         "lib/CuptiRangeProfiler.cpp",
         "lib/CuptiRangeProfilerApi.cpp",
         "lib/CuptiRangeProfilerConfig.cpp",
