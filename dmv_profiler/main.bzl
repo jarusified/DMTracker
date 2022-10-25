@@ -1,6 +1,6 @@
 def get_libdmv_cupti_srcs(with_api = True):
     return [
-        "lib/libdmv_api.cpp",
+        "lib/libdmv.cpp",
         "lib/AbstractConfig.cpp",
         "lib/CuptiActivityProfiler.cpp",
         "lib/ActivityProfilerController.cpp",
@@ -35,7 +35,7 @@ def get_libdmv_cupti_srcs(with_api = True):
 
 def get_libdmv_cpu_only_srcs(with_api = True):
     return [
-        "lib/libdmv_api.cpp",
+        "lib/libdmv.cpp",
         "lib/AbstractConfig.cpp",
         "lib/CuptiActivityProfiler.cpp",
         "lib/ActivityProfilerController.cpp",
