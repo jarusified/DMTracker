@@ -1,19 +1,9 @@
+#include "CuptiNvmlGpuUtilization.h"
+#include <assert.h>
 #include <chrono>
-#include <cstdio>
-#include <cstdlib>
-#include <ctime>
-#include <fstream>
-#include <iostream>
-#include <string>
-#include <thread>
-#include <vector>
 
-#include <cuda_runtime.h>
+#include "Logger.h"
 
-#include <nvml.h>
-
-int constexpr size_of_vector { 100000 };
-int constexpr nvml_device_name_buffer_size { 100 };
 
 // *************** FOR ERROR CHECKING *******************
 #ifndef NVML_RT_CALL
@@ -34,11 +24,9 @@ int constexpr nvml_device_name_buffer_size { 100 };
 #endif  // NVML_RT_CALL
 // *************** FOR ERROR CHECKING *******************
 
-class nvmlClass {
-  public:
-    nvmlClass( int const &deviceID, std::string const &filename ) :
-        time_steps_ {}, filename_ { filename }, outfile_ {}, device_ {}, loop_ { false } {
 
+namespace libdmv {
+  CuptiNvmlGpuUtilization::CuptiNvmlGpuUtilization(int const &deviceID, std::string const &filename) {
         char name[nvml_device_name_buffer_size];
 
         // Initialize NVML library
@@ -58,15 +46,15 @@ class nvmlClass {
 
         // Print header
         printHeader( );
-    }
+  }
 
-    ~nvmlClass( ) {
+  CuptiNvmlGpuUtilization::~CuptiNvmlGpuUtilization() {
         NVML_RT_CALL( nvmlShutdown( ) );
         writeData( );
     }
-
-    void getStats( ) {
-
+  
+  
+  CuptiNvmlGpuUtilization::getStats() {
         stats device_stats {};
         loop_ = true;
 
@@ -91,70 +79,30 @@ class nvmlClass {
 
             std::this_thread::sleep_for( std::chrono::milliseconds( 1 ) );
         }
-    }
-
-    void killThread( ) {
-
-        // Retrieve a few empty samples
+  }
+  
+  CuptiNvmlGpuUtilization::killThread() {
+       // Retrieve a few empty samples
         std::this_thread::sleep_for( std::chrono::seconds( 2 ) );
 
         // Set loop to false to exit while loop
         loop_ = false;
-    }
+  }
 
-  private:
-    typedef struct _stats {
-        std::time_t        timestamp;
-        uint               temperature;
-        uint               powerUsage;
-        uint               powerLimit;
-        nvmlUtilization_t  utilization;
-        nvmlMemory_t       memory;
-        unsigned long long throttleReasons;
-        uint               clockSM;
-        uint               clockGraphics;
-        uint               clockMemory;
-        uint               clockMemoryMax;
-        nvmlPstates_t      performanceState;
-    } stats;
-
-    std::vector<std::string> names_ = { "timestamp",
-                                        "temperature_gpu",
-                                        "power_draw_w",
-                                        "power_limit_w",
-                                        "utilization_gpu",
-                                        "utilization_memory",
-                                        "memory_used_mib",
-                                        "memory_free_mib",
-                                        "clocks_throttle_reasons_active",
-                                        "clocks_current_sm_mhz",
-                                        "clocks_applications_graphics_mhz",
-                                        "clocks_current_memory_mhz",
-                                        "clocks_max_memory_mhz",
-                                        "pstate" };
-
-    std::vector<stats> time_steps_;
-    std::string        filename_;
-    std::ofstream      outfile_;
-    nvmlDevice_t       device_;
-    bool               loop_;
-
-    void printHeader( ) {
-
-        // Print header
+  CuptiNvmlGpuUtilization::printHeader() {
+           // Print header
         for ( int i = 0; i < ( static_cast<int>( names_.size( ) ) - 1 ); i++ )
             outfile_ << names_[i] << ", ";
         // Leave off the last comma
         outfile_ << names_[static_cast<int>( names_.size( ) ) - 1];
         outfile_ << "\n";
-    }
+  }
 
-    void writeData( ) {
-
-        printf( "Writing NVIDIA-SMI data -> %s\n\n", filename_.c_str( ) );
+  CuptiNvmlGpuUtilization::dumpData() {
+    printf( "Writing NVIDIA-SMI data -> %s\n\n", filename_.c_str( ) );
 
         // Print data
-        for ( int i = 0; i < static_cast<int>( time_steps_.size( ) ); i++ ) {
+    for ( int i = 0; i < static_cast<int>( time_steps_.size( ) ); i++ ) {
             outfile_ << time_steps_[i].timestamp << ", " << time_steps_[i].temperature << ", "
                      << time_steps_[i].powerUsage / 1000 << ", "  // mW to W
                      << time_steps_[i].powerLimit / 1000 << ", "  // mW to W
@@ -167,6 +115,6 @@ class nvmlClass {
         }
         outfile_.close( );
     }
-};
+  }
 
-#endif /* NVMLCLASS_H_ */
+}
