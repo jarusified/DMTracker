@@ -4,7 +4,7 @@
 
 #define LIBDMV_DBG_STREAM std::cerr
 
-#define USE_GOOGLE_LOG 1
+#define USE_GOOGLE_LOG 0
 
 #if USE_GOOGLE_LOG
 
