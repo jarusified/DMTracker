@@ -16,13 +16,13 @@
 #include "ThreadUtil.h"
 #include "TraceSpan.h"
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
   class Config;
 }
 
 namespace libdmv {
 
-using namespace DMV_NAMESPACE;
+using namespace libdmv;
 
 class ActivityLogger {
  public:
@@ -78,7 +78,7 @@ class ActivityLogger {
   }
 
   virtual void finalizeTrace(
-      const DMV_NAMESPACE::Config& config,
+      const libdmv::Config& config,
       std::unique_ptr<ActivityBuffers> buffers,
       int64_t endTime,
       std::unordered_map<std::string, std::vector<std::string>>& metadata) = 0;
@@ -87,4 +87,4 @@ class ActivityLogger {
   ActivityLogger() = default;
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

@@ -1,7 +1,7 @@
 #pragma once
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 bool isGpuAvailable();
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

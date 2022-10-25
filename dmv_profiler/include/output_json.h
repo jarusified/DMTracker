@@ -14,12 +14,12 @@
 #include "GenericTraceActivity.h"
 #include "output_base.h"
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
   // Previous declaration of TraceSpan is struct. Must match the same here.
   struct TraceSpan;
 }
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 class Config;
 
@@ -87,4 +87,4 @@ class ChromeTraceLogger : public libdmv::ActivityLogger {
   std::ofstream traceOf_;
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

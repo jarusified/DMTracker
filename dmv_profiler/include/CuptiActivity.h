@@ -13,7 +13,7 @@ namespace libdmv {
   class ActivityLogger;
 }
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 using namespace libdmv;
 struct TraceSpan;
@@ -111,4 +111,4 @@ struct GpuActivity : public CuptiActivity<T> {
   const T& raw() const {return CuptiActivity<T>::raw();}
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

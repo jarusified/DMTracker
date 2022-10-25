@@ -15,7 +15,7 @@
 #include "CuptiActivityBuffer.h"
 
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 using namespace libdmv;
 
@@ -94,4 +94,4 @@ class CuptiActivityApi {
 #endif
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

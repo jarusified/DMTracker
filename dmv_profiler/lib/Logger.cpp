@@ -1,10 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
-// TODO(T90238193)
-// @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
 #include "Logger.h"
 #include "ILoggerObserver.h"
 
@@ -21,7 +14,7 @@
 
 #include "ThreadUtil.h"
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 std::atomic_int Logger::severityLevel_{VERBOSE};
 std::atomic_int Logger::verboseLogLevel_{-1};
@@ -34,7 +27,7 @@ std::mutex Logger::loggerObserversMutex_;
 
 
 Logger::Logger(int severity, int line, const char* filePath, int errnum)
-    : buf_(), out_(libdmv_DBG_STREAM), errnum_(errnum), messageSeverity_(severity) {
+    : buf_(), out_(LIBDMV_DBG_STREAM), errnum_(errnum), messageSeverity_(severity) {
   buf_ << toString((LoggerOutputType) severity) << ":";
 
   const auto tt =
@@ -148,6 +141,6 @@ void Logger::addLoggerObserverAddMetadata(const std::string& key, const std::str
   }
 }
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv
 
 #endif // USE_GOOGLE_LOG

@@ -8,7 +8,7 @@
 #include <map>
 #include <string>
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 class ActivityLogger;
 
@@ -56,4 +56,4 @@ class ActivityLoggerFactory {
   std::map<std::string, FactoryFunc> factories_;
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

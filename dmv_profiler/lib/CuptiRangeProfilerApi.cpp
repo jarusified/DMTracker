@@ -30,7 +30,7 @@
 #include "cupti_call.h"
 #endif // HAS_CUPTI_RANGE_PROFILER
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 TraceSpan CuptiRBProfilerSession::getProfilerTraceSpan() {
   return TraceSpan(
@@ -759,4 +759,4 @@ void trackCudaKernelLaunch(CUcontext ctx, const char* kernelName) {
 }
 
 } // namespace testing
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

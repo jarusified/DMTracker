@@ -5,7 +5,7 @@
 
 #include <cupti.h>
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 int smCount(uint32_t deviceId);
 float blocksPerSm(const CUpti_ActivityKernel4& kernel);
@@ -28,4 +28,4 @@ const std::string& devicePropertiesJson();
 
 // TODO: (suraj) Add topology related api's here.
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

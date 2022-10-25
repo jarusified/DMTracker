@@ -27,7 +27,7 @@
 #include "IActivityProfiler.h"
 #include "LoggerCollector.h"
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 class Config;
 class CuptiActivityApi;
@@ -408,4 +408,4 @@ class CuptiActivityProfiler {
 #endif // !USE_GOOGLE_LOG
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

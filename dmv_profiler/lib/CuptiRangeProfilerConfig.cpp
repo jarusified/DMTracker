@@ -14,7 +14,7 @@
 
 using namespace std::chrono;
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 // number of ranges affect the size of counter data binary used by
 // the CUPTI Profiler. these defaults can be tuned
@@ -68,4 +68,4 @@ void CuptiRangeProfilerConfig::registerFactory() {
       [](Config& cfg) { return new CuptiRangeProfilerConfig(cfg); });
 }
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

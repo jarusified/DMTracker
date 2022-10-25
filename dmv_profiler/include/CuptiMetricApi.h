@@ -7,7 +7,7 @@
 
 #include "SampleListener.h"
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 // C++ interface to CUPTI Metrics C API.
 // Virtual methods are here mainly to allow easier testing.
@@ -33,4 +33,4 @@ class CuptiMetricApi {
   CUdevice device_;
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

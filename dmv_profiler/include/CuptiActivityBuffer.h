@@ -10,7 +10,7 @@
 
 #include "ITraceActivity.h"
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 class CuptiActivityBuffer {
  public:
@@ -46,4 +46,4 @@ class CuptiActivityBuffer {
 using CuptiActivityBufferMap =
     std::map<uint8_t*, std::unique_ptr<CuptiActivityBuffer>>;
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

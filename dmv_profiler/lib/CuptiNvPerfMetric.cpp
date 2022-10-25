@@ -18,7 +18,7 @@
 #include "CuptiNvPerfMetric.h"
 #include "Logger.h"
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 // Add a namespace to isolate these utility functions that are only
 // going to be used by the CuptiRangeProfiler. These included calls
@@ -519,4 +519,4 @@ CuptiProfilerResult evalMetricValues(
 #endif // cuda version > 10.00 and < 11.04
 
 } // namespace nvperf
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

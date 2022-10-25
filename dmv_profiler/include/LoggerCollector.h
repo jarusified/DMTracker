@@ -16,7 +16,7 @@
 // @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
 #include "ILoggerObserver.h"
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 using namespace libdmv;
 
@@ -72,6 +72,6 @@ class LoggerCollector : public ILoggerObserver {
 
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv
 
 #endif // !USE_GOOGLE_LOG

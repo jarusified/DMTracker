@@ -7,7 +7,7 @@
 #include "libdmv.h"
 #include "CuptiActivityBuffer.h"
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 struct ActivityBuffers {
   std::list<std::unique_ptr<libdmv::CpuTraceBuffer>> cpu;
@@ -24,4 +24,4 @@ struct ActivityBuffers {
   std::vector<std::unique_ptr<const ITraceActivity>> wrappers_;
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

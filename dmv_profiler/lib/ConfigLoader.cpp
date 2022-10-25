@@ -22,11 +22,11 @@
 using namespace std::chrono;
 using std::string;
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 using namespace libdmv;
 
-constexpr char kConfigFileEnvVar[] = "KINETO_CONFIG";
+constexpr char kConfigFileEnvVar[] = "DMV_CONFIG";
 #ifdef __linux__
 constexpr char kConfigFile[] = "/etc/libdmv.conf";
 constexpr char kOnDemandConfigFile[] = "/tmp/libdmv.conf";
@@ -300,4 +300,4 @@ bool ConfigLoader::hasNewConfig(const Config& oldConfig) {
   return config_->timestamp() > oldConfig.timestamp();
 }
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

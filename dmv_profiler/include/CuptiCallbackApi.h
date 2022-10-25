@@ -10,14 +10,11 @@
 #include <mutex>
 #include <set>
 
-// TODO(T90238193)
-// @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
 #include "CuptiCallbackApiMock.h"
-
-namespace DMV_NAMESPACE {
 
 using namespace libdmv;
 
+namespace libdmv {
 
 /* CuptiCallbackApi : Provides an abstraction over CUPTI callback
  *  interface. This enables various callback functions to be registered
@@ -125,4 +122,4 @@ class CuptiCallbackApi {
 #endif
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

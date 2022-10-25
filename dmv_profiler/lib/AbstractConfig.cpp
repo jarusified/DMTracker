@@ -11,7 +11,7 @@ using namespace std::chrono;
 using std::string;
 using std::vector;
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 constexpr char kWhitespace[] = "\t\n ";
 
@@ -183,4 +183,4 @@ void AbstractConfig::printActivityProfilerConfig(std::ostream& s) const {
   }
 }
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

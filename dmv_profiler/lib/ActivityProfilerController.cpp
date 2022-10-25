@@ -14,7 +14,7 @@
 
 using namespace std::chrono;
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 constexpr milliseconds kProfilerIntervalMsecs(1000);
 
@@ -305,4 +305,4 @@ void ActivityProfilerController::addMetadata(
   profiler_->addMetadata(key, value);
 }
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

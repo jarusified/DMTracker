@@ -15,7 +15,7 @@
 // #include "CU"
 #include "output_base.h"
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 class Config;
 
@@ -108,4 +108,4 @@ class MemoryTraceLogger : public ActivityLogger {
   int64_t endTime_{0};
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

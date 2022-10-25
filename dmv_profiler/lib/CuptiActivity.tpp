@@ -11,7 +11,7 @@
 #include "CudaDeviceProperties.h"
 #include "output_base.h"
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 using namespace libdmv;
 
@@ -188,4 +188,4 @@ inline const std::string GpuActivity<T>::metadataJson() const {
   return "";
 }
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

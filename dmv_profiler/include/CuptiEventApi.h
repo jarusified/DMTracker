@@ -4,7 +4,7 @@
 #include <queue>
 #include <string>
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 // C++ interface to CUPTI Events C API.
 // Virtual methods are here mainly to allow easier testing.
@@ -44,4 +44,4 @@ class CuptiEventApi {
   CUdevice device_;
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

@@ -15,7 +15,7 @@
 #include "CuptiRangeProfiler.h"
 #include "CuptiRangeProfilerConfig.h"
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 const ActivityType kProfActivityType = ActivityType::CUDA_PROFILER_RANGE;
 const std::set<ActivityType> kSupportedActivities{kProfActivityType};
@@ -309,4 +309,4 @@ CuptiRangeProfilerInit::~CuptiRangeProfilerInit() {
   }
 }
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

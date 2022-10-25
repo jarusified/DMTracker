@@ -17,7 +17,7 @@ namespace libdmv {
   class LibDmvApi;
 }
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 using namespace libdmv;
 class DaemonConfigLoader;
@@ -136,4 +136,4 @@ class ConfigLoader {
   std::atomic_bool onDemandSignal_{false};
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 class AbstractConfig {
  public:
@@ -108,4 +108,4 @@ class AbstractConfig {
   std::map<std::string, AbstractConfig*> featureConfigs_{};
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

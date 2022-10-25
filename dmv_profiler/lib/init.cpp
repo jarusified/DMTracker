@@ -14,7 +14,7 @@
 
 #include "Logger.h"
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 #ifdef HAS_CUPTI
 static bool initialized = false;
@@ -72,10 +72,10 @@ static void stopProfiler(
 static std::unique_ptr<CuptiRangeProfilerInit> rangeProfilerInit;
 #endif // HAS_CUPTI
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv
 
 // Callback interface with CUPTI and library constructors
-using namespace DMV_NAMESPACE;
+using namespace libdmv;
 extern "C" {
 
 // Return true if no CUPTI errors occurred during init

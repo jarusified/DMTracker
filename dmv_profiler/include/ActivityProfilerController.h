@@ -14,7 +14,7 @@
 #include "CuptiActivityApi.h"
 #include "LoggerCollector.h"
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 class Config;
 
@@ -85,4 +85,4 @@ class ActivityProfilerController : public ConfigLoader::ConfigHandler {
   ConfigLoader& configLoader_;
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

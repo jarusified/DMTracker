@@ -14,7 +14,7 @@
  *   Range Based Profiler API.
  */
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 using CuptiProfilerPrePostCallback = std::function<void(void)>;
 
@@ -105,4 +105,4 @@ struct CuptiRangeProfilerInit {
   bool success = false;
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

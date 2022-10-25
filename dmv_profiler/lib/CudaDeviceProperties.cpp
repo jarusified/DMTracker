@@ -8,7 +8,7 @@
 
 #include "Logger.h"
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 static const std::vector<cudaDeviceProp> createDeviceProps() {
   std::vector<cudaDeviceProp> props;
@@ -150,4 +150,4 @@ float kernelOccupancy(
   return occupancy;
 }
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

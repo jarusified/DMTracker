@@ -13,7 +13,7 @@
 using namespace std::chrono;
 using std::vector;
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 CuptiEventApi::CuptiEventApi(CUcontext context)
     : context_(context) {
@@ -112,4 +112,4 @@ CUpti_EventID CuptiEventApi::eventId(const std::string& name) {
   return id;
 }
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

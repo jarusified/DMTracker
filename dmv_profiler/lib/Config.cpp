@@ -26,7 +26,7 @@ using namespace std::chrono;
 using std::string;
 using std::vector;
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 constexpr milliseconds kDefaultSamplePeriodMsecs(1000);
 constexpr milliseconds kDefaultMultiplexPeriodMsecs(1000);
@@ -491,4 +491,4 @@ void Config::printActivityProfilerConfig(std::ostream& s) const {
   AbstractConfig::printActivityProfilerConfig(s);
 }
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

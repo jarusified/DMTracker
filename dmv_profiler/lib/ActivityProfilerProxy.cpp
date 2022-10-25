@@ -11,7 +11,7 @@
 #include "Logger.h"
 #include <chrono>
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 ActivityProfilerProxy::ActivityProfilerProxy(
     bool cpuOnly, ConfigLoader& configLoader)

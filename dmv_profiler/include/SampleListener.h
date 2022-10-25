@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 class Config;
 
@@ -146,4 +146,4 @@ class SampleListener {
   SampleListener() = default;
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

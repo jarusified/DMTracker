@@ -1,13 +1,10 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <iostream>
 
-#define libdmv_DBG_STREAM std::cerr
+#define LIBDMV_DBG_STREAM std::cerr
+
+#define USE_GOOGLE_LOG 1
 
 #if USE_GOOGLE_LOG
 
@@ -38,12 +35,7 @@
 
 #include "ILoggerObserver.h"
 
-#ifdef _MSC_VER
-// unset a predefined ERROR (windows)
-#undef ERROR
-#endif // _MSC_VER
-
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 class Logger {
  public:
@@ -145,7 +137,7 @@ class VoidLogger {
   void operator&(std::ostream&) {}
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv
 
 #ifdef LOG // Undefine in case these are already defined (quite likely)
 #undef LOG

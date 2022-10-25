@@ -21,7 +21,7 @@
 using std::endl;
 using namespace libdmv;
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 static constexpr int kSchemaVersion = 1;
 static constexpr char kFlowStart = 's';
@@ -418,4 +418,4 @@ void ChromeTraceLogger::finalizeTrace(
   ChromeTraceLogger::finalizeTraceInternal(endTime, metadata);
   UST_LOGGER_MARK_COMPLETED(kPostProcessingStage);
 }
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

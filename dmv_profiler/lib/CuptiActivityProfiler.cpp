@@ -43,7 +43,7 @@ using namespace std::chrono;
 using namespace libdmv;
 using std::string;
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 ConfigDerivedState::ConfigDerivedState(const Config& config) {
   profileActivityTypes_ = config.selectedActivityTypes();
@@ -575,7 +575,7 @@ void CuptiActivityProfiler::configure(
   }
 
   if (LOG_IS_ON(INFO)) {
-    config_->printActivityProfilerConfig(libdmv_DBG_STREAM);
+    config_->printActivityProfilerConfig(LIBDMV_DBG_STREAM);
   }
   if (!cpuOnly_ && !libdmv::api().client()) {
     if (derivedConfig_->isProfilingByIteration()) {
@@ -902,4 +902,4 @@ void CuptiActivityProfiler::resetTraceData() {
 }
 
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

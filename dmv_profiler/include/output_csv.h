@@ -10,7 +10,7 @@
 #include <ostream>
 #include <set>
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 class EventCSVLogger : public SampleListener {
  public:
@@ -39,4 +39,4 @@ class EventCSVDbgLogger : public EventCSVLogger {
   void update(const Config& config) override;
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 constexpr char kCuptiProfilerConfigName[] = "cupti_rb_profiler";
 
@@ -86,4 +86,4 @@ class CuptiRangeProfilerConfig : public AbstractConfig {
   int64_t cuptiProfilerMaxRanges_ = 0;
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 using namespace libdmv;
 
@@ -423,4 +423,4 @@ class Config : public AbstractConfig {
   std::string requestGroupTraceID_;
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

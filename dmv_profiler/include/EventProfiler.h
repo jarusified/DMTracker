@@ -16,7 +16,7 @@
 #include "CuptiMetricApi.h"
 #include "SampleListener.h"
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 // Helper function for computing percentiles (nearest-rank).
 // Modifies the input.
@@ -336,4 +336,4 @@ class EventProfiler {
   const std::vector<std::unique_ptr<SampleListener>>& onDemandLoggers_;
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

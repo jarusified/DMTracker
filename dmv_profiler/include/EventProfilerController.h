@@ -10,7 +10,7 @@
 
 #include "ConfigLoader.h"
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 class Config;
 class ConfigLoader;
@@ -58,4 +58,4 @@ class EventProfilerController : public ConfigLoader::ConfigHandler {
   std::mutex mutex_;
 };
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

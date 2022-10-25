@@ -6,7 +6,7 @@
 
 #include "Logger.h"
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 struct CuptiRangeMeasurement {
   std::string rangeName;
@@ -64,4 +64,4 @@ CuptiProfilerResult evalMetricValues(
 
 
 } // namespace nvperf
-} // namespace DMV_NAMESPACE
+} // namespace libdmv

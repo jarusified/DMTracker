@@ -20,7 +20,7 @@
 
 namespace libdmv {
 
-using namespace DMV_NAMESPACE;
+using namespace libdmv;
 struct CpuTraceBuffer;
 
 

@@ -14,7 +14,7 @@ namespace libdmv {
   struct CpuTraceBuffer;
 }
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 using namespace libdmv;
 

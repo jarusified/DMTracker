@@ -17,7 +17,7 @@
 #include "Logger.h"
 
 
-namespace DMV_NAMESPACE {
+namespace libdmv {
 
 // limit on number of handles per callback type
 constexpr size_t MAX_CB_FNS_PER_CB = 8;
@@ -260,4 +260,4 @@ bool CuptiCallbackApi::disableCallback(
   return false;
 }
 
-} // namespace DMV_NAMESPACE
+} // namespace libdmv
