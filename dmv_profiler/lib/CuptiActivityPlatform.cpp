@@ -7,7 +7,7 @@
 
 namespace chrono = std::chrono;
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 #ifdef _WIN32
 uint64_t epochs_diff() {
@@ -33,4 +33,4 @@ uint64_t unixEpochTimestamp(uint64_t ts) {
 }
 #endif // _WIN32
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

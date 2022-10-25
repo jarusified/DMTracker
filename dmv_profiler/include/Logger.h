@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#define LIBKINETO_DBG_STREAM std::cerr
+#define libdmv_DBG_STREAM std::cerr
 
 #if USE_GOOGLE_LOG
 
@@ -45,7 +45,7 @@
 #undef ERROR
 #endif // _MSC_VER
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 class Logger {
  public:
@@ -134,8 +134,8 @@ class Logger {
   static std::atomic_int severityLevel_;
   static std::atomic_int verboseLogLevel_;
   static std::atomic<uint64_t> verboseLogModules_;
-  static std::set<libkineto::ILoggerObserver*>& loggerObservers() {
-    static auto* inst = new std::set<libkineto::ILoggerObserver*>();
+  static std::set<libdmv::ILoggerObserver*>& loggerObservers() {
+    static auto* inst = new std::set<libdmv::ILoggerObserver*>();
     return *inst;
   }
   static std::mutex loggerObserversMutex_;
@@ -147,7 +147,7 @@ class VoidLogger {
   void operator&(std::ostream&) {}
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE
 
 #ifdef LOG // Undefine in case these are already defined (quite likely)
 #undef LOG
@@ -172,11 +172,11 @@ class VoidLogger {
 #endif
 
 #define LOG_IS_ON(severity) \
-  (severity >= libkineto::Logger::severityLevel())
+  (severity >= libdmv::Logger::severityLevel())
 
 #define LOG_IF(severity, condition) \
-  !(LOG_IS_ON(severity) && (condition)) ? (void)0 : libkineto::VoidLogger() & \
-    libkineto::Logger(severity, __LINE__, __FILE__).stream()
+  !(LOG_IS_ON(severity) && (condition)) ? (void)0 : libdmv::VoidLogger() & \
+    libdmv::Logger(severity, __LINE__, __FILE__).stream()
 
 #define LOG(severity) LOG_IF(severity, true)
 
@@ -196,11 +196,11 @@ struct __to_constant__ {
   static const uint64_t val = n;
 };
 #define FILENAME_HASH                             \
-  __to_constant__<libkineto::Logger::hash( \
-      libkineto::Logger::basename(__FILE__))>::val
+  __to_constant__<libdmv::Logger::hash( \
+      libdmv::Logger::basename(__FILE__))>::val
 #define VLOG_IS_ON(verbosity)                           \
-  (libkineto::Logger::verboseLogLevel() >= verbosity && \
-   (libkineto::Logger::verboseLogModules() & FILENAME_HASH) == FILENAME_HASH)
+  (libdmv::Logger::verboseLogLevel() >= verbosity && \
+   (libdmv::Logger::verboseLogModules() & FILENAME_HASH) == FILENAME_HASH)
 
 #define VLOG_IF(verbosity, condition) \
   LOG_IF(VERBOSE, VLOG_IS_ON(verbosity) && (condition))
@@ -213,50 +213,50 @@ struct __to_constant__ {
       << "(x" << LOG_OCCURRENCES << ") "
 
 #define PLOG(severity) \
-  libkineto::Logger(severity, __LINE__, __FILE__, errno).stream()
+  libdmv::Logger(severity, __LINE__, __FILE__, errno).stream()
 
 #define SET_LOG_SEVERITY_LEVEL(level) \
-  libkineto::Logger::setSeverityLevel(level)
+  libdmv::Logger::setSeverityLevel(level)
 
 #define SET_LOG_VERBOSITY_LEVEL(level, modules)   \
-  libkineto::Logger::setVerboseLogLevel(level); \
-  libkineto::Logger::setVerboseLogModules(modules)
+  libdmv::Logger::setVerboseLogLevel(level); \
+  libdmv::Logger::setVerboseLogModules(modules)
 
 // Logging the set of devices the trace is collect on.
 #define LOGGER_OBSERVER_ADD_DEVICE(device_count) \
-  libkineto::Logger::addLoggerObserverDevice(device_count)
+  libdmv::Logger::addLoggerObserverDevice(device_count)
 
 // Incrementing the number of events collected by this trace.
 #define LOGGER_OBSERVER_ADD_EVENT_COUNT(count) \
-  libkineto::Logger::addLoggerObserverEventCount(count)
+  libdmv::Logger::addLoggerObserverEventCount(count)
 
 // Record duration of trace in milliseconds.
 #define LOGGER_OBSERVER_SET_TRACE_DURATION_MS(duration) \
-  libkineto::Logger::setLoggerObserverTraceDurationMS(duration)
+  libdmv::Logger::setLoggerObserverTraceDurationMS(duration)
 
 // Record the trace id when given.
 #define LOGGER_OBSERVER_SET_TRACE_ID(tid) \
-  libkineto::Logger::setLoggerObserverTraceID(tid)
+  libdmv::Logger::setLoggerObserverTraceID(tid)
 
 // Record the group trace id when given.
 #define LOGGER_OBSERVER_SET_GROUP_TRACE_ID(gtid) \
-  libkineto::Logger::setLoggerObserverGroupTraceID(gtid)
+  libdmv::Logger::setLoggerObserverGroupTraceID(gtid)
 
 // Log the set of destinations the trace is sent to.
 #define LOGGER_OBSERVER_ADD_DESTINATION(dest) \
-  libkineto::Logger::addLoggerObserverDestination(dest)
+  libdmv::Logger::addLoggerObserverDestination(dest)
 
 // Record this was triggered by On-Demand.
 #define LOGGER_OBSERVER_SET_TRIGGER_ON_DEMAND() \
-  libkineto::Logger::setLoggerObserverOnDemand()
+  libdmv::Logger::setLoggerObserverOnDemand()
 
 // Record this was triggered by On-Demand.
 #define LOGGER_OBSERVER_ADD_METADATA(key, value) \
-  libkineto::Logger::addLoggerObserverAddMetadata(key, value)
+  libdmv::Logger::addLoggerObserverAddMetadata(key, value)
 
 
 // UST Logger Semantics to describe when a stage is complete.
 #define UST_LOGGER_MARK_COMPLETED(stage) \
-  LOG(libkineto::LoggerOutputType::STAGE) << "Completed Stage: " << stage
+  LOG(libdmv::LoggerOutputType::STAGE) << "Completed Stage: " << stage
 
 #endif // USE_GOOGLE_LOG

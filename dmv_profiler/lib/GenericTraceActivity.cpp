@@ -1,8 +1,8 @@
 #include "GenericTraceActivity.h"
 #include "output_base.h"
 
-namespace libkineto {
+namespace libdmv {
   void GenericTraceActivity::log(ActivityLogger& logger) const {
     logger.handleGenericActivity(*this);
   }
-} // namespace libkineto
+} // namespace libdmv

@@ -7,7 +7,7 @@
 
 #include <string>
 
-// Stages in libkineto used when pushing logs to UST Logger.
+// Stages in libdmv used when pushing logs to UST Logger.
 constexpr char kWarmUpStage[] = "Warm Up";
 constexpr char kCollectionStage[] = "Collection";
 constexpr char kPostProcessingStage[] = "Post Processing";
@@ -17,7 +17,7 @@ constexpr char kPostProcessingStage[] = "Post Processing";
 #include <map>
 #include <vector>
 
-namespace libkineto {
+namespace libdmv {
 
 enum LoggerOutputType {
   VERBOSE = 0,
@@ -50,6 +50,6 @@ class ILoggerObserver {
 
 };
 
-} // namespace libkineto
+} // namespace libdmv
 
 #endif // USE_GOOGLE_LOG

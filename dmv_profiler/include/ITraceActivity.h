@@ -9,7 +9,7 @@
 
 #include "ActivityType.h"
 
-namespace libkineto {
+namespace libdmv {
 
 class ActivityLogger;
 struct TraceSpan;
@@ -53,4 +53,4 @@ struct ITraceActivity {
   }
 };
 
-} // namespace libkineto
+} // namespace libdmv

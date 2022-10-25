@@ -7,7 +7,7 @@
 
 #include <fmt/format.h>
 
-namespace libkineto {
+namespace libdmv {
 
 struct ActivityTypeName {
   const char* name;
@@ -67,4 +67,4 @@ const std::array<ActivityType, defaultActivityTypeCount> defaultActivityTypes() 
 }
 
 
-} // namespace libkineto
+} // namespace libdmv

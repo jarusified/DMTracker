@@ -52,7 +52,7 @@ class ActivityProfilerController : public ConfigLoader::ConfigHandler {
   }
 
   void transferCpuTrace(
-      std::unique_ptr<libkineto::CpuTraceBuffer> cpuTrace) {
+      std::unique_ptr<libdmv::CpuTraceBuffer> cpuTrace) {
     return profiler_->transferCpuTrace(std::move(cpuTrace));
   }
 

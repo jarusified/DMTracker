@@ -29,7 +29,7 @@
   if (!(expr)) {\
   };
 
-using namespace KINETO_NAMESPACE;
+using namespace DMV_NAMESPACE;
 
 static int numRanges = 1;
 

@@ -21,7 +21,7 @@
 
 #include "ThreadUtil.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 std::atomic_int Logger::severityLevel_{VERBOSE};
 std::atomic_int Logger::verboseLogLevel_{-1};
@@ -34,7 +34,7 @@ std::mutex Logger::loggerObserversMutex_;
 
 
 Logger::Logger(int severity, int line, const char* filePath, int errnum)
-    : buf_(), out_(LIBKINETO_DBG_STREAM), errnum_(errnum), messageSeverity_(severity) {
+    : buf_(), out_(libdmv_DBG_STREAM), errnum_(errnum), messageSeverity_(severity) {
   buf_ << toString((LoggerOutputType) severity) << ":";
 
   const auto tt =
@@ -148,6 +148,6 @@ void Logger::addLoggerObserverAddMetadata(const std::string& key, const std::str
   }
 }
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE
 
 #endif // USE_GOOGLE_LOG

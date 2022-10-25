@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <string>
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 class DaemonConfigLoader {
  public:
@@ -27,4 +27,4 @@ class DaemonConfigLoader {
   virtual void setCommunicationFabric(bool enabled) = 0;
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

@@ -13,7 +13,7 @@
 
 namespace DMV_NAMESPACE {
 
-using namespace libkineto;
+using namespace libdmv;
 
 template<>
 inline const std::string GpuActivity<CUpti_ActivityKernel4>::name() const {

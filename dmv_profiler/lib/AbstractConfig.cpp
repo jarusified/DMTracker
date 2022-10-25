@@ -183,4 +183,4 @@ void AbstractConfig::printActivityProfilerConfig(std::ostream& s) const {
   }
 }
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

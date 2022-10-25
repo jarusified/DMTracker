@@ -38,4 +38,4 @@ constexpr int defaultActivityTypeCount = (int)ActivityType::OPTIONAL_ACTIVITY_TY
 const std::array<ActivityType, activityTypeCount> activityTypes();
 const std::array<ActivityType, defaultActivityTypeCount> defaultActivityTypes();
 
-} // namespace libkineto
+} // namespace libdmv

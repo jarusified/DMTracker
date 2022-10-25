@@ -12,7 +12,7 @@
 #include "IActivityProfiler.h"
 #include "output_base.h"
 
-namespace libkineto {
+namespace libdmv {
 
 class MockProfilerSession: public IActivityProfilerSession {
 
@@ -71,4 +71,4 @@ class MockActivityProfiler: public IActivityProfiler {
   std::deque<GenericTraceActivity> test_activities_;
 };
 
-} // namespace libkineto
+} // namespace libdmv

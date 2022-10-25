@@ -7,14 +7,14 @@
 #include <array>
 #include <set>
 
-#include "libkineto.h"
+#include "libdmv.h"
 #include "Config.h"
 #include "src/CuptiRangeProfilerApi.h"
 
 #include "src/Logger.h"
 #include "test/CuptiRangeProfilerTestUtil.h"
 
-using namespace KINETO_NAMESPACE;
+using namespace DMV_NAMESPACE;
 
 #if HAS_CUPTI_RANGE_PROFILER
 

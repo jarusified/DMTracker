@@ -14,7 +14,7 @@
 #include "ITraceActivity.h"
 #include "TraceSpan.h"
 
-namespace libkineto {
+namespace libdmv {
 
 // Link type, used in GenericTraceActivity.flow.type
 constexpr unsigned int kLinkFwdBwd = 1;
@@ -125,4 +125,4 @@ class GenericTraceActivity : public ITraceActivity {
   std::vector<std::string> metadata_;
 };
 
-} // namespace libkineto
+} // namespace libdmv

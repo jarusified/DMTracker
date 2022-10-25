@@ -22,7 +22,7 @@ using namespace std::chrono;
 using std::unique_ptr;
 using std::vector;
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 namespace {
 
@@ -423,4 +423,4 @@ void EventProfilerController::profilerLoop() {
           << ": Exited event profiling loop";
 }
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

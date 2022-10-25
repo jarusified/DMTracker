@@ -10,7 +10,7 @@
 #include "output_base.h"
 #include "test/MockActivitySubProfiler.h"
 
-namespace libkineto {
+namespace libdmv {
 
 const std::set<ActivityType> supported_activities {ActivityType::CPU_OP};
 const std::string profile_name{"MockProfiler"};
@@ -57,4 +57,4 @@ std::unique_ptr<CpuTraceBuffer> MockProfilerSession::getTraceBuffer() {
   test_activities_.clear();
   return buf;
 }
-} // namespace libkineto
+} // namespace libdmv

@@ -10,7 +10,7 @@
 
 #include "ConfigLoader.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 class Config;
 class ConfigLoader;
@@ -58,4 +58,4 @@ class EventProfilerController : public ConfigLoader::ConfigHandler {
   std::mutex mutex_;
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

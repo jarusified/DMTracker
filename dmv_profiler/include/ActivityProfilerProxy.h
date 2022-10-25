@@ -9,14 +9,14 @@
 #include "ActivityType.h"
 #include "ITraceActivity.h"
 
-namespace libkineto {
+namespace libdmv {
   // previous declaration is struct so this one must be too.
   struct CpuTraceBuffer;
 }
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
-using namespace libkineto;
+using namespace libdmv;
 
 class ActivityProfilerController;
 class Config;
@@ -68,4 +68,4 @@ class ActivityProfilerProxy : public ActivityProfilerInterface {
   ActivityProfilerController* controller_{nullptr};
 };
 
-} // namespace libkineto
+} // namespace libdmv

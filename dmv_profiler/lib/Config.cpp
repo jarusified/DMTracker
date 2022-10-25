@@ -26,7 +26,7 @@ using namespace std::chrono;
 using std::string;
 using std::vector;
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 constexpr milliseconds kDefaultSamplePeriodMsecs(1000);
 constexpr milliseconds kDefaultMultiplexPeriodMsecs(1000);
@@ -112,7 +112,7 @@ constexpr char kProfileStartIterationRoundUpKey[]
   = "PROFILE_START_ITERATION_ROUNDUP";
 
 // Enable on-demand trigger via kill -USR2 <pid>
-// When triggered in this way, /tmp/libkineto.conf will be used as config.
+// When triggered in this way, /tmp/libdmv.conf will be used as config.
 constexpr char kEnableSigUsr2Key[] = "ENABLE_SIGUSR2";
 
 // Enable communication through IPC Fabric
@@ -179,7 +179,7 @@ void Config::addConfigFactory(
 }
 
 static string defaultTraceFileName() {
-  return fmt::format("/tmp/libkineto_activities_{}.json", processId());
+  return fmt::format("/tmp/libdmv_activities_{}.json", processId());
 }
 
 Config::Config()
@@ -491,4 +491,4 @@ void Config::printActivityProfilerConfig(std::ostream& s) const {
   AbstractConfig::printActivityProfilerConfig(s);
 }
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

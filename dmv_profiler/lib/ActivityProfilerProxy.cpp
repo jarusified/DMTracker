@@ -11,7 +11,7 @@
 #include "Logger.h"
 #include <chrono>
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 ActivityProfilerProxy::ActivityProfilerProxy(
     bool cpuOnly, ConfigLoader& configLoader)
@@ -119,4 +119,4 @@ void ActivityProfilerProxy::addChildActivityProfiler(
   controller_->addChildActivityProfiler(std::move(profiler));
 }
 
-} // namespace libkineto
+} // namespace libdmv

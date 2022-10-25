@@ -11,7 +11,7 @@
 // @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
 #include "CuptiRangeProfilerApi.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 #if HAS_CUPTI_RANGE_PROFILER
 
@@ -111,4 +111,4 @@ inline void simulateKernelLaunch(
 
 #endif // HAS_CUPTI_RANGE_PROFILER
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

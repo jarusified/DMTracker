@@ -15,7 +15,7 @@
 // #include "CU"
 #include "output_base.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 class Config;
 
@@ -108,4 +108,4 @@ class MemoryTraceLogger : public ActivityLogger {
   int64_t endTime_{0};
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

@@ -16,7 +16,7 @@
 #include <fcntl.h>
 #endif
 
-#include "libkineto.h"
+#include "libdmv.h"
 #include "Config.h"
 #include "CuptiActivityProfiler.h"
 #include "ActivityTrace.h"
@@ -29,7 +29,7 @@
 #include "MockActivitySubProfiler.h"
 
 using namespace std::chrono;
-using namespace KINETO_NAMESPACE;
+using namespace DMV_NAMESPACE;
 
 #define CUDA_LAUNCH_KERNEL CUPTI_RUNTIME_TRACE_CBID_cudaLaunchKernel_v7000
 #define CUDA_MEMCPY CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020
@@ -199,7 +199,7 @@ TEST(CuptiActivityProfiler, AsyncTrace) {
   MockCuptiActivities activities;
   CuptiActivityProfiler profiler(activities, /*cpu only*/ true);
 
-  char filename[] = "/tmp/libkineto_testXXXXXX.json";
+  char filename[] = "/tmp/libdmv_testXXXXXX.json";
   mkstemps(filename, 5);
 
   Config cfg;
@@ -288,7 +288,7 @@ TEST(CuptiActivityProfiler, AsyncTraceUsingIter) {
     MockCuptiActivities activities;
     CuptiActivityProfiler profiler(activities, /*cpu only*/ true);
 
-    char filename[] = "/tmp/libkineto_testXXXXXX.json";
+    char filename[] = "/tmp/libdmv_testXXXXXX.json";
     mkstemps(filename, 5);
 
     Config cfg;
@@ -437,7 +437,7 @@ TEST_F(CuptiActivityProfilerTest, SyncTrace) {
   EXPECT_EQ(resourceIds[2], 1);
 
 #ifdef __linux__
-  char filename[] = "/tmp/libkineto_testXXXXXX.json";
+  char filename[] = "/tmp/libdmv_testXXXXXX.json";
   mkstemps(filename, 5);
   trace.save(filename);
   // Check that the expected file was written and that it has some content
@@ -560,7 +560,7 @@ TEST_F(CuptiActivityProfilerTest, SubActivityProfilers) {
   profiler.stopTrace(start_time + microseconds(duration_us));
   EXPECT_TRUE(profiler.isActive());
 
-  char filename[] = "/tmp/libkineto_testXXXXXX.json";
+  char filename[] = "/tmp/libdmv_testXXXXXX.json";
   mkstemps(filename, 5);
   LOG(INFO) << "Logging to tmp file " << filename;
 

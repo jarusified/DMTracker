@@ -9,7 +9,7 @@
 #include <string>
 #include <thread>
 
-namespace libkineto {
+namespace libdmv {
 
 struct TraceSpan {
   TraceSpan() = delete;
@@ -36,4 +36,4 @@ struct TraceSpan {
   std::string prefix;
 };
 
-} // namespace libkineto
+} // namespace libdmv

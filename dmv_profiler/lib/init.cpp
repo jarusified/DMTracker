@@ -10,11 +10,11 @@
 #include "EventProfilerController.h"
 #endif
 #include "cupti_call.h"
-#include "libkineto.h"
+#include "libdmv.h"
 
 #include "Logger.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 #ifdef HAS_CUPTI
 static bool initialized = false;
@@ -31,14 +31,14 @@ static void initProfilers(
   std::lock_guard<std::mutex> lock(initMutex);
 
   if (!initialized) {
-    libkineto::api().initProfilerIfRegistered();
+    libdmv::api().initProfilerIfRegistered();
     initialized = true;
-    VLOG(0) << "libkineto profilers activated";
+    VLOG(0) << "libdmv profilers activated";
   }
   if (getenv("KINETO_DISABLE_EVENT_PROFILER") != nullptr) {
     VLOG(0) << "Event profiler disabled via env var";
   } else {
-    ConfigLoader& config_loader = libkineto::api().configLoader();
+    ConfigLoader& config_loader = libdmv::api().configLoader();
     config_loader.initBaseConfig();
     EventProfilerController::start(ctx, config_loader);
   }
@@ -72,14 +72,14 @@ static void stopProfiler(
 static std::unique_ptr<CuptiRangeProfilerInit> rangeProfilerInit;
 #endif // HAS_CUPTI
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE
 
 // Callback interface with CUPTI and library constructors
-using namespace KINETO_NAMESPACE;
+using namespace DMV_NAMESPACE;
 extern "C" {
 
 // Return true if no CUPTI errors occurred during init
-void libkineto_init(bool cpuOnly, bool logOnError) {
+void libdmv_init(bool cpuOnly, bool logOnError) {
 #ifdef HAS_CUPTI
   LOG (INFO) << "CUPTI instrumentation enabled.";
   if (!cpuOnly) {
@@ -128,20 +128,20 @@ void libkineto_init(bool cpuOnly, bool logOnError) {
   }
 #endif // HAS_CUPTI
 
-  ConfigLoader& config_loader = libkineto::api().configLoader();
-  libkineto::api().registerProfiler(
+  ConfigLoader& config_loader = libdmv::api().configLoader();
+  libdmv::api().registerProfiler(
       std::make_unique<ActivityProfilerProxy>(cpuOnly, config_loader));
 }
 
 // The cuda driver calls this function if the CUDA_INJECTION64_PATH environment
 // variable is set
 int InitializeInjection(void) {
-  LOG(INFO) << "Injection mode: Initializing libkineto";
-  libkineto_init(false /*cpuOnly*/, true /*logOnError*/);
+  LOG(INFO) << "Injection mode: Initializing libdmv";
+  libdmv_init(false /*cpuOnly*/, true /*logOnError*/);
   return 1;
 }
 
-void suppressLibkinetoLogMessages() {
+void suppresslibdmvLogMessages() {
   SET_LOG_SEVERITY_LEVEL(ERROR);
 }
 

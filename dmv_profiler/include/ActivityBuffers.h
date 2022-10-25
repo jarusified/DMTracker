@@ -4,13 +4,13 @@
 #include <list>
 #include <memory>
 
-#include "libkineto.h"
+#include "libdmv.h"
 #include "CuptiActivityBuffer.h"
 
 namespace DMV_NAMESPACE {
 
 struct ActivityBuffers {
-  std::list<std::unique_ptr<libkineto::CpuTraceBuffer>> cpu;
+  std::list<std::unique_ptr<libdmv::CpuTraceBuffer>> cpu;
   std::unique_ptr<CuptiActivityBufferMap> gpu;
 
   // Add a wrapper object to the underlying struct stored in the buffer

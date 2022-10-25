@@ -48,7 +48,7 @@ enum CUpti_ProfilerReplayMode
  * See : https://docs.nvidia.com/cupti/Cupti/r_main.html#r_profiler
  */
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 // Initialize and configure CUPTI Profiler counters.
 // - Metric names must be provided as string vector.
@@ -234,4 +234,4 @@ void trackCudaKernelLaunch(CUcontext ctx, const char* kernelName);
 
 } // namespace testing
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

@@ -14,7 +14,7 @@
 
 using namespace std::chrono;
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 constexpr milliseconds kProfilerIntervalMsecs(1000);
 
@@ -275,8 +275,8 @@ void ActivityProfilerController::prepareTrace(const Config& config) {
   if (profiler_->isActive()) {
     LOG(WARNING) << "Cancelling current trace request in order to start "
                  << "higher priority synchronous request";
-    if (libkineto::api().client()) {
-      libkineto::api().client()->stop();
+    if (libdmv::api().client()) {
+      libdmv::api().client()->stop();
     }
     profiler_->stopTrace(now);
     profiler_->reset();
@@ -305,4 +305,4 @@ void ActivityProfilerController::addMetadata(
   profiler_->addMetadata(key, value);
 }
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

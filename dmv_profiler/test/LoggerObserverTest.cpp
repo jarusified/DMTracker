@@ -8,11 +8,11 @@
 
 // TODO(T90238193)
 // @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
-#include "include/libkineto.h"
+#include "include/libdmv.h"
 #include "src/Logger.h"
 #include "LoggerCollector.h"
 
-using namespace KINETO_NAMESPACE;
+using namespace DMV_NAMESPACE;
 
 #if !USE_GOOGLE_LOG
 

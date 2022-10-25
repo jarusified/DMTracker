@@ -11,7 +11,7 @@
 #include <fmt/format.h>
 #include <gtest/gtest.h>
 
-using namespace KINETO_NAMESPACE;
+using namespace DMV_NAMESPACE;
 
 TEST(ThreadNameTest, setAndGet) {
   setThreadName("ThreadNameTest");

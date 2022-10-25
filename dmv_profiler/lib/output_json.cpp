@@ -19,9 +19,9 @@
 #include "Logger.h"
 
 using std::endl;
-using namespace libkineto;
+using namespace libdmv;
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 static constexpr int kSchemaVersion = 1;
 static constexpr char kFlowStart = 's';
@@ -29,9 +29,9 @@ static constexpr char kFlowEnd = 'f';
 
 #ifdef __linux__
 static constexpr char kDefaultLogFileFmt[] =
-    "/tmp/libkineto_activities_{}.json";
+    "/tmp/libdmv_activities_{}.json";
 #else
-static constexpr char kDefaultLogFileFmt[] = "libkineto_activities_{}.json";
+static constexpr char kDefaultLogFileFmt[] = "libdmv_activities_{}.json";
 #endif
 
 std::string& ChromeTraceLogger::sanitizeStrForJSON(std::string& value) {
@@ -235,7 +235,7 @@ void ChromeTraceLogger::addIterationMarker(const TraceSpan& span) {
 }
 
 void ChromeTraceLogger::handleGenericInstantEvent(
-    const libkineto::ITraceActivity& op) {
+    const libdmv::ITraceActivity& op) {
   if (!traceOf_) {
     return;
   }
@@ -254,7 +254,7 @@ void ChromeTraceLogger::handleGenericInstantEvent(
 }
 
 void ChromeTraceLogger::handleActivity(
-    const libkineto::ITraceActivity& op) {
+    const libdmv::ITraceActivity& op) {
   if (!traceOf_) {
     return;
   }
@@ -310,7 +310,7 @@ void ChromeTraceLogger::handleActivity(
 }
 
 void ChromeTraceLogger::handleGenericActivity(
-    const libkineto::GenericTraceActivity& op) {
+    const libdmv::GenericTraceActivity& op) {
         handleActivity(op);
 }
 
@@ -418,4 +418,4 @@ void ChromeTraceLogger::finalizeTrace(
   ChromeTraceLogger::finalizeTraceInternal(endTime, metadata);
   UST_LOGGER_MARK_COMPLETED(kPostProcessingStage);
 }
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

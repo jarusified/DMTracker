@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 class Config;
 
@@ -146,4 +146,4 @@ class SampleListener {
   SampleListener() = default;
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

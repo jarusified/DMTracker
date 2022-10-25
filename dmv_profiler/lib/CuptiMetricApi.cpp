@@ -13,7 +13,7 @@
 using namespace std::chrono;
 using std::vector;
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 CUpti_MetricID CuptiMetricApi::idFromName(const std::string& name) {
   CUpti_MetricID metric_id{~0u};
@@ -107,4 +107,4 @@ SampleValue CuptiMetricApi::calculate(
   return SampleValue(-1);
 }
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

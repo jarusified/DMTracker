@@ -12,7 +12,7 @@
 #include <chrono>
 
 using namespace std::chrono;
-using namespace KINETO_NAMESPACE;
+using namespace DMV_NAMESPACE;
 
 class CuptiRangeProfilerConfigTest : public ::testing::Test {
  protected:

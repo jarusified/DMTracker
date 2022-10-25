@@ -5,7 +5,7 @@
 
 #include "cupti_strings.h"
 
-namespace libkineto {
+namespace libdmv {
 
 const char* memcpyKindString(
     CUpti_ActivityMemcpyKind kind) {
@@ -502,4 +502,4 @@ const char* runtimeCbidName(CUpti_CallbackId cbid) {
   return runtimeCbidNames[cbid];
 }
 
-} // namespace libkineto
+} // namespace libdmv

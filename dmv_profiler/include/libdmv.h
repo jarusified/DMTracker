@@ -29,12 +29,12 @@
 #include "ThreadUtil.h"
 
 extern "C" {
-  void suppressLibkinetoLogMessages();
+  void suppresslibdmvLogMessages();
   int InitializeInjection(void);
-  void libkineto_init(bool cpuOnly, bool logOnError);
+  void libdmv_init(bool cpuOnly, bool logOnError);
 }
 
-namespace libkineto {
+namespace libdmv {
 
 class Config;
 class ConfigLoader;
@@ -64,18 +64,18 @@ struct CpuTraceBuffer {
 using ChildActivityProfilerFactory =
   std::function<std::unique_ptr<IActivityProfiler>()>;
 
-class LibkinetoApi {
+class libdmvApi {
  public:
 
-  explicit LibkinetoApi(ConfigLoader& configLoader)
+  explicit libdmvApi(ConfigLoader& configLoader)
       : configLoader_(configLoader) {
   }
 
   // Called by client that supports tracing API.
-  // libkineto can still function without this.
+  // libdmv can still function without this.
   void registerClient(ClientInterface* client);
 
-  // Called by libkineto on init
+  // Called by libdmv on init
   void registerProfiler(std::unique_ptr<ActivityProfilerInterface> profiler) {
     // LOG (INFO) << "Registering profiler";
     activityProfiler_ = std::move(profiler);
@@ -84,7 +84,7 @@ class LibkinetoApi {
 
   ActivityProfilerInterface& activityProfiler() {
     // LOG (INFO) << "Return the pointer";
-    libkineto_init(false, true);
+    libdmv_init(false, true);
     return *activityProfiler_;
   }
 
@@ -114,7 +114,7 @@ class LibkinetoApi {
   }
 
   void suppressLogMessages() {
-    suppressLibkinetoLogMessages();
+    suppresslibdmvLogMessages();
   }
 
   // Provides access to profier configuration manaegement
@@ -143,7 +143,7 @@ class LibkinetoApi {
     childProfilerFactories_.clear();
   }
 
-  // Client is initialized once both it and libkineto has registered
+  // Client is initialized once both it and libdmv has registered
   void initClientIfRegistered();
 
   ConfigLoader& configLoader_;
@@ -156,6 +156,6 @@ class LibkinetoApi {
 };
 
 // Singleton
-LibkinetoApi& api();
+libdmvApi& api();
 
-} // namespace libkineto
+} // namespace libdmv

@@ -3,7 +3,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-def get_libkineto_cupti_srcs(with_api = True):
+def get_libdmv_cupti_srcs(with_api = True):
     return [
         "lib/CudaDeviceProperties.cpp",
         "lib/CuptiActivityApi.cpp",
@@ -19,11 +19,11 @@ def get_libkineto_cupti_srcs(with_api = True):
         "lib/EventProfilerController.cpp",
         "lib/WeakSymbols.cpp",
         "lib/cupti_strings.cpp",
-    ] + (get_libkineto_cpu_only_srcs(with_api))
+    ] + (get_libdmv_cpu_only_srcs(with_api))
 
-def get_libkineto_cpu_only_srcs(with_api = True):
+def get_libdmv_cpu_only_srcs(with_api = True):
     return [
-        "lib/libkineto_api.cpp",
+        "lib/libdmv_api.cpp",
         "lib/AbstractConfig.cpp",
         "lib/CuptiActivityProfiler.cpp",
         "lib/ActivityProfilerController.cpp",
@@ -41,7 +41,7 @@ def get_libkineto_cpu_only_srcs(with_api = True):
         "lib/ThreadUtil.cpp",
     ]
 
-def get_libkineto_public_headers():
+def get_libdmv_public_headers():
     return [
         "include/AbstractConfig.h",
         "include/ActivityProfilerInterface.h",
@@ -55,7 +55,7 @@ def get_libkineto_public_headers():
         "include/ITraceActivity.h",
         "include/TraceSpan.h",
         "include/ThreadUtil.h",
-        "include/libkineto.h",
+        "include/libdmv.h",
         "include/time_since_epoch.h",
     ]
 

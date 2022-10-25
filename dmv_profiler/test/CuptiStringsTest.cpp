@@ -7,7 +7,7 @@
 
 #include "src/cupti_strings.h"
 
-using namespace KINETO_NAMESPACE;
+using namespace DMV_NAMESPACE;
 
 TEST(CuptiStringsTest, Valid) {
   ASSERT_STREQ(

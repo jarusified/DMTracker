@@ -297,7 +297,7 @@ CuptiRangeProfilerInit::CuptiRangeProfilerInit() {
     return;
   }
 
-  // Register the activity profiler instance with libkineto api
+  // Register the activity profiler instance with libdmv api
   api().registerProfilerFactory([&]() {
     return std::make_unique<CuptiRangeProfiler>();
   });

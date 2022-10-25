@@ -14,7 +14,7 @@
 
 #include "Logger.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 static const std::vector<cudaDeviceProp> createDeviceProps() {
   std::vector<cudaDeviceProp> props;
@@ -156,4 +156,4 @@ float kernelOccupancy(
   return occupancy;
 }
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

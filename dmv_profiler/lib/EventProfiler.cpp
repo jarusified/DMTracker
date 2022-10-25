@@ -32,7 +32,7 @@ using std::string;
 using std::unique_ptr;
 using std::vector;
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 static std::mutex& logMutex() {
   static std::mutex instance;
@@ -52,7 +52,7 @@ PercentileList& Event::percentiles(
   for (int i = 0; i < instanceCount; i++) {
     instance_values.push_back(sumInstance(i, slice));
   }
-  return KINETO_NAMESPACE::percentiles(instance_values, pcs);
+  return DMV_NAMESPACE::percentiles(instance_values, pcs);
 }
 
 // Add up all samples for a given domain instance
@@ -501,8 +501,8 @@ bool EventProfiler::initEventsAndMetrics(const Config& config) {
   }
 
   if (VLOG_IS_ON(1)) {
-    printMetrics(LIBKINETO_DBG_STREAM);
-    printSets(LIBKINETO_DBG_STREAM);
+    printMetrics(libdmv_DBG_STREAM);
+    printSets(libdmv_DBG_STREAM);
   }
   return true;
 }
@@ -584,7 +584,7 @@ void EventProfiler::dispatchSamples(
   }
 
   if (VLOG_IS_ON(2)) {
-    printAllSamples(LIBKINETO_DBG_STREAM, device());
+    printAllSamples(libdmv_DBG_STREAM, device());
   }
 }
 
@@ -631,8 +631,8 @@ void EventProfiler::collectSample() {
   }
   sets_[curEnabledSet_].collectSample();
   if (VLOG_IS_ON(1)) {
-    printAllSamples(LIBKINETO_DBG_STREAM, device());
+    printAllSamples(libdmv_DBG_STREAM, device());
   }
 }
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

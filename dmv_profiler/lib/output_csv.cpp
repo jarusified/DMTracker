@@ -15,7 +15,7 @@
 #include "Config.h"
 #include "Logger.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 static void write_header(
     std::ostream& out,
@@ -80,7 +80,7 @@ void EventCSVDbgLogger::update(const Config& config) {
   if (out_ && config.verboseLogLevel() < 0) {
     out_ = nullptr;
   } else if (!out_ && config.verboseLogLevel() >= 0) {
-    out_ = &LIBKINETO_DBG_STREAM;
+    out_ = &libdmv_DBG_STREAM;
   }
   if (config.verboseLogLevel() >= 0) {
     percentiles_.clear();
@@ -88,4 +88,4 @@ void EventCSVDbgLogger::update(const Config& config) {
   }
 }
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

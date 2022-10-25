@@ -16,13 +16,13 @@
 #include "ThreadUtil.h"
 #include "TraceSpan.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
   class Config;
 }
 
-namespace libkineto {
+namespace libdmv {
 
-using namespace KINETO_NAMESPACE;
+using namespace DMV_NAMESPACE;
 
 class ActivityLogger {
  public:
@@ -66,9 +66,9 @@ class ActivityLogger {
   virtual void handleTraceSpan(const TraceSpan& span) = 0;
 
   virtual void handleActivity(
-      const libkineto::ITraceActivity& activity) = 0;
+      const libdmv::ITraceActivity& activity) = 0;
   virtual void handleGenericActivity(
-      const libkineto::GenericTraceActivity& activity) = 0;
+      const libdmv::GenericTraceActivity& activity) = 0;
 
   virtual void handleTraceStart(
       const std::unordered_map<std::string, std::string>& metadata) = 0;
@@ -78,7 +78,7 @@ class ActivityLogger {
   }
 
   virtual void finalizeTrace(
-      const KINETO_NAMESPACE::Config& config,
+      const DMV_NAMESPACE::Config& config,
       std::unique_ptr<ActivityBuffers> buffers,
       int64_t endTime,
       std::unordered_map<std::string, std::vector<std::string>>& metadata) = 0;
@@ -87,4 +87,4 @@ class ActivityLogger {
   ActivityLogger() = default;
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

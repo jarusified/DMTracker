@@ -6,7 +6,7 @@
 #include <iostream>
 #include <filesystem>
 
-#include "libkineto.h"
+#include "libdmv.h"
 #include "main.cuh"
 
 namespace fs = std::filesystem;
@@ -17,12 +17,12 @@ int main() {
   kineto::warmup();
 
   // Kineto config
-  std::set<libkineto::ActivityType> types = {
-      libkineto::ActivityType::CONCURRENT_KERNEL,
-      libkineto::ActivityType::GPU_MEMCPY,
-      libkineto::ActivityType::GPU_MEMSET,
-      libkineto::ActivityType::CUDA_RUNTIME,
-      libkineto::ActivityType::EXTERNAL_CORRELATION,
+  std::set<libdmv::ActivityType> types = {
+      libdmv::ActivityType::CONCURRENT_KERNEL,
+      libdmv::ActivityType::GPU_MEMCPY,
+      libdmv::ActivityType::GPU_MEMSET,
+      libdmv::ActivityType::CUDA_RUNTIME,
+      libdmv::ActivityType::EXTERNAL_CORRELATION,
   };
 
   std::string profiler_config = "ACTIVITIES_WARMUP_PERIOD_SECS=5\n "
@@ -30,8 +30,8 @@ int main() {
                                 "CUPTI_PROFILER_ENABLE_PER_KERNEL=true\n "
                                 "ACTIVITIES_DURATION_SECS=5";
 
-  auto &profiler = libkineto::api().activityProfiler();
-  libkineto::api().initProfilerIfRegistered();
+  auto &profiler = libdmv::api().activityProfiler();
+  libdmv::api().initProfilerIfRegistered();
   profiler.prepareTrace(types, profiler_config);
   auto isActive = profiler.isActive();
 

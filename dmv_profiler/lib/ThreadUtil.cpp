@@ -28,7 +28,7 @@
 #include <iostream>
 #include <string>
 
-namespace libkineto {
+namespace libdmv {
 
 namespace {
 thread_local int32_t _pid = 0;
@@ -205,4 +205,4 @@ std::vector<std::pair<int32_t, std::string>> pidCommandPairsOfAncestors() {
   return pairs;
 }
 
-} // namespace libkineto
+} // namespace libdmv

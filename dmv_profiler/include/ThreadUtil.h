@@ -10,7 +10,7 @@
 #include <utility>
 #include <vector>
 
-namespace libkineto {
+namespace libdmv {
 
 int32_t systemThreadId();
 int32_t threadId();
@@ -24,4 +24,4 @@ std::string processName(int32_t pid);
 // and its parents.
 std::vector<std::pair<int32_t, std::string>> pidCommandPairsOfAncestors();
 
-} // namespace libkineto
+} // namespace libdmv

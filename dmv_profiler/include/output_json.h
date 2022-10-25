@@ -14,16 +14,16 @@
 #include "GenericTraceActivity.h"
 #include "output_base.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
   // Previous declaration of TraceSpan is struct. Must match the same here.
   struct TraceSpan;
 }
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 class Config;
 
-class ChromeTraceLogger : public libkineto::ActivityLogger {
+class ChromeTraceLogger : public libdmv::ActivityLogger {
  public:
   explicit ChromeTraceLogger(const std::string& traceFileName);
 
@@ -87,4 +87,4 @@ class ChromeTraceLogger : public libkineto::ActivityLogger {
   std::ofstream traceOf_;
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

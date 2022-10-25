@@ -2,7 +2,7 @@
 
 #include <functional>
 
-#include <libkineto.h>
+#include <libdmv.h>
 #include <IActivityProfiler.h>
 
 // TODO(T90238193)
@@ -36,7 +36,7 @@ class CuptiRangeProfilerSession : public IActivityProfilerSession {
   void stop() override;
 
   // process trace events with logger
-  void processTrace(libkineto::ActivityLogger& logger) override;
+  void processTrace(libdmv::ActivityLogger& logger) override;
 
   std::unique_ptr<CpuTraceBuffer> getTraceBuffer() override {
     return std::make_unique<CpuTraceBuffer>(std::move(traceBuffer_));
@@ -60,10 +60,10 @@ class CuptiRangeProfilerSession : public IActivityProfilerSession {
 
 
 /* This is a wrapper class that refers to the underlying
- * CuptiRangeProfiler. Using a wrapper libkineto can manage the ownership
+ * CuptiRangeProfiler. Using a wrapper libdmv can manage the ownership
  * of this object independent of the CuptiRangeProfiler itself.
  */
-class CuptiRangeProfiler : public libkineto::IActivityProfiler {
+class CuptiRangeProfiler : public libdmv::IActivityProfiler {
  public:
   explicit CuptiRangeProfiler();
 
@@ -79,15 +79,15 @@ class CuptiRangeProfiler : public libkineto::IActivityProfiler {
 
   // sets up the tracing session and provides control to the
   // the activity profiler session object.
-  std::unique_ptr<libkineto::IActivityProfilerSession> configure(
-      const std::set<libkineto::ActivityType>& activity_types,
+  std::unique_ptr<libdmv::IActivityProfilerSession> configure(
+      const std::set<libdmv::ActivityType>& activity_types,
       const Config& config) override;
 
   // asynchronous version of the above with future timestamp and duration.
-  std::unique_ptr<libkineto::IActivityProfilerSession> configure(
+  std::unique_ptr<libdmv::IActivityProfilerSession> configure(
       int64_t ts_ms,
       int64_t duration_ms,
-      const std::set<libkineto::ActivityType>& activity_types,
+      const std::set<libdmv::ActivityType>& activity_types,
       const Config& config) override;
 
   // hooks to enable configuring the environment before and after the
@@ -105,4 +105,4 @@ struct CuptiRangeProfilerInit {
   bool success = false;
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

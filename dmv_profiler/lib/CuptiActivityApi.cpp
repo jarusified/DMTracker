@@ -13,7 +13,7 @@
 
 using namespace std::chrono;
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 // TODO: do we want this to be configurable?
 // Set to 2MB to avoid constantly creating buffers (espeically for networks
@@ -312,4 +312,4 @@ void CuptiActivityApi::disableCuptiActivities(
 #endif
 }
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

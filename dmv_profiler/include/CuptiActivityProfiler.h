@@ -21,7 +21,7 @@
 
 #include "ThreadUtil.h"
 #include "TraceSpan.h"
-#include "libkineto.h"
+#include "libdmv.h"
 #include "output_base.h"
 #include "GenericTraceActivity.h"
 #include "IActivityProfiler.h"
@@ -144,7 +144,7 @@ class CuptiActivityProfiler {
 
   // Registered with client API to pass CPU trace events over
   void transferCpuTrace(
-      std::unique_ptr<libkineto::CpuTraceBuffer> cpuTrace);
+      std::unique_ptr<libdmv::CpuTraceBuffer> cpuTrace);
 
   const Config& config() {
     return *config_;
@@ -252,7 +252,7 @@ class CuptiActivityProfiler {
 
   // Process a single CPU trace
   void processCpuTrace(
-      libkineto::CpuTraceBuffer& cpuTrace,
+      libdmv::CpuTraceBuffer& cpuTrace,
       ActivityLogger& logger);
 
   // Create resource names for streams
@@ -272,7 +272,7 @@ class CuptiActivityProfiler {
 
   // Returns true if net name is to be tracked for a specified number of
   // iterations.
-  bool iterationTargetMatch(libkineto::CpuTraceBuffer& trace);
+  bool iterationTargetMatch(libdmv::CpuTraceBuffer& trace);
 
   // net name to id
   int netId(const std::string& netName);

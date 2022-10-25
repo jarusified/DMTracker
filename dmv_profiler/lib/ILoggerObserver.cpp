@@ -12,7 +12,7 @@
 #include <array>
 #include <fmt/format.h>
 
-namespace libkineto {
+namespace libdmv {
 
 struct LoggerTypeName {
   constexpr LoggerTypeName(const char* n, LoggerOutputType t) : name(n), type(t) {};
@@ -51,7 +51,7 @@ LoggerOutputType toLoggerOutputType(const std::string& str) {
   throw std::invalid_argument(fmt::format("Invalid activity type: {}", str));
 }
 
-} // namespace libkineto
+} // namespace libdmv
 
 
 #endif // !USE_GOOGLE_LOG

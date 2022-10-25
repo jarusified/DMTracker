@@ -3,19 +3,19 @@
 // This source code is licensed under the BSD-style license found in the
 // LICENSE file in the root directory of this source tree.
 
-#include "libkineto.h"
+#include "libdmv.h"
 
 #include "ConfigLoader.h"
 #include "ThreadUtil.h"
 
-namespace libkineto {
+namespace libdmv {
 
-LibkinetoApi& api() {
-  static LibkinetoApi instance(ConfigLoader::instance());
+libdmvApi& api() {
+  static libdmvApi instance(ConfigLoader::instance());
   return instance;
 }
 
-void LibkinetoApi::initClientIfRegistered() {
+void libdmvApi::initClientIfRegistered() {
   if (client_) {
     if (clientRegisterThread_ != threadId()) {
       fprintf(
@@ -30,7 +30,7 @@ void LibkinetoApi::initClientIfRegistered() {
   }
 }
 
-void LibkinetoApi::registerClient(ClientInterface* client) {
+void libdmvApi::registerClient(ClientInterface* client) {
   client_ = client;
   if (client && activityProfiler_) {
     // Can initialize straight away
@@ -41,4 +41,4 @@ void LibkinetoApi::registerClient(ClientInterface* client) {
   clientRegisterThread_ = threadId();
 }
 
-} // namespace libkineto
+} // namespace libdmv

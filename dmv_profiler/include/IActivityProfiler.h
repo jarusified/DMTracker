@@ -18,9 +18,9 @@
  * and combine together events from multiple such activity profilers.
  */
 
-namespace libkineto {
+namespace libdmv {
 
-using namespace KINETO_NAMESPACE;
+using namespace DMV_NAMESPACE;
 struct CpuTraceBuffer;
 
 #ifdef _MSC_VER
@@ -105,4 +105,4 @@ class IActivityProfiler {
       const Config& config) = 0;
 };
 
-} // namespace libkineto
+} // namespace libdmv

@@ -10,7 +10,7 @@
 #include <time.h>
 
 using namespace std::chrono;
-using namespace KINETO_NAMESPACE;
+using namespace DMV_NAMESPACE;
 
 TEST(PercentileTest, Create) {
   PercentileList pct = {{10, SampleValue(0)},

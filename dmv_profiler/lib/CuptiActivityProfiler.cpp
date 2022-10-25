@@ -40,10 +40,10 @@
 #include "ThreadUtil.h"
 
 using namespace std::chrono;
-using namespace libkineto;
+using namespace libdmv;
 using std::string;
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 ConfigDerivedState::ConfigDerivedState(const Config& config) {
   profileActivityTypes_ = config.selectedActivityTypes();
@@ -110,7 +110,7 @@ bool ConfigDerivedState::isCollectionDone(
 }
 
 void CuptiActivityProfiler::transferCpuTrace(
-    std::unique_ptr<libkineto::CpuTraceBuffer> cpuTrace) {
+    std::unique_ptr<libdmv::CpuTraceBuffer> cpuTrace) {
   std::lock_guard<std::mutex> guard(mutex_);
   const string& trace_name = cpuTrace->span.name;
   if (currentRunloopState_ != RunloopState::CollectTrace &&
@@ -141,7 +141,7 @@ CuptiActivityProfiler::CuptiActivityProfiler(CuptiActivityApi& cupti, bool cpuOn
 
 #ifdef HAS_CUPTI
     // TODO (SURAJ) Fix the linking issue with isGpuAvailable.
-    // if (libkineto::isGpuAvailable()) {
+    // if (libdmv::isGpuAvailable()) {
       logCudaVersions();
     // }
 #endif
@@ -225,7 +225,7 @@ CuptiActivityProfiler::CpuGpuSpanPair& CuptiActivityProfiler::recordTraceSpan(
 }
 
 void CuptiActivityProfiler::processCpuTrace(
-    libkineto::CpuTraceBuffer& cpuTrace,
+    libdmv::CpuTraceBuffer& cpuTrace,
     ActivityLogger& logger) {
   if (cpuTrace.activities.size() == 0) {
     LOG(WARNING) << "CPU trace is empty!";
@@ -267,8 +267,8 @@ inline void CuptiActivityProfiler::handleCorrelationActivity(
 #endif // HAS_CUPTI
 
 static GenericTraceActivity createUserGpuSpan(
-    const libkineto::ITraceActivity& cpuTraceActivity,
-    const libkineto::ITraceActivity& gpuTraceActivity) {
+    const libdmv::ITraceActivity& cpuTraceActivity,
+    const libdmv::ITraceActivity& gpuTraceActivity) {
   GenericTraceActivity res(
       *cpuTraceActivity.traceSpan(),
       ActivityType::GPU_USER_ANNOTATION,
@@ -575,9 +575,9 @@ void CuptiActivityProfiler::configure(
   }
 
   if (LOG_IS_ON(INFO)) {
-    config_->printActivityProfilerConfig(LIBKINETO_DBG_STREAM);
+    config_->printActivityProfilerConfig(libdmv_DBG_STREAM);
   }
-  if (!cpuOnly_ && !libkineto::api().client()) {
+  if (!cpuOnly_ && !libdmv::api().client()) {
     if (derivedConfig_->isProfilingByIteration()) {
       LOG(INFO) << "GPU-only tracing for "
                 << config_->activitiesRunIterations() << " iterations";
@@ -627,8 +627,8 @@ void CuptiActivityProfiler::configure(
     configureChildProfilers();
   }
 
-  if (libkineto::api().client()) {
-    libkineto::api().client()->warmup(config_->isOpInputsCollectionEnabled());
+  if (libdmv::api().client()) {
+    libdmv::api().client()->warmup(config_->isOpInputsCollectionEnabled());
   }
 
   if (derivedConfig_->isProfilingByIteration()) {
@@ -651,7 +651,7 @@ void CuptiActivityProfiler::configure(
 }
 
 void CuptiActivityProfiler::startTraceInternal(const time_point<system_clock>& now) {
-  captureWindowStartTime_ = libkineto::timeSinceEpoch(now);
+  captureWindowStartTime_ = libdmv::timeSinceEpoch(now);
   VLOG(0) << "Warmup -> CollectTrace";
   for (auto& session : sessions_){
     LOG(INFO) << "Starting child profiler session";
@@ -661,7 +661,7 @@ void CuptiActivityProfiler::startTraceInternal(const time_point<system_clock>& n
 }
 
 void CuptiActivityProfiler::stopTraceInternal(const time_point<system_clock>& now) {
-  captureWindowEndTime_ = libkineto::timeSinceEpoch(now);
+  captureWindowEndTime_ = libdmv::timeSinceEpoch(now);
 #if defined(HAS_CUPTI) || defined(HAS_ROCTRACER)
   if (!cpuOnly_) {
     time_point<system_clock> timestamp;
@@ -750,8 +750,8 @@ const time_point<system_clock> CuptiActivityProfiler::performRunLoopStep(
           LOG(INFO) << "Tracing started";
         }
         startTrace(now);
-        if (libkineto::api().client()) {
-          libkineto::api().client()->start();
+        if (libdmv::api().client()) {
+          libdmv::api().client()->start();
         }
         if (nextWakeupTime > derivedConfig_->profileEndTime()) {
           new_wakeup_time = derivedConfig_->profileEndTime();
@@ -776,8 +776,8 @@ const time_point<system_clock> CuptiActivityProfiler::performRunLoopStep(
         VLOG_IF(1, currentIter > 0) << "This state change was invoked by application's step() call";
 
         // FIXME: Need to communicate reason for stopping on errors
-        if (libkineto::api().client()) {
-          libkineto::api().client()->stop();
+        if (libdmv::api().client()) {
+          libdmv::api().client()->stop();
         }
         std::lock_guard<std::mutex> guard(mutex_);
         stopTraceInternal(now);
@@ -902,4 +902,4 @@ void CuptiActivityProfiler::resetTraceData() {
 }
 
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

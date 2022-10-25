@@ -16,9 +16,9 @@
 // @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
 #include "ILoggerObserver.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
-using namespace libkineto;
+using namespace libdmv;
 
 class LoggerCollector : public ILoggerObserver {
  public:
@@ -72,6 +72,6 @@ class LoggerCollector : public ILoggerObserver {
 
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE
 
 #endif // !USE_GOOGLE_LOG

@@ -10,7 +10,7 @@
 #include <ostream>
 #include <set>
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 class EventCSVLogger : public SampleListener {
  public:
@@ -39,4 +39,4 @@ class EventCSVDbgLogger : public EventCSVLogger {
   void update(const Config& config) override;
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

@@ -13,7 +13,7 @@
 #include <fcntl.h>
 #endif
 
-#include "include/libkineto.h"
+#include "include/libdmv.h"
 #include "include/Config.h"
 #include "src/ActivityTrace.h"
 #include "src/CuptiRangeProfilerConfig.h"
@@ -25,7 +25,7 @@
 
 #include "test/CuptiRangeProfilerTestUtil.h"
 
-using namespace KINETO_NAMESPACE;
+using namespace DMV_NAMESPACE;
 
 #if HAS_CUPTI_RANGE_PROFILER
 
@@ -41,7 +41,7 @@ static std::vector<std::string> kCtx1Kernels = {
   "mercury", "venus", "earth"};
 
 static auto getActivityTypes() {
-  static std::set activity_types_{libkineto::ActivityType::CUDA_PROFILER_RANGE};
+  static std::set activity_types_{libdmv::ActivityType::CUDA_PROFILER_RANGE};
   return activity_types_;
 }
 
@@ -158,7 +158,7 @@ void saveTrace(ActivityTrace& /*trace*/) {
   // TODO seems to be hitting a memory bug run with ASAN
 #if 0
 //#ifdef __linux__
-  char filename[] = "/tmp/libkineto_testXXXXXX.json";
+  char filename[] = "/tmp/libdmv_testXXXXXX.json";
   mkstemps(filename, 5);
   trace.save(filename);
   // Check that the expected file was written and that it has some content

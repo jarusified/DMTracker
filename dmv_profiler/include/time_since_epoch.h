@@ -7,7 +7,7 @@
 
 #include <chrono>
 
-namespace libkineto {
+namespace libdmv {
 
 template <class ClockT>
 inline int64_t timeSinceEpoch(
@@ -17,4 +17,4 @@ inline int64_t timeSinceEpoch(
         .count();
 }
 
-} // namespace libkineto
+} // namespace libdmv

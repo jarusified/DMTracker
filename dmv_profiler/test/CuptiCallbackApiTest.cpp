@@ -12,8 +12,8 @@
 #include <thread>
 
 using namespace std::chrono;
-using namespace KINETO_NAMESPACE;
-using namespace libkineto;
+using namespace DMV_NAMESPACE;
+using namespace libdmv;
 
 const size_t some_data = 42;
 

@@ -9,7 +9,7 @@
 #include <cuda_runtime.h>
 #include <mutex>
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 bool gpuAvailable = false;
 
@@ -26,4 +26,4 @@ bool isGpuAvailable() {
   return gpuAvailable;
 }
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE
