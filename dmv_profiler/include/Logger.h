@@ -4,25 +4,6 @@
 
 #define LIBDMV_DBG_STREAM std::cerr
 
-#define USE_GOOGLE_LOG 0
-
-#if USE_GOOGLE_LOG
-
-#include <glog/logging.h>
-
-#define SET_LOG_SEVERITY_LEVEL(level)
-#define SET_LOG_VERBOSITY_LEVEL(level, modules)
-#define LOGGER_OBSERVER_ADD_DEVICE(device)
-#define LOGGER_OBSERVER_ADD_EVENT_COUNT(count)
-#define LOGGER_OBSERVER_SET_TRACE_DURATION_MS(duration)
-#define LOGGER_OBSERVER_SET_TRACE_ID(tid)
-#define LOGGER_OBSERVER_SET_GROUP_TRACE_ID(gtid)
-#define LOGGER_OBSERVER_ADD_DESTINATION(dest)
-#define LOGGER_OBSERVER_SET_TRIGGER_ON_DEMAND()
-#define LOGGER_OBSERVER_ADD_METADATA(key, value)
-#define UST_LOGGER_MARK_COMPLETED(stage)
-
-#else // !USE_GOOGLE_LOG
 #include <stdio.h>
 #include <atomic>
 #include <map>
@@ -248,5 +229,3 @@ struct __to_constant__ {
 // UST Logger Semantics to describe when a stage is complete.
 #define UST_LOGGER_MARK_COMPLETED(stage) \
   LOG(libdmv::LoggerOutputType::STAGE) << "Completed Stage: " << stage
-
-#endif // USE_GOOGLE_LOG

@@ -403,9 +403,7 @@ class CuptiActivityProfiler {
   uint32_t resourceOverheadCount_;
 
   // LoggerCollector to collect all LOGs during the trace
-#if !USE_GOOGLE_LOG
-  std::unique_ptr<LoggerCollector> loggerCollectorMetadata_;
-#endif // !USE_GOOGLE_LOG
+    std::unique_ptr<LoggerCollector> loggerCollectorMetadata_;
 };
 
 } // namespace libdmv

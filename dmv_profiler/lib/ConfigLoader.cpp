@@ -169,9 +169,7 @@ ConfigLoader::~ConfigLoader() {
     }
     updateThread_->join();
   }
-#if !USE_GOOGLE_LOG
   Logger::clearLoggerObservers();
-#endif // !USE_GOOGLE_LOG
 }
 
 void ConfigLoader::handleOnDemandSignal() {
