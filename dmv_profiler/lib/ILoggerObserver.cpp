@@ -1,7 +1,5 @@
 #include "ILoggerObserver.h"
 
-#if !USE_GOOGLE_LOG
-
 #include <array>
 #include <fmt/format.h>
 
@@ -45,6 +43,3 @@ LoggerOutputType toLoggerOutputType(const std::string& str) {
 }
 
 } // namespace libdmv
-
-
-#endif // !USE_GOOGLE_LOG

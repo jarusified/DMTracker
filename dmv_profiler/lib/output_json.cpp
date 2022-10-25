@@ -376,7 +376,6 @@ void ChromeTraceLogger::finalizeTraceInternal(
   ],)JSON",
       endTime);
 
-#if !USE_GOOGLE_LOG
   std::unordered_map<std::string, std::string> PreparedMetadata;
   for (const auto& kv : metadata) {
     // Skip empty log buckets, ex. skip ERROR if its empty.
@@ -399,8 +398,7 @@ void ChromeTraceLogger::finalizeTraceInternal(
     }
   }
   metadataToJSON(PreparedMetadata);
-#endif // !USE_GOOGLE_LOG
-
+  
   // Putting this here because the last entry MUST not end with a comma.
   traceOf_ << fmt::format(R"JSON(
   "traceName": "{}"

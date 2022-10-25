@@ -1,9 +1,6 @@
 #include "Logger.h"
 #include "ILoggerObserver.h"
 
-#define USE_GOOGLE_LOG 0
-
-#ifndef USE_GOOGLE_LOG
 
 #include <chrono>
 #include <cstring>
@@ -144,5 +141,3 @@ void Logger::addLoggerObserverAddMetadata(const std::string& key, const std::str
 }
 
 } // namespace libdmv
-
-#endif // USE_GOOGLE_LOG

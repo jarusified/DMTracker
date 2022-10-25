@@ -14,8 +14,6 @@
 
 using namespace DMV_NAMESPACE;
 
-#if !USE_GOOGLE_LOG
-
 constexpr char InfoTestStr[] = "Checking LOG(INFO)";
 constexpr char WarningTestStr[] = "Checking LOG(WARNING)";
 constexpr char ErrorTestStr[] = "Checking LOG(ERROR)";
@@ -90,8 +88,6 @@ TEST(LoggerObserverTest, FourCollectorObserver) {
   Logger::removeLoggerObserver(lc3.get());
   Logger::removeLoggerObserver(lc4.get());
 }
-
-#endif // !USE_GOOGLE_LOG
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);

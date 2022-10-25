@@ -5,15 +5,11 @@
 
 #pragma once
 
-#if !USE_GOOGLE_LOG
-
 #include <atomic>
 #include <map>
 #include <set>
 #include <vector>
 
-// TODO(T90238193)
-// @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
 #include "ILoggerObserver.h"
 
 namespace libdmv {
@@ -73,5 +69,3 @@ class LoggerCollector : public ILoggerObserver {
 };
 
 } // namespace libdmv
-
-#endif // !USE_GOOGLE_LOG

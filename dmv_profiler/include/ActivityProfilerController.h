@@ -27,10 +27,7 @@ class ActivityProfilerController : public ConfigLoader::ConfigHandler {
 
   ~ActivityProfilerController();
 
-#if !USE_GOOGLE_LOG
-  static void setLoggerCollectorFactory(
-      std::function<std::unique_ptr<LoggerCollector>()> factory);
-#endif // !USE_GOOGLE_LOG
+  static void setLoggerCollectorFactory(std::function<std::unique_ptr<LoggerCollector>()> factory);
 
   static void addLoggerFactory(
       const std::string& protocol,
