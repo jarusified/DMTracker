@@ -24,8 +24,8 @@ ScopeExit<T> makeScopeExit(T t) {
 };
 
 // Add a level of indirection so __LINE__ is expanded
-#define __kINETO_CONCAT(name, line) name##line
-#define ANON_VAR(name, line) __kINETO_CONCAT(name, line)
+#define __DMV_CONCAT(name, line) name##line
+#define ANON_VAR(name, line) __DMV_CONCAT(name, line)
 
 #define SCOPE_EXIT(func)                                      \
   const auto ANON_VAR(SCOPE_BLOCK, __LINE__) =                \

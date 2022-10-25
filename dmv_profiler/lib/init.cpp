@@ -35,7 +35,7 @@ static void initProfilers(
     initialized = true;
     VLOG(0) << "libdmv profilers activated";
   }
-  if (getenv("KINETO_DISABLE_EVENT_PROFILER") != nullptr) {
+  if (getenv("DMV_DISABLE_EVENT_PROFILER") != nullptr) {
     VLOG(0) << "Event profiler disabled via env var";
   } else {
     ConfigLoader& config_loader = libdmv::api().configLoader();

@@ -35,6 +35,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+
 #include "ILoggerObserver.h"
 
 #ifdef _MSC_VER

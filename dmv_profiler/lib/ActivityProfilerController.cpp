@@ -163,7 +163,7 @@ bool ActivityProfilerController::shouldActivateIterationConfig(
 }
 
 void ActivityProfilerController::profilerLoop() {
-  setThreadName("dmv Activity Profiler");
+  setThreadName("DMV Activity Profiler");
   VLOG(0) << "Entering activity profiler loop";
 
   auto now = system_clock::now();
