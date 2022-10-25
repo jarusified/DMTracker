@@ -17,8 +17,6 @@
 
 namespace libdmv {
 
-using namespace libdmv;
-
 #ifndef HAS_CUPTI
 using CUpti_Activity = void;
 #endif

@@ -16,7 +16,7 @@ static const std::vector<cudaDeviceProp> createDeviceProps() {
   cudaError_t error_id = cudaGetDeviceCount(&device_count);
   // Return empty vector if error.
   if (error_id != cudaSuccess) {
-    LOG(ERROR) << "cudaGetDeviceCount failed with code " << error_id;
+        LOG(ERROR) << "cudaGetDeviceCount failed with code " << error_id;
     return {};
   }
   VLOG(0) << "Device count is " << device_count;

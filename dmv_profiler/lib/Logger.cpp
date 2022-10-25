@@ -1,6 +1,8 @@
 #include "Logger.h"
 #include "ILoggerObserver.h"
 
+#define USE_GOOGLE_LOG 0
+
 #ifndef USE_GOOGLE_LOG
 
 #include <chrono>

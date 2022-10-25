@@ -12,7 +12,7 @@
 
 #include "CuptiCallbackApiMock.h"
 
-using namespace libdmv;
+// using namespace libdmv;
 
 namespace libdmv {
 

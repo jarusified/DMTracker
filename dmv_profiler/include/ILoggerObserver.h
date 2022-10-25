@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <string>
@@ -11,8 +6,6 @@
 constexpr char kWarmUpStage[] = "Warm Up";
 constexpr char kCollectionStage[] = "Collection";
 constexpr char kPostProcessingStage[] = "Post Processing";
-
-#ifndef USE_GOOGLE_LOG
 
 #include <map>
 #include <vector>
@@ -51,5 +44,3 @@ class ILoggerObserver {
 };
 
 } // namespace libdmv
-
-#endif // USE_GOOGLE_LOG
