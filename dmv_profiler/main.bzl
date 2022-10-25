@@ -1,10 +1,21 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree.
-
 def get_libdmv_cupti_srcs(with_api = True):
     return [
+        "lib/libdmv_api.cpp",
+        "lib/AbstractConfig.cpp",
+        "lib/CuptiActivityProfiler.cpp",
+        "lib/ActivityProfilerController.cpp",
+        "lib/ActivityProfilerProxy.cpp",
+        "lib/ActivityType.cpp",
+        "lib/Config.cpp",
+        "lib/ConfigLoader.cpp",
+        "lib/CuptiActivityApi.cpp",
+        "lib/GenericTraceActivity.cpp",
+        "lib/ILoggerObserver.cpp",
+        "lib/Logger.cpp",
+        "lib/init.cpp",
+        "lib/output_csv.cpp",
+        "lib/output_json.cpp",
+        "lib/ThreadUtil.cpp",
         "lib/CudaDeviceProperties.cpp",
         "lib/CuptiActivityApi.cpp",
         "lib/CuptiActivityPlatform.cpp",

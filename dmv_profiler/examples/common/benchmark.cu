@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
@@ -260,7 +259,9 @@ int main(int argc, char *argv[])
         };
         auto metricsConfigStr = fmt::format("CUPTI_PROFILER_METRICS = {}", fmt::join(metrics, ","));
 
-        std::string profiler_config = fmt::format("ACTIVITIES_WARMUP_PERIOD_SECS=0\n {}\n CUPTI_PROFILER_ENABLE_PER_KERNEL=true \n ACTIVITIES_DURATION_SECS=0", metricsConfigStr);
+//        std::string profiler_config = fmt::format("ACTIVITIES_WARMUP_PERIOD_SECS=0\n {}\n CUPTI_PROFILER_ENABLE_PER_KERNEL=true \n ACTIVITIES_DURATION_SECS=0", metricsConfigStr);
+
+	std::string profiler_config = "";
 
         auto &profiler = libdmv::api().activityProfiler();
         libdmv::api().initProfilerIfRegistered();
