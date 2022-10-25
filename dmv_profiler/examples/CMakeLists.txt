@@ -24,21 +24,20 @@ message(STATUS "CUPTI include dir: ${CUDA_TARGETS_INCLUDE_DIR}")
 find_library(CUPTI_LIBRARY cupti HINTS "${CUDA_TARGETS_LIB_DIR}")
 find_library(CUDA_LIBRARY cudart HINTS "${CUDA_TARGETS_LIB_DIR}")
 
-message(STATUS "Kineto source dir: ${KINETO_SOURCE_DIR}")
+message(STATUS "DMV source dir: ${DMV_SOURCE_DIR}")
 
-set(KINETO_INCLUDE_DIR ${KINETO_SOURCE_DIR}/include)
-message(STATUS "Kineto include dir: ${KINETO_INCLUDE_DIR}")
+set(DMV_INCLUDE_DIR ${DMV_SOURCE_DIR}/include)
+message(STATUS "DMV include dir: ${DMV_INCLUDE_DIR}")
 
-set(KINETO_LIB_PATH "${KINETO_SOURCE_DIR}/libkineto.a")
-message(STATUS ${CMAKE_STATIC_LIBRARY_PREFIX}kineto${CMAKE_STATIC_LIBRARY_SUFFIX})
-message(STATUS ${KINETO_SOURCE_DIR})
+message(STATUS ${CMAKE_STATIC_LIBRARY_PREFIX} ${CMAKE_STATIC_LIBRARY_SUFFIX})
+message(STATUS ${DMV_SOURCE_DIR})
 
-add_library(KINETO_LIBRARY STATIC IMPORTED)
-set_target_properties(KINETO_LIBRARY PROPERTIES 
-  IMPORTED_LOCATION "${KINETO_SOURCE_DIR}/libkineto.a")
+add_library(DMV_LIBRARY STATIC IMPORTED)
+set_target_properties(DMV_LIBRARY PROPERTIES 
+  IMPORTED_LOCATION "${DMV_SOURCE_DIR}/libdmv.a")
 
-if(NOT ${KINETO_LIBRARY})
-  message(FATAL_ERROR "Kineto library not found")
+if(NOT ${DMV_LIBRARY})
+  message(FATAL_ERROR "DMV library not found")
 endif()
 
 
