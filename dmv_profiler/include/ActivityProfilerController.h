@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <atomic>
@@ -11,8 +6,6 @@
 #include <mutex>
 #include <thread>
 
-// TODO(T90238193)
-// @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
 #include "ActivityLoggerFactory.h"
 #include "CuptiActivityProfiler.h"
 #include "ActivityProfilerInterface.h"
@@ -21,7 +14,7 @@
 #include "CuptiActivityApi.h"
 #include "LoggerCollector.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 class Config;
 
@@ -92,4 +85,4 @@ class ActivityProfilerController : public ConfigLoader::ConfigHandler {
   ConfigLoader& configLoader_;
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

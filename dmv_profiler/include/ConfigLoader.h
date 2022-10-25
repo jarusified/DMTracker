@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <algorithm>
@@ -15,17 +10,16 @@
 
 #include "Config.h"
 
-// TODO(T90238193)
-// @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
+
 #include "ILoggerObserver.h"
 
-namespace libkineto {
-  class LibkinetoApi;
+namespace libdmv {
+  class LibDmvApi;
 }
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
-using namespace libkineto;
+using namespace libdmv;
 class DaemonConfigLoader;
 
 class ConfigLoader {
@@ -142,4 +136,4 @@ class ConfigLoader {
   std::atomic_bool onDemandSignal_{false};
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

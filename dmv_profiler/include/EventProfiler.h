@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <algorithm>
@@ -21,7 +16,7 @@
 #include "CuptiMetricApi.h"
 #include "SampleListener.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 // Helper function for computing percentiles (nearest-rank).
 // Modifies the input.
@@ -341,4 +336,4 @@ class EventProfiler {
   const std::vector<std::unique_ptr<SampleListener>>& onDemandLoggers_;
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

@@ -1,9 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
-
 #pragma once
 
 #include <stdint.h>
@@ -11,7 +5,7 @@
 
 #include <cupti.h>
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 int smCount(uint32_t deviceId);
 float blocksPerSm(const CUpti_ActivityKernel4& kernel);
@@ -32,4 +26,4 @@ float kernelOccupancy(
 // Return compute properties for each device as a json string
 const std::string& devicePropertiesJson();
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

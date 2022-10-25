@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include "AbstractConfig.h"
@@ -15,9 +10,9 @@
 #include <string>
 #include <vector>
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
-using namespace libkineto;
+using namespace libdmv;
 
 class Config : public AbstractConfig {
  public:
@@ -428,4 +423,4 @@ class Config : public AbstractConfig {
   std::string requestGroupTraceID_;
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

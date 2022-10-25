@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <stdlib.h>
@@ -15,7 +10,7 @@
 
 #include "ITraceActivity.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 class CuptiActivityBuffer {
  public:
@@ -51,4 +46,4 @@ class CuptiActivityBuffer {
 using CuptiActivityBufferMap =
     std::map<uint8_t*, std::unique_ptr<CuptiActivityBuffer>>;
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

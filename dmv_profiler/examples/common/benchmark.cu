@@ -219,7 +219,7 @@ int main(int argc, char *argv[])
         bool properties = op.getOptionBool("properties");
         bool quiet = op.getOptionBool("quiet");
         string metricsfile = op.getOptionString("metricsFile");
-	string traceFile = op.getOptionString("traceFile");
+	    string traceFile = op.getOptionString("traceFile");
 
         int device;
         device = op.getOptionVecInt("device")[0];
@@ -253,8 +253,15 @@ int main(int argc, char *argv[])
             libkineto::ActivityType::EXTERNAL_CORRELATION,
         };
 
+        std::vector<std::string> metrics = {
+            "kineto__cuda_core_flops",
+            "sm__inst_executed.sum",
+            "l1tex__data_bank_conflicts_pipe_lsu.sum",
+        };
+        auto metricsConfigStr = fmt::format("CUPTI_PROFILER_METRICS = {}", fmt::join(metrics, ","));
+
         std::string profiler_config = "ACTIVITIES_WARMUP_PERIOD_SECS=0\n "
-                                    "CUPTI_PROFILER_METRICS=kineto__cuda_core_flops\n "
+                                    metricsConfigStr
                                     "CUPTI_PROFILER_ENABLE_PER_KERNEL=true\n "
                                     "ACTIVITIES_DURATION_SECS=0";
 

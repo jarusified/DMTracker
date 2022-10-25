@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <atomic>
@@ -19,9 +14,6 @@
 #include <unordered_set>
 #include <vector>
 
-// TODO(T90238193)
-// @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
-
 #ifdef HAS_CUPTI
 #include <cupti.h>
 #include "CuptiActivity.h"
@@ -35,7 +27,7 @@
 #include "IActivityProfiler.h"
 #include "LoggerCollector.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 class Config;
 class CuptiActivityApi;
@@ -416,4 +408,4 @@ class CuptiActivityProfiler {
 #endif // !USE_GOOGLE_LOG
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

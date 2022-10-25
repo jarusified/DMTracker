@@ -1,19 +1,12 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <string>
 #include <vector>
 #include <fmt/format.h>
 
-// TODO(T90238193)
-// @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
 #include "Logger.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 struct CuptiRangeMeasurement {
   std::string rangeName;
@@ -71,4 +64,4 @@ CuptiProfilerResult evalMetricValues(
 
 
 } // namespace nvperf
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

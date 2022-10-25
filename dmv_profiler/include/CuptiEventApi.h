@@ -1,15 +1,10 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <cupti.h>
 #include <queue>
 #include <string>
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 // C++ interface to CUPTI Events C API.
 // Virtual methods are here mainly to allow easier testing.
@@ -49,4 +44,4 @@ class CuptiEventApi {
   CUdevice device_;
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

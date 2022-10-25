@@ -11,14 +11,11 @@
 #include <unordered_set>
 #include <utility>
 
-// TODO(T90238193)
-// @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
 #include "output_base.h"
 #include "CuptiRangeProfiler.h"
 #include "CuptiRangeProfilerConfig.h"
-#include "Demangle.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 const ActivityType kProfActivityType = ActivityType::CUDA_PROFILER_RANGE;
 const std::set<ActivityType> kSupportedActivities{kProfActivityType};
@@ -167,7 +164,7 @@ void CuptiRangeProfilerSession::addRangeEvents(
         traceBuffer_.span,
         kProfActivityType,
         use_kernel_as_range ?
-          demangle(profiler->getKernelNames()[ridx]) :
+          profiler->getKernelNames()[ridx]:
           measurement.rangeName
     );
     auto& event = activities.back();
@@ -312,4 +309,4 @@ CuptiRangeProfilerInit::~CuptiRangeProfilerInit() {
   }
 }
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

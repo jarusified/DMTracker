@@ -1,14 +1,7 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <cupti.h>
 
-// TODO(T90238193)
-// @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
 #include "ITraceActivity.h"
 #include "GenericTraceActivity.h"
 #include "CuptiActivityPlatform.h"
@@ -16,13 +9,13 @@
 #include "ThreadUtil.h"
 #include "cupti_strings.h"
 
-namespace libkineto {
+namespace libdmv {
   class ActivityLogger;
 }
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
-using namespace libkineto;
+using namespace libdmv;
 struct TraceSpan;
 
 // These classes wrap the various CUPTI activity types
@@ -118,4 +111,4 @@ struct GpuActivity : public CuptiActivity<T> {
   const T& raw() const {return CuptiActivity<T>::raw();}
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

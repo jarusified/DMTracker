@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 
@@ -12,7 +7,7 @@
 #include "libkineto.h"
 #include "CuptiActivityBuffer.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 struct ActivityBuffers {
   std::list<std::unique_ptr<libkineto::CpuTraceBuffer>> cpu;
@@ -29,4 +24,4 @@ struct ActivityBuffers {
   std::vector<std::unique_ptr<const ITraceActivity>> wrappers_;
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

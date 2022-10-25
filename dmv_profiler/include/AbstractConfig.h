@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <chrono>
@@ -11,7 +6,7 @@
 #include <string>
 #include <vector>
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 class AbstractConfig {
  public:
@@ -113,4 +108,4 @@ class AbstractConfig {
   std::map<std::string, AbstractConfig*> featureConfigs_{};
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

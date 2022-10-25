@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <memory>
@@ -14,7 +9,7 @@
 #include "ActivityTraceInterface.h"
 #include "IActivityProfiler.h"
 
-namespace libkineto {
+namespace libdmv {
 
 class ActivityProfilerController;
 struct CpuTraceBuffer;
@@ -91,4 +86,4 @@ class ActivityProfilerInterface {
       std::unique_ptr<IActivityProfiler> profiler) {}
 };
 
-} // namespace libkineto
+} // namespace libdmv

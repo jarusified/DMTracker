@@ -9,16 +9,15 @@
 #include <fmt/format.h>
 
 #include "CudaDeviceProperties.h"
-#include "Demangle.h"
 #include "output_base.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 using namespace libkineto;
 
 template<>
 inline const std::string GpuActivity<CUpti_ActivityKernel4>::name() const {
-  return demangle(raw().name);
+  return raw().name;
 }
 
 template<>
@@ -189,4 +188,4 @@ inline const std::string GpuActivity<T>::metadataJson() const {
   return "";
 }
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

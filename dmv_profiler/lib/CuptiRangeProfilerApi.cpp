@@ -18,7 +18,6 @@
 
 #include "time_since_epoch.h"
 #include "Logger.h"
-#include "Demangle.h"
 
 // TODO(T90238193)
 // @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
@@ -602,7 +601,7 @@ CuptiProfilerResult CuptiRBProfilerSession::evaluateMetrics(
   LOG(INFO) << "Total kernels logged = " << kernelNames_.size();
   if (verbose) {
     for (const auto& kernel : kernelNames_) {
-      std::cout << demangle(kernel) << std::endl;
+      std::cout << kernel << std::endl;
     }
     LOG(INFO) << "Profiler Range data : ";
   }

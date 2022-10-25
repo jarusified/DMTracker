@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <atomic>
@@ -19,9 +14,9 @@
 // @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
 #include "CuptiCallbackApiMock.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
-using namespace libkineto;
+using namespace libdmv;
 
 
 /* CuptiCallbackApi : Provides an abstraction over CUPTI callback
@@ -130,4 +125,4 @@ class CuptiCallbackApi {
 #endif
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

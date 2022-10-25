@@ -61,9 +61,7 @@ class nvmlClass {
     }
 
     ~nvmlClass( ) {
-
         NVML_RT_CALL( nvmlShutdown( ) );
-
         writeData( );
     }
 
