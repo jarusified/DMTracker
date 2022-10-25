@@ -59,7 +59,7 @@ def get_libdmv_public_headers():
         "include/time_since_epoch.h",
     ]
 
-# kineto code should be updated to not have to
+# dmv code should be updated to not have to
 # suppress these warnings.
 KINETO_COMPILER_FLAGS = [
     "-fexceptions",

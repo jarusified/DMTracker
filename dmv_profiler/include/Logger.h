@@ -35,9 +35,6 @@
 #include <string>
 #include <sstream>
 #include <vector>
-
-// TODO(T90238193)
-// @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
 #include "ILoggerObserver.h"
 
 #ifdef _MSC_VER

@@ -163,7 +163,7 @@ bool ActivityProfilerController::shouldActivateIterationConfig(
 }
 
 void ActivityProfilerController::profilerLoop() {
-  setThreadName("Kineto Activity Profiler");
+  setThreadName("dmv Activity Profiler");
   VLOG(0) << "Entering activity profiler loop";
 
   auto now = system_clock::now();

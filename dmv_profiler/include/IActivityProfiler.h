@@ -14,7 +14,7 @@
 
 /* This file includes an abstract base class for an activity profiler
  * that can be implemented by multiple tracing agents in the application.
- * The high level Kineto profiler can co-ordinate start and end of tracing
+ * The high level dmv profiler can co-ordinate start and end of tracing
  * and combine together events from multiple such activity profilers.
  */
 
@@ -23,10 +23,6 @@ namespace libdmv {
 using namespace DMV_NAMESPACE;
 struct CpuTraceBuffer;
 
-#ifdef _MSC_VER
-// workaround for the predefined ERROR macro on Windows
-#undef ERROR
-#endif // _MSC_VER
 
 enum class TraceStatus {
   READY, // Accepting trace requests
@@ -74,7 +70,7 @@ class IActivityProfilerSession {
 
 
 /* Activity Profiler Plugins:
- *   These allow other frameworks to integrate into Kineto's primariy
+ *   These allow other frameworks to integrate into dmv's primariy
  *   activity profiler. While the primary activity profiler handles
  *   timing the trace collections and correlating events the plugins
  *   can become source of new trace activity types.

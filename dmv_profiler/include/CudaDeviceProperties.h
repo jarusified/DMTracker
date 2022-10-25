@@ -26,4 +26,6 @@ float kernelOccupancy(
 // Return compute properties for each device as a json string
 const std::string& devicePropertiesJson();
 
+// TODO: (suraj) Add topology related api's here.
+
 } // namespace DMV_NAMESPACE

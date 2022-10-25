@@ -160,7 +160,7 @@ class CuptiActivityProfiler {
     recordThreadInfo(sysTid, tid, pid);
   }
 
-  // T107508020: We can deprecate the recordThreadInfo(void) once we optimized profiler_kineto
+  // T107508020: We can deprecate the recordThreadInfo(void) once we optimized profiler_dmv
   void recordThreadInfo(int32_t sysTid, int32_t tid, int32_t pid) {
     if (resourceInfo_.find({pid, tid}) == resourceInfo_.end()) {
       resourceInfo_.emplace(
