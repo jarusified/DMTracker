@@ -20,7 +20,7 @@
 // *************** FOR ERROR CHECKING *******************
 
 namespace libdmv {
-void CuptiNvmlGpuUtilization::CuptiNvmlGpuUtilization(
+CuptiNvmlGpuUtilization::CuptiNvmlGpuUtilization(
     int const &deviceID, std::string const &filename) {
   char name[nvml_device_name_buffer_size];
 
@@ -43,9 +43,9 @@ void CuptiNvmlGpuUtilization::CuptiNvmlGpuUtilization(
   printHeader();
 }
 
-void CuptiNvmlGpuUtilization::~CuptiNvmlGpuUtilization() {
+CuptiNvmlGpuUtilization::~CuptiNvmlGpuUtilization() {
   NVML_RT_CALL(nvmlShutdown());
-  writeData();
+  dumpData();
 }
 
 void CuptiNvmlGpuUtilization::getStats() {
@@ -103,7 +103,7 @@ void CuptiNvmlGpuUtilization::printHeader() {
 }
 
 void CuptiNvmlGpuUtilization::dumpData() {
-  printf("Writing NVIDIA-SMI data -> %s\n\n", filename_.c_str());
+  cout<<"Writing GPU utilization to  "<< filename_.c_str();
 
   // Print data
   for (int i = 0; i < static_cast<int>(time_steps_.size()); i++) {

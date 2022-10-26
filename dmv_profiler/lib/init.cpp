@@ -68,6 +68,7 @@ static void stopProfiler(CUpti_CallbackDomain /*domain*/,
 }
 
 static std::unique_ptr<CuptiRangeProfilerInit> rangeProfilerInit;
+static std::unique_ptr<CuptiNvmlGpuUtilization> gpuUtilizationInit;
 #endif // HAS_CUPTI
 
 } // namespace libdmv
@@ -87,6 +88,7 @@ void libdmv_init(bool cpuOnly, bool logOnError) {
     auto &cbapi = CuptiCallbackApi::singleton();
     bool status = false;
     bool initRangeProfiler = true;
+    bool initGpuUtilization = true;
 
     if (cbapi.initSuccess()) {
       const CUpti_CallbackDomain domain = CUPTI_CB_DOMAIN_RESOURCE;
@@ -126,7 +128,10 @@ void libdmv_init(bool cpuOnly, bool logOnError) {
     }
 
     if (initGpuUtilization) {
-      gpuUtilizationInit = std::make_unique<CuptiNvmlGpuUtilization>();
+      gpuUtilizationInit = std::make_unique<CuptiNvmlGpuUtilization>(0, "gpu_0.csv");
+
+      /* Create thread to gather GPU stats */
+      std::thread threadStart(CuptiNvmlGpuUtilization::getStats, &gpuUtilizationInit);
     }
   }
 

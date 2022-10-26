@@ -7,5 +7,5 @@ set(LIBS_SAMPLE_PROGRAM_SRC
 message(STATUS "Compiling: ${LIBS_SAMPLE_PROGRAM_SRC}")
 
 add_executable(sqrt ${LIBS_SAMPLE_PROGRAM_SRC})
-target_link_libraries(sqrt DMV_LIBRARY cupti stdc++ stdc++fs)
+target_link_libraries(sqrt DMV_LIBRARY cupti stdc++ stdc++fs -lnvidia-ml)
 target_include_directories(sqrt PRIVATE ${DMV_INCLUDE_DIR} ${CUPTI_INCLUDE_DIR} ${FMT_INCLUDE_DIR})
