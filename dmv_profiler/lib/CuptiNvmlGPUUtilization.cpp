@@ -20,8 +20,8 @@
 // *************** FOR ERROR CHECKING *******************
 
 namespace libdmv {
-CuptiNvmlGpuUtilization::CuptiNvmlGpuUtilization(int const &deviceID,
-                                                 std::string const &filename) {
+void CuptiNvmlGpuUtilization::CuptiNvmlGpuUtilization(
+    int const &deviceID, std::string const &filename) {
   char name[nvml_device_name_buffer_size];
 
   // Initialize NVML library
@@ -43,12 +43,12 @@ CuptiNvmlGpuUtilization::CuptiNvmlGpuUtilization(int const &deviceID,
   printHeader();
 }
 
-CuptiNvmlGpuUtilization::~CuptiNvmlGpuUtilization() {
+void CuptiNvmlGpuUtilization::~CuptiNvmlGpuUtilization() {
   NVML_RT_CALL(nvmlShutdown());
   writeData();
 }
 
-CuptiNvmlGpuUtilization::getStats() {
+void CuptiNvmlGpuUtilization::getStats() {
   stats device_stats{};
   loop_ = true;
 
@@ -85,7 +85,7 @@ CuptiNvmlGpuUtilization::getStats() {
   }
 }
 
-CuptiNvmlGpuUtilization::killThread() {
+void CuptiNvmlGpuUtilization::killThread() {
   // Retrieve a few empty samples
   std::this_thread::sleep_for(std::chrono::seconds(2));
 
@@ -93,7 +93,7 @@ CuptiNvmlGpuUtilization::killThread() {
   loop_ = false;
 }
 
-CuptiNvmlGpuUtilization::printHeader() {
+void CuptiNvmlGpuUtilization::printHeader() {
   // Print header
   for (int i = 0; i < (static_cast<int>(names_.size()) - 1); i++)
     outfile_ << names_[i] << ", ";
@@ -102,7 +102,7 @@ CuptiNvmlGpuUtilization::printHeader() {
   outfile_ << "\n";
 }
 
-CuptiNvmlGpuUtilization::dumpData() {
+void CuptiNvmlGpuUtilization::dumpData() {
   printf("Writing NVIDIA-SMI data -> %s\n\n", filename_.c_str());
 
   // Print data
@@ -122,5 +122,4 @@ CuptiNvmlGpuUtilization::dumpData() {
   }
   outfile_.close();
 }
-}
-}
+} // namespace libdmv

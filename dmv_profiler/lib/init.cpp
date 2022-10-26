@@ -124,15 +124,16 @@ void libdmv_init(bool cpuOnly, bool logOnError) {
     if (initRangeProfiler) {
       rangeProfilerInit = std::make_unique<CuptiRangeProfilerInit>();
     }
+
+    if (initGpuUtilization) {
+      gpuUtilizationInit = std::make_unique<CuptiNvmlGpuUtilization>();
+    }
   }
 
   if (shouldPreloadCuptiInstrumentation()) {
     CuptiActivityApi::forceLoadCupti();
   }
 
-  if (initGpuUtilization) {
-    gpuUtilizationInit = std::make_unique<CuptiNvmlGpuUtilization>();
-  }
 #endif // HAS_CUPTI
 
   ConfigLoader &config_loader = libdmv::api().configLoader();

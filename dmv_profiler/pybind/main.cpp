@@ -26,6 +26,7 @@ PYBIND11_MODULE(dmv_profiler, m)
         profiler.prepareTrace(types, profiler_config);
         profiler.startTrace(); 
     }, py::return_value_policy::reference);
+
     m.def("end_profile", [](std::string filepath) {
         // auto trace = profiler.stopTrace();
         // std::cout << "Stopped and processed trace. Got " << trace->activities()->size() << " activities.\n";
