@@ -3,8 +3,8 @@
 #include <fmt/format.h>
 #include <vector>
 
-#include <cuda_runtime.h>
 #include <cuda_occupancy.h>
+#include <cuda_runtime.h>
 
 #include "Logger.h"
 
@@ -16,7 +16,7 @@ static const std::vector<cudaDeviceProp> createDeviceProps() {
   cudaError_t error_id = cudaGetDeviceCount(&device_count);
   // Return empty vector if error.
   if (error_id != cudaSuccess) {
-        LOG(ERROR) << "cudaGetDeviceCount failed with code " << error_id;
+    LOG(ERROR) << "cudaGetDeviceCount failed with code " << error_id;
     return {};
   }
   VLOG(0) << "Device count is " << device_count;
@@ -34,13 +34,13 @@ static const std::vector<cudaDeviceProp> createDeviceProps() {
   return props;
 }
 
-static const std::vector<cudaDeviceProp>& deviceProps() {
+static const std::vector<cudaDeviceProp> &deviceProps() {
   static const std::vector<cudaDeviceProp> props = createDeviceProps();
   return props;
 }
 
-static const std::string createDevicePropertiesJson(
-    size_t id, const cudaDeviceProp& props) {
+static const std::string
+createDevicePropertiesJson(size_t id, const cudaDeviceProp &props) {
   return fmt::format(R"JSON(
     {{
       "id": {}, "name": "{}", "totalGlobalMem": {},
@@ -50,73 +50,61 @@ static const std::string createDevicePropertiesJson(
       "sharedMemPerBlock": {}, "sharedMemPerMultiprocessor": {},
       "numSms": {}, "sharedMemPerBlockOptin": {}
     }})JSON",
-      id, props.name, props.totalGlobalMem,
-      props.major, props.minor,
-      props.maxThreadsPerBlock, props.maxThreadsPerMultiProcessor,
-      props.regsPerBlock, props.regsPerMultiprocessor, props.warpSize,
-      props.sharedMemPerBlock, props.sharedMemPerMultiprocessor,
-      props.multiProcessorCount, props.sharedMemPerBlockOptin);
+                     id, props.name, props.totalGlobalMem, props.major,
+                     props.minor, props.maxThreadsPerBlock,
+                     props.maxThreadsPerMultiProcessor, props.regsPerBlock,
+                     props.regsPerMultiprocessor, props.warpSize,
+                     props.sharedMemPerBlock, props.sharedMemPerMultiprocessor,
+                     props.multiProcessorCount, props.sharedMemPerBlockOptin);
 }
 
 static const std::string createDevicePropertiesJson() {
   std::vector<std::string> jsonProps;
-  const auto& props = deviceProps();
+  const auto &props = deviceProps();
   for (size_t i = 0; i < props.size(); i++) {
     jsonProps.push_back(createDevicePropertiesJson(i, props[i]));
   }
   return fmt::format("{}", fmt::join(jsonProps, ","));
 }
 
-const std::string& devicePropertiesJson() {
+const std::string &devicePropertiesJson() {
   static std::string devicePropsJson = createDevicePropertiesJson();
   return devicePropsJson;
 }
 
 int smCount(uint32_t deviceId) {
   const std::vector<cudaDeviceProp> &props = deviceProps();
-  return deviceId >= props.size() ? 0 :
-     props[deviceId].multiProcessorCount;
+  return deviceId >= props.size() ? 0 : props[deviceId].multiProcessorCount;
 }
 
-float blocksPerSm(const CUpti_ActivityKernel4& kernel) {
+float blocksPerSm(const CUpti_ActivityKernel4 &kernel) {
   return (kernel.gridX * kernel.gridY * kernel.gridZ) /
-      (float) smCount(kernel.deviceId);
+         (float)smCount(kernel.deviceId);
 }
 
-float warpsPerSm(const CUpti_ActivityKernel4& kernel) {
+float warpsPerSm(const CUpti_ActivityKernel4 &kernel) {
   constexpr int threads_per_warp = 32;
-  return blocksPerSm(kernel) *
-      (kernel.blockX * kernel.blockY * kernel.blockZ) /
-      threads_per_warp;
+  return blocksPerSm(kernel) * (kernel.blockX * kernel.blockY * kernel.blockZ) /
+         threads_per_warp;
 }
 
-float kernelOccupancy(const CUpti_ActivityKernel4& kernel) {
+float kernelOccupancy(const CUpti_ActivityKernel4 &kernel) {
   float blocks_per_sm = -1.0;
   int sm_count = smCount(kernel.deviceId);
   if (sm_count) {
     blocks_per_sm =
-        (kernel.gridX * kernel.gridY * kernel.gridZ) / (float) sm_count;
+        (kernel.gridX * kernel.gridY * kernel.gridZ) / (float)sm_count;
   }
-  return kernelOccupancy(
-      kernel.deviceId,
-      kernel.registersPerThread,
-      kernel.staticSharedMemory,
-      kernel.dynamicSharedMemory,
-      kernel.blockX,
-      kernel.blockY,
-      kernel.blockZ,
-      blocks_per_sm);
+  return kernelOccupancy(kernel.deviceId, kernel.registersPerThread,
+                         kernel.staticSharedMemory, kernel.dynamicSharedMemory,
+                         kernel.blockX, kernel.blockY, kernel.blockZ,
+                         blocks_per_sm);
 }
 
-float kernelOccupancy(
-    uint32_t deviceId,
-    uint16_t registersPerThread,
-    int32_t staticSharedMemory,
-    int32_t dynamicSharedMemory,
-    int32_t blockX,
-    int32_t blockY,
-    int32_t blockZ,
-    float blocksPerSm) {
+float kernelOccupancy(uint32_t deviceId, uint16_t registersPerThread,
+                      int32_t staticSharedMemory, int32_t dynamicSharedMemory,
+                      int32_t blockX, int32_t blockY, int32_t blockZ,
+                      float blocksPerSm) {
   // Calculate occupancy
   float occupancy = -1.0;
   const std::vector<cudaDeviceProp> &props = deviceProps();
@@ -134,17 +122,17 @@ float kernelOccupancy(
     cudaOccResult occ_result;
     cudaOccDeviceProp prop(props[deviceId]);
     cudaOccError status = cudaOccMaxActiveBlocksPerMultiprocessor(
-          &occ_result, &prop, &occFuncAttr, &occDeviceState,
-          blockSize, dynamicSmemSize);
+        &occ_result, &prop, &occFuncAttr, &occDeviceState, blockSize,
+        dynamicSmemSize);
     if (status == CUDA_OCC_SUCCESS) {
       if (occ_result.activeBlocksPerMultiprocessor < blocksPerSm) {
         blocksPerSm = occ_result.activeBlocksPerMultiprocessor;
       }
       occupancy = blocksPerSm * blockSize /
-          (float) props[deviceId].maxThreadsPerMultiProcessor;
+                  (float)props[deviceId].maxThreadsPerMultiProcessor;
     } else {
-      LOG_EVERY_N(ERROR, 1000) << "Failed to calculate occupancy, status = "
-                               << status;
+      LOG_EVERY_N(ERROR, 1000)
+          << "Failed to calculate occupancy, status = " << status;
     }
   }
   return occupancy;

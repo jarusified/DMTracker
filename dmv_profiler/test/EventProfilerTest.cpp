@@ -112,24 +112,18 @@ TEST(EventTest, Percentiles) {
 }
 
 class MockCuptiMetrics : public CuptiMetricApi {
- public:
+public:
   MockCuptiMetrics() : CuptiMetricApi(0) {}
-  MOCK_METHOD1(idFromName, CUpti_MetricID(const std::string& name));
-  MOCK_METHOD1(
-      events,
-      std::map<CUpti_EventID, std::string>(CUpti_MetricID metric_id));
+  MOCK_METHOD1(idFromName, CUpti_MetricID(const std::string &name));
+  MOCK_METHOD1(events,
+               std::map<CUpti_EventID, std::string>(CUpti_MetricID metric_id));
   MOCK_METHOD1(valueKind, CUpti_MetricValueKind(CUpti_MetricID metric));
-  MOCK_METHOD1(
-      evaluationMode,
-      CUpti_MetricEvaluationMode(CUpti_MetricID metric));
-  MOCK_METHOD5(
-      calculate,
-      SampleValue(
-          CUpti_MetricID metric,
-          CUpti_MetricValueKind kind,
-          std::vector<CUpti_EventID>& events,
-          std::vector<int64_t>& values,
-          int64_t duration));
+  MOCK_METHOD1(evaluationMode,
+               CUpti_MetricEvaluationMode(CUpti_MetricID metric));
+  MOCK_METHOD5(calculate,
+               SampleValue(CUpti_MetricID metric, CUpti_MetricValueKind kind,
+                           std::vector<CUpti_EventID> &events,
+                           std::vector<int64_t> &values, int64_t duration));
 };
 
 TEST(MetricTest, Calculate) {
@@ -158,8 +152,8 @@ TEST(MetricTest, Calculate) {
   EXPECT_CALL(metrics, valueKind(1))
       .Times(1)
       .WillOnce(Return(CUPTI_METRIC_VALUE_KIND_DOUBLE));
-  Metric m(
-      "ipc", 1, {2, 3}, CUPTI_METRIC_EVALUATION_MODE_PER_INSTANCE, metrics);
+  Metric m("ipc", 1, {2, 3}, CUPTI_METRIC_EVALUATION_MODE_PER_INSTANCE,
+           metrics);
 
   // Calculate metric for first sample
   // Since evaluation mode is CUPTI_METRIC_EVALUATION_MODE_PER_INSTANCE,
@@ -167,18 +161,18 @@ TEST(MetricTest, Calculate) {
   // to get the total across SMs.
   std::vector<CUpti_EventID> ids = {2, 3};
   std::vector<int64_t> vals = {100, 1000};
-  EXPECT_CALL(
-      metrics, calculate(1, CUPTI_METRIC_VALUE_KIND_DOUBLE, ids, vals, 1000))
+  EXPECT_CALL(metrics,
+              calculate(1, CUPTI_METRIC_VALUE_KIND_DOUBLE, ids, vals, 1000))
       .Times(1)
       .WillOnce(Return(SampleValue(0.1)));
   vals = {200, 1200};
-  EXPECT_CALL(
-      metrics, calculate(1, CUPTI_METRIC_VALUE_KIND_DOUBLE, ids, vals, 1000))
+  EXPECT_CALL(metrics,
+              calculate(1, CUPTI_METRIC_VALUE_KIND_DOUBLE, ids, vals, 1000))
       .Times(1)
       .WillOnce(Return(SampleValue(0.17)));
   vals = {300, 2200};
-  EXPECT_CALL(
-      metrics, calculate(1, CUPTI_METRIC_VALUE_KIND_DOUBLE, ids, vals, 1000))
+  EXPECT_CALL(metrics,
+              calculate(1, CUPTI_METRIC_VALUE_KIND_DOUBLE, ids, vals, 1000))
       .Times(1)
       .WillOnce(Return(SampleValue(0.14)));
   auto v = m.calculate(events, nanoseconds(1000), {0, 0, 2});
@@ -196,8 +190,8 @@ TEST(MetricTest, Calculate) {
       .WillOnce(Return(CUPTI_METRIC_VALUE_KIND_DOUBLE));
   Metric m2("ipc", 1, {2, 3}, CUPTI_METRIC_EVALUATION_MODE_AGGREGATE, metrics);
   vals = {700, 2600};
-  EXPECT_CALL(
-      metrics, calculate(1, CUPTI_METRIC_VALUE_KIND_DOUBLE, ids, vals, 1000))
+  EXPECT_CALL(metrics,
+              calculate(1, CUPTI_METRIC_VALUE_KIND_DOUBLE, ids, vals, 1000))
       .Times(1)
       .WillOnce(Return(SampleValue(0.27)));
   v = m2.calculate(events, nanoseconds(1000), {0, 1, 2});
@@ -208,21 +202,19 @@ TEST(MetricTest, Calculate) {
 }
 
 class MockCuptiEvents : public CuptiEventApi {
- public:
-  MOCK_METHOD1(
-      createGroupSets,
-      CUpti_EventGroupSets*(std::vector<CUpti_EventID>& ids));
-  MOCK_METHOD1(destroyGroupSets, void(CUpti_EventGroupSets* sets));
+public:
+  MOCK_METHOD1(createGroupSets,
+               CUpti_EventGroupSets *(std::vector<CUpti_EventID> &ids));
+  MOCK_METHOD1(destroyGroupSets, void(CUpti_EventGroupSets *sets));
   MOCK_METHOD0(setContinuousMode, bool());
   MOCK_METHOD1(enablePerInstance, void(CUpti_EventGroup eventGroup));
   MOCK_METHOD1(instanceCount, uint32_t(CUpti_EventGroup eventGroup));
-  MOCK_METHOD1(enableGroupSet, void(CUpti_EventGroupSet& set));
-  MOCK_METHOD1(disableGroupSet, void(CUpti_EventGroupSet& set));
-  MOCK_METHOD3(
-      readEvent,
-      void(CUpti_EventGroup g, CUpti_EventID id, std::vector<int64_t>& vals));
+  MOCK_METHOD1(enableGroupSet, void(CUpti_EventGroupSet &set));
+  MOCK_METHOD1(disableGroupSet, void(CUpti_EventGroupSet &set));
+  MOCK_METHOD3(readEvent, void(CUpti_EventGroup g, CUpti_EventID id,
+                               std::vector<int64_t> &vals));
   MOCK_METHOD1(eventsInGroup, std::vector<CUpti_EventID>(CUpti_EventGroup g));
-  MOCK_METHOD1(eventId, CUpti_EventID(const std::string& name));
+  MOCK_METHOD1(eventId, CUpti_EventID(const std::string &name));
 };
 
 TEST(EventGroupSetTest, CollectSample) {
@@ -230,7 +222,7 @@ TEST(EventGroupSetTest, CollectSample) {
   using ::testing::Return;
   using ::testing::SetArgPointee;
   const CUpti_EventGroup g1{nullptr};
-  const CUpti_EventGroup g2{reinterpret_cast<void*>(0x1000)};
+  const CUpti_EventGroup g2{reinterpret_cast<void *>(0x1000)};
   CUpti_EventGroup groups[] = {g1, g2};
   CUpti_EventGroupSet set;
   set.eventGroups = groups;
@@ -291,13 +283,14 @@ TEST(EventGroupSetTest, CollectSample) {
 }
 
 class MockLogger : public SampleListener {
- public:
-  MOCK_METHOD3(handleSample, void(int device, const Sample& sample, bool from_new_version));
-  MOCK_METHOD1(update, void(const Config& config));
+public:
+  MOCK_METHOD3(handleSample,
+               void(int device, const Sample &sample, bool from_new_version));
+  MOCK_METHOD1(update, void(const Config &config));
 };
 
 class EventProfilerTest : public ::testing::Test {
- protected:
+protected:
   void SetUp() override {
     auto cupti_events_ptr = std::make_unique<MockCuptiEvents>();
     auto cupti_metrics_ptr = std::make_unique<MockCuptiMetrics>();
@@ -305,11 +298,9 @@ class EventProfilerTest : public ::testing::Test {
     cuptiMetrics_ = cupti_metrics_ptr.get();
     loggers_.push_back(std::make_unique<MockLogger>());
     onDemandLoggers_.push_back(std::make_unique<MockLogger>());
-    profiler_ = std::make_unique<EventProfiler>(
-        std::move(cupti_events_ptr),
-        std::move(cupti_metrics_ptr),
-        loggers_,
-        onDemandLoggers_);
+    profiler_ = std::make_unique<EventProfiler>(std::move(cupti_events_ptr),
+                                                std::move(cupti_metrics_ptr),
+                                                loggers_, onDemandLoggers_);
 
     for (int i = 0; i < kEventGroupCount; i++) {
       eventGroups_[i] = &eventGroups_[i];
@@ -324,8 +315,8 @@ class EventProfilerTest : public ::testing::Test {
     groupSets_.sets = groupSet_;
   }
 
-  MockCuptiEvents* cuptiEvents_;
-  MockCuptiMetrics* cuptiMetrics_;
+  MockCuptiEvents *cuptiEvents_;
+  MockCuptiMetrics *cuptiMetrics_;
   std::vector<std::unique_ptr<SampleListener>> loggers_;
   std::vector<std::unique_ptr<SampleListener>> onDemandLoggers_;
   constexpr static int kEventGroupCount = 4;
@@ -528,7 +519,7 @@ TEST_F(EventProfilerTest, ReportSample) {
   EXPECT_CALL(*cuptiEvents_, readEvent(_, _, _))
       .Times(6)
       .WillRepeatedly(Invoke(
-          [](CUpti_EventGroup g, CUpti_EventID id, std::vector<int64_t>& vals) {
+          [](CUpti_EventGroup g, CUpti_EventID id, std::vector<int64_t> &vals) {
             vals = {1, 2, 3, 4};
           }));
 
@@ -544,15 +535,15 @@ TEST_F(EventProfilerTest, ReportSample) {
   std::vector<CUpti_EventID> ipc_ids = {4, 5};
   // Called once for each instance (4) and once for the total.
   // x2 since we recompute per logger.
-  EXPECT_CALL(
-      *cuptiMetrics_,
-      calculate(10, CUPTI_METRIC_VALUE_KIND_DOUBLE, ipc_ids, _, 2000000000))
+  EXPECT_CALL(*cuptiMetrics_, calculate(10, CUPTI_METRIC_VALUE_KIND_DOUBLE,
+                                        ipc_ids, _, 2000000000))
       .Times(10)
       .WillRepeatedly(Return(SampleValue(0.3)));
-  auto& logger = dynamic_cast<MockLogger&>(*loggers_[0]);
+  auto &logger = dynamic_cast<MockLogger &>(*loggers_[0]);
   EXPECT_CALL(logger, handleSample(0, _, _))
       .Times(1)
-      .WillOnce(Invoke([](int device, const Sample& sample, bool from_new_version) {
+      .WillOnce(Invoke([](int device, const Sample &sample,
+                          bool from_new_version) {
         // Sample will include all stats - logger must pick the
         // ones it wants.
         EXPECT_EQ(sample.stats.size(), 4);
@@ -568,12 +559,12 @@ TEST_F(EventProfilerTest, ReportSample) {
         // ipc is always 0.3 from mocked calculate function above
         EXPECT_EQ(sample.stats[3].total.getDouble(), 0.3);
         EXPECT_EQ(sample.stats[3].percentileValues[0].second.getDouble(), 0.3);
-        EXPECT_EQ(
-            sample.stats[3].percentileValues.back().second.getDouble(), 0.3);
+        EXPECT_EQ(sample.stats[3].percentileValues.back().second.getDouble(),
+                  0.3);
       }));
   profiler_->reportSamples();
 
-  auto& on_demand_logger = dynamic_cast<MockLogger&>(*onDemandLoggers_[0]);
+  auto &on_demand_logger = dynamic_cast<MockLogger &>(*onDemandLoggers_[0]);
   EXPECT_CALL(on_demand_logger, handleSample(0, _, _)).Times(1);
   profiler_->reportOnDemandSamples();
 

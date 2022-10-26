@@ -5,7 +5,7 @@
 
 namespace libdmv {
 
-libdmvApi& api() {
+libdmvApi &api() {
   static libdmvApi instance(ConfigLoader::instance());
   return instance;
 }
@@ -13,19 +13,18 @@ libdmvApi& api() {
 void libdmvApi::initClientIfRegistered() {
   if (client_) {
     if (clientRegisterThread_ != threadId()) {
-      fprintf(
-          stderr,
-          "ERROR: External init callback must run in same thread as registerClient "
-          "(%d != %d)\n",
-          threadId(),
-          (int)clientRegisterThread_);
+      fprintf(stderr,
+              "ERROR: External init callback must run in same thread as "
+              "registerClient "
+              "(%d != %d)\n",
+              threadId(), (int)clientRegisterThread_);
     } else {
       client_->init();
     }
   }
 }
 
-void libdmvApi::registerClient(ClientInterface* client) {
+void libdmvApi::registerClient(ClientInterface *client) {
   client_ = client;
   if (client && activityProfiler_) {
     // Can initialize straight away

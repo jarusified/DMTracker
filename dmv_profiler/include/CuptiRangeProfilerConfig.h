@@ -17,63 +17,53 @@ namespace libdmv {
 constexpr char kCuptiProfilerConfigName[] = "cupti_rb_profiler";
 
 class CuptiRangeProfilerConfig : public AbstractConfig {
- public:
-  bool handleOption(const std::string& name, std::string& val) override;
+public:
+  bool handleOption(const std::string &name, std::string &val) override;
 
-  void validate(
-      const std::chrono::time_point<std::chrono::system_clock>&
-      fallbackProfileStartTime) override {}
+  void validate(const std::chrono::time_point<std::chrono::system_clock>
+                    &fallbackProfileStartTime) override {}
 
-  static CuptiRangeProfilerConfig& get(const Config& cfg) {
-    return dynamic_cast<CuptiRangeProfilerConfig&>(cfg.feature(
-          kCuptiProfilerConfigName));
+  static CuptiRangeProfilerConfig &get(const Config &cfg) {
+    return dynamic_cast<CuptiRangeProfilerConfig &>(
+        cfg.feature(kCuptiProfilerConfigName));
   }
 
-  Config& parent() const {
-    return *parent_;
-  }
+  Config &parent() const { return *parent_; }
 
   std::vector<std::string> activitiesCuptiMetrics() const {
     return activitiesCuptiMetrics_;
   }
 
-  bool cuptiProfilerPerKernel() const {
-    return cuptiProfilerPerKernel_;
-  }
+  bool cuptiProfilerPerKernel() const { return cuptiProfilerPerKernel_; }
 
-  int64_t cuptiProfilerMaxRanges() const {
-    return cuptiProfilerMaxRanges_;
-  }
+  int64_t cuptiProfilerMaxRanges() const { return cuptiProfilerMaxRanges_; }
 
-  void setSignalDefaults() override {
-    setDefaults();
-  }
+  void setSignalDefaults() override { setDefaults(); }
 
-  void setClientDefaults() override {
-    setDefaults();
-  }
+  void setClientDefaults() override { setDefaults(); }
 
-  void printActivityProfilerConfig(std::ostream& s) const override;
+  void printActivityProfilerConfig(std::ostream &s) const override;
 
   static void registerFactory();
- protected:
-  AbstractConfig* cloneDerived(AbstractConfig& parent) const override {
-    CuptiRangeProfilerConfig* clone = new CuptiRangeProfilerConfig(*this);
-    clone->parent_ = dynamic_cast<Config*>(&parent);
+
+protected:
+  AbstractConfig *cloneDerived(AbstractConfig &parent) const override {
+    CuptiRangeProfilerConfig *clone = new CuptiRangeProfilerConfig(*this);
+    clone->parent_ = dynamic_cast<Config *>(&parent);
     return clone;
   }
 
- private:
- CuptiRangeProfilerConfig() = delete;
-  explicit CuptiRangeProfilerConfig(Config& parent);
-  explicit CuptiRangeProfilerConfig(
-      const CuptiRangeProfilerConfig& other) = default;
+private:
+  CuptiRangeProfilerConfig() = delete;
+  explicit CuptiRangeProfilerConfig(Config &parent);
+  explicit CuptiRangeProfilerConfig(const CuptiRangeProfilerConfig &other) =
+      default;
 
   // some defaults will depend on other configuration
   void setDefaults();
 
   // Associated Config object
-  Config* parent_;
+  Config *parent_;
 
   // Counter metrics exposed via CUPTI Profiler API
   std::vector<std::string> activitiesCuptiMetrics_;

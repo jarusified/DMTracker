@@ -2,8 +2,8 @@
 
 #include <functional>
 
-#include <libdmv.h>
 #include <IActivityProfiler.h>
+#include <libdmv.h>
 
 // TODO(T90238193)
 // @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
@@ -22,12 +22,11 @@ using CuptiProfilerPrePostCallback = std::function<void(void)>;
  * API object
  */
 class CuptiRangeProfilerSession : public IActivityProfilerSession {
- public:
-  explicit CuptiRangeProfilerSession(
-      const Config& config,
-      ICuptiRBProfilerSessionFactory& factory);
+public:
+  explicit CuptiRangeProfilerSession(const Config &config,
+                                     ICuptiRBProfilerSessionFactory &factory);
 
-  ~CuptiRangeProfilerSession() override {};
+  ~CuptiRangeProfilerSession() override{};
 
   // start profiling
   void start() override;
@@ -36,7 +35,7 @@ class CuptiRangeProfilerSession : public IActivityProfilerSession {
   void stop() override;
 
   // process trace events with logger
-  void processTrace(libdmv::ActivityLogger& logger) override;
+  void processTrace(libdmv::ActivityLogger &logger) override;
 
   std::unique_ptr<CpuTraceBuffer> getTraceBuffer() override {
     return std::make_unique<CpuTraceBuffer>(std::move(traceBuffer_));
@@ -45,57 +44,54 @@ class CuptiRangeProfilerSession : public IActivityProfilerSession {
   // returns errors with this trace
   std::vector<std::string> errors() override;
 
- private:
-  void addRangeEvents(
-      const CuptiProfilerResult& result,
-      const CuptiRBProfilerSession* profiler);
+private:
+  void addRangeEvents(const CuptiProfilerResult &result,
+                      const CuptiRBProfilerSession *profiler);
 
   CUpti_ProfilerRange rangeType_ = CUPTI_UserRange;
   CUpti_ProfilerReplayMode replayType_ = CUPTI_UserReplay;
 
   CpuTraceBuffer traceBuffer_;
-  std::vector<
-    std::unique_ptr<CuptiRBProfilerSession>> profilers_;
+  std::vector<std::unique_ptr<CuptiRBProfilerSession>> profilers_;
 };
-
 
 /* This is a wrapper class that refers to the underlying
  * CuptiRangeProfiler. Using a wrapper libdmv can manage the ownership
  * of this object independent of the CuptiRangeProfiler itself.
  */
 class CuptiRangeProfiler : public libdmv::IActivityProfiler {
- public:
+public:
   explicit CuptiRangeProfiler();
 
-  explicit CuptiRangeProfiler(ICuptiRBProfilerSessionFactory& factory);
+  explicit CuptiRangeProfiler(ICuptiRBProfilerSessionFactory &factory);
 
   ~CuptiRangeProfiler() override {}
 
   // name of profiler
-  const std::string& name() const override;
+  const std::string &name() const override;
 
   // returns activity types this profiler supports
-  const std::set<ActivityType>& availableActivities() const override;
+  const std::set<ActivityType> &availableActivities() const override;
 
   // sets up the tracing session and provides control to the
   // the activity profiler session object.
-  std::unique_ptr<libdmv::IActivityProfilerSession> configure(
-      const std::set<libdmv::ActivityType>& activity_types,
-      const Config& config) override;
+  std::unique_ptr<libdmv::IActivityProfilerSession>
+  configure(const std::set<libdmv::ActivityType> &activity_types,
+            const Config &config) override;
 
   // asynchronous version of the above with future timestamp and duration.
-  std::unique_ptr<libdmv::IActivityProfilerSession> configure(
-      int64_t ts_ms,
-      int64_t duration_ms,
-      const std::set<libdmv::ActivityType>& activity_types,
-      const Config& config) override;
+  std::unique_ptr<libdmv::IActivityProfilerSession>
+  configure(int64_t ts_ms, int64_t duration_ms,
+            const std::set<libdmv::ActivityType> &activity_types,
+            const Config &config) override;
 
   // hooks to enable configuring the environment before and after the
   // profiling sesssion.
   static void setPreRunCallback(CuptiProfilerPrePostCallback fn);
   static void setPostRunCallback(CuptiProfilerPrePostCallback fn);
- private:
-  ICuptiRBProfilerSessionFactory& factory_;
+
+private:
+  ICuptiRBProfilerSessionFactory &factory_;
 };
 
 struct CuptiRangeProfilerInit {

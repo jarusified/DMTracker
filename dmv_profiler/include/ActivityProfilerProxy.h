@@ -10,9 +10,9 @@
 #include "ITraceActivity.h"
 
 namespace libdmv {
-  // previous declaration is struct so this one must be too.
-  struct CpuTraceBuffer;
-}
+// previous declaration is struct so this one must be too.
+struct CpuTraceBuffer;
+} // namespace libdmv
 
 namespace libdmv {
 
@@ -24,25 +24,22 @@ class ConfigLoader;
 
 class ActivityProfilerProxy : public ActivityProfilerInterface {
 
- public:
-  ActivityProfilerProxy(bool cpuOnly, ConfigLoader& configLoader);
+public:
+  ActivityProfilerProxy(bool cpuOnly, ConfigLoader &configLoader);
   ~ActivityProfilerProxy() override;
 
   void init() override;
-  bool isInitialized() override {
-    return controller_ != nullptr;
-  }
+  bool isInitialized() override { return controller_ != nullptr; }
 
   bool isActive() override;
 
   void recordThreadInfo() override;
 
-  void scheduleTrace(const std::string& configStr) override;
-  void scheduleTrace(const Config& config);
+  void scheduleTrace(const std::string &configStr) override;
+  void scheduleTrace(const Config &config);
 
-  void prepareTrace(
-      const std::set<ActivityType>& activityTypes,
-      const std::string& configStr = "") override;
+  void prepareTrace(const std::set<ActivityType> &activityTypes,
+                    const std::string &configStr = "") override;
 
   void startTrace() override;
   void step() override;
@@ -54,18 +51,17 @@ class ActivityProfilerProxy : public ActivityProfilerInterface {
   void pushUserCorrelationId(uint64_t id) override;
   void popUserCorrelationId() override;
 
-  void transferCpuTrace(
-     std::unique_ptr<CpuTraceBuffer> traceBuffer) override;
+  void transferCpuTrace(std::unique_ptr<CpuTraceBuffer> traceBuffer) override;
 
-  void addMetadata(const std::string& key, const std::string& value) override;
+  void addMetadata(const std::string &key, const std::string &value) override;
 
   virtual void addChildActivityProfiler(
       std::unique_ptr<IActivityProfiler> profiler) override;
 
- private:
+private:
   bool cpuOnly_{true};
-  ConfigLoader& configLoader_;
-  ActivityProfilerController* controller_{nullptr};
+  ConfigLoader &configLoader_;
+  ActivityProfilerController *controller_{nullptr};
 };
 
 } // namespace libdmv

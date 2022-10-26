@@ -17,10 +17,10 @@ namespace libdmv {
 using namespace libdmv;
 
 class LoggerCollector : public ILoggerObserver {
- public:
+public:
   LoggerCollector() : buckets_() {}
 
-  void write(const std::string& message, LoggerOutputType ot = ERROR) override {
+  void write(const std::string &message, LoggerOutputType ot = ERROR) override {
     // Skip STAGE output type which is only used by USTLoggerCollector.
     // Skip VERBOSE output type which may bloat metadata section of traces.
     if (ot == STAGE || ot == VERBOSE) {
@@ -29,7 +29,8 @@ class LoggerCollector : public ILoggerObserver {
     buckets_[ot].push_back(message);
   }
 
-  const std::map<LoggerOutputType, std::vector<std::string>> extractCollectorMetadata() override {
+  const std::map<LoggerOutputType, std::vector<std::string>>
+  extractCollectorMetadata() override {
     return buckets_;
   }
 
@@ -39,33 +40,29 @@ class LoggerCollector : public ILoggerObserver {
     destinations.clear();
   }
 
-  void addDevice(const int64_t device) override {
-    devices.insert(device);
-  }
+  void addDevice(const int64_t device) override { devices.insert(device); }
 
   void setTraceDurationMS(const int64_t duration) override {
     trace_duration_ms = duration;
   }
 
-  void addEventCount(const int64_t count) override {
-    event_count += count;
-  }
+  void addEventCount(const int64_t count) override { event_count += count; }
 
-  void addDestination(const std::string& dest) override {
+  void addDestination(const std::string &dest) override {
     destinations.insert(dest);
   }
 
-  void addMetadata(const std::string& key, const std::string& value) override {};
+  void addMetadata(const std::string &key, const std::string &value) override{};
 
- protected:
+protected:
   std::map<LoggerOutputType, std::vector<std::string>> buckets_;
 
-  // These are useful metadata to collect from CUPTIActivityProfiler for internal tracking.
+  // These are useful metadata to collect from CUPTIActivityProfiler for
+  // internal tracking.
   std::set<int64_t> devices;
   int64_t trace_duration_ms{0};
   std::atomic<uint64_t> event_count{0};
   std::set<std::string> destinations;
-
 };
 
 } // namespace libdmv

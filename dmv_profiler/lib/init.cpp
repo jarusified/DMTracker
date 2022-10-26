@@ -4,10 +4,10 @@
 #include "ActivityProfilerProxy.h"
 #include "Config.h"
 #ifdef HAS_CUPTI
-#include "CuptiCallbackApi.h"
 #include "CuptiActivityApi.h"
-#include "CuptiRangeProfiler.h"
+#include "CuptiCallbackApi.h"
 #include "CuptiNvmlGpuUtilization.h"
+#include "CuptiRangeProfiler.h"
 #include "EventProfilerController.h"
 #endif
 #include "cupti_call.h"
@@ -20,11 +20,10 @@ namespace libdmv {
 #ifdef HAS_CUPTI
 static bool initialized = false;
 static std::mutex initMutex;
-static void initProfilers(
-    CUpti_CallbackDomain /*domain*/,
-    CUpti_CallbackId /*cbid*/,
-    const CUpti_CallbackData* cbInfo) {
-  CUpti_ResourceData* d = (CUpti_ResourceData*)cbInfo;
+static void initProfilers(CUpti_CallbackDomain /*domain*/,
+                          CUpti_CallbackId /*cbid*/,
+                          const CUpti_CallbackData *cbInfo) {
+  CUpti_ResourceData *d = (CUpti_ResourceData *)cbInfo;
   CUcontext ctx = d->context;
 
   VLOG(0) << "CUDA Context created";
@@ -38,7 +37,7 @@ static void initProfilers(
   if (getenv("DMV_DISABLE_EVENT_PROFILER") != nullptr) {
     VLOG(0) << "Event profiler disabled via env var";
   } else {
-    ConfigLoader& config_loader = libdmv::api().configLoader();
+    ConfigLoader &config_loader = libdmv::api().configLoader();
     config_loader.initBaseConfig();
     EventProfilerController::start(ctx, config_loader);
   }
@@ -57,11 +56,10 @@ static bool shouldPreloadCuptiInstrumentation() {
 #endif
 }
 
-static void stopProfiler(
-    CUpti_CallbackDomain /*domain*/,
-    CUpti_CallbackId /*cbid*/,
-    const CUpti_CallbackData* cbInfo) {
-  CUpti_ResourceData* d = (CUpti_ResourceData*)cbInfo;
+static void stopProfiler(CUpti_CallbackDomain /*domain*/,
+                         CUpti_CallbackId /*cbid*/,
+                         const CUpti_CallbackData *cbInfo) {
+  CUpti_ResourceData *d = (CUpti_ResourceData *)cbInfo;
   CUcontext ctx = d->context;
 
   LOG(INFO) << "CUDA Context destroyed";
@@ -81,28 +79,31 @@ extern "C" {
 // Return true if no CUPTI errors occurred during init
 void libdmv_init(bool cpuOnly, bool logOnError) {
 #ifdef HAS_CUPTI
-  LOG (INFO) << "CUPTI instrumentation enabled.";
+  LOG(INFO) << "CUPTI instrumentation enabled.";
   if (!cpuOnly) {
     // libcupti will be lazily loaded on this call.
     // If it is not available (e.g. CUDA is not installed),
     // then this call will return an error and we just abort init.
-    auto& cbapi = CuptiCallbackApi::singleton();
+    auto &cbapi = CuptiCallbackApi::singleton();
     bool status = false;
     bool initRangeProfiler = true;
 
-    if (cbapi.initSuccess()){
+    if (cbapi.initSuccess()) {
       const CUpti_CallbackDomain domain = CUPTI_CB_DOMAIN_RESOURCE;
       status = cbapi.registerCallback(
           domain, CuptiCallbackApi::RESOURCE_CONTEXT_CREATED, initProfilers);
-      status = status && cbapi.registerCallback(
-          domain, CuptiCallbackApi::RESOURCE_CONTEXT_DESTROYED, stopProfiler);
+      status =
+          status && cbapi.registerCallback(
+                        domain, CuptiCallbackApi::RESOURCE_CONTEXT_DESTROYED,
+                        stopProfiler);
 
       if (status) {
         status = cbapi.enableCallback(
             domain, CuptiCallbackApi::RESOURCE_CONTEXT_CREATED);
-        status = status && cbapi.enableCallback(
-            domain, CuptiCallbackApi::RESOURCE_CONTEXT_DESTROYED);
-        }
+        status =
+            status && cbapi.enableCallback(
+                          domain, CuptiCallbackApi::RESOURCE_CONTEXT_DESTROYED);
+      }
     }
 
     if (!cbapi.initSuccess() || !status) {
@@ -112,8 +113,10 @@ void libdmv_init(bool cpuOnly, bool logOnError) {
         CUPTI_CALL(cbapi.getCuptiStatus());
         LOG(WARNING) << "CUPTI initialization failed - "
                      << "CUDA profiler activities will be missing";
-        LOG(INFO) << "If you see CUPTI_ERROR_INSUFFICIENT_PRIVILEGES, refer to "
-                  << "https://developer.nvidia.com/nvidia-development-tools-solutions-err-nvgpuctrperm-cupti";
+        LOG(INFO)
+            << "If you see CUPTI_ERROR_INSUFFICIENT_PRIVILEGES, refer to "
+            << "https://developer.nvidia.com/"
+               "nvidia-development-tools-solutions-err-nvgpuctrperm-cupti";
       }
     }
 
@@ -132,7 +135,7 @@ void libdmv_init(bool cpuOnly, bool logOnError) {
   }
 #endif // HAS_CUPTI
 
-  ConfigLoader& config_loader = libdmv::api().configLoader();
+  ConfigLoader &config_loader = libdmv::api().configLoader();
   libdmv::api().registerProfiler(
       std::make_unique<ActivityProfilerProxy>(cpuOnly, config_loader));
 }
@@ -145,8 +148,6 @@ int InitializeInjection(void) {
   return 1;
 }
 
-void suppresslibdmvLogMessages() {
-  SET_LOG_SEVERITY_LEVEL(ERROR);
-}
+void suppresslibdmvLogMessages() { SET_LOG_SEVERITY_LEVEL(ERROR); }
 
 } // extern C

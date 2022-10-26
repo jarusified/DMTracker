@@ -28,9 +28,7 @@ uint64_t unixEpochTimestamp(uint64_t ts) {
   return ts + diff;
 }
 #else
-uint64_t unixEpochTimestamp(uint64_t ts) {
-  return ts;
-}
+uint64_t unixEpochTimestamp(uint64_t ts) { return ts; }
 #endif // _WIN32
 
 } // namespace libdmv

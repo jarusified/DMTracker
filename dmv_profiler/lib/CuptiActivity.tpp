@@ -3,7 +3,6 @@
 // This source code is licensed under the BSD-style license found in the
 // LICENSE file in the root directory of this source tree.
 
-
 #include "CuptiActivity.h"
 
 #include <fmt/format.h>
@@ -15,18 +14,18 @@ namespace libdmv {
 
 using namespace libdmv;
 
-template<>
+template <>
 inline const std::string GpuActivity<CUpti_ActivityKernel4>::name() const {
   return raw().name;
 }
 
-template<>
+template <>
 inline ActivityType GpuActivity<CUpti_ActivityKernel4>::type() const {
   return ActivityType::CONCURRENT_KERNEL;
 }
 
-template<class T>
-inline void GpuActivity<T>::log(ActivityLogger& logger) const {
+template <class T>
+inline void GpuActivity<T>::log(ActivityLogger &logger) const {
   logger.handleActivity(*this);
 }
 
@@ -36,9 +35,10 @@ constexpr int64_t us(int64_t timestamp) {
   return timestamp / 1000;
 }
 
-template<>
-inline const std::string GpuActivity<CUpti_ActivityKernel4>::metadataJson() const {
-  const CUpti_ActivityKernel4& kernel = raw();
+template <>
+inline const std::string
+GpuActivity<CUpti_ActivityKernel4>::metadataJson() const {
+  const CUpti_ActivityKernel4 &kernel = raw();
   // clang-format off
   return fmt::format(R"JSON(
       "queued": {}, "device": {}, "context": {},
@@ -62,21 +62,19 @@ inline const std::string GpuActivity<CUpti_ActivityKernel4>::metadataJson() cons
   // clang-format on
 }
 
-
 inline std::string memcpyName(uint8_t kind, uint8_t src, uint8_t dst) {
-  return fmt::format(
-      "Memcpy {} ({} -> {})",
-      memcpyKindString((CUpti_ActivityMemcpyKind)kind),
-      memoryKindString((CUpti_ActivityMemoryKind)src),
-      memoryKindString((CUpti_ActivityMemoryKind)dst));
+  return fmt::format("Memcpy {} ({} -> {})",
+                     memcpyKindString((CUpti_ActivityMemcpyKind)kind),
+                     memoryKindString((CUpti_ActivityMemoryKind)src),
+                     memoryKindString((CUpti_ActivityMemoryKind)dst));
 }
 
-template<>
+template <>
 inline ActivityType GpuActivity<CUpti_ActivityMemcpy>::type() const {
   return ActivityType::GPU_MEMCPY;
 }
 
-template<>
+template <>
 inline const std::string GpuActivity<CUpti_ActivityMemcpy>::name() const {
   return memcpyName(raw().copyKind, raw().srcKind, raw().dstKind);
 }
@@ -85,9 +83,10 @@ inline std::string bandwidth(uint64_t bytes, uint64_t duration) {
   return duration == 0 ? "\"N/A\"" : fmt::format("{}", bytes * 1.0 / duration);
 }
 
-template<>
-inline const std::string GpuActivity<CUpti_ActivityMemcpy>::metadataJson() const {
-  const CUpti_ActivityMemcpy& memcpy = raw();
+template <>
+inline const std::string
+GpuActivity<CUpti_ActivityMemcpy>::metadataJson() const {
+  const CUpti_ActivityMemcpy &memcpy = raw();
   // clang-format off
   return fmt::format(R"JSON(
       "device": {}, "context": {},
@@ -99,20 +98,20 @@ inline const std::string GpuActivity<CUpti_ActivityMemcpy>::metadataJson() const
   // clang-format on
 }
 
-
-template<>
+template <>
 inline ActivityType GpuActivity<CUpti_ActivityMemcpy2>::type() const {
   return ActivityType::GPU_MEMCPY;
 }
 
-template<>
+template <>
 inline const std::string GpuActivity<CUpti_ActivityMemcpy2>::name() const {
   return memcpyName(raw().copyKind, raw().srcKind, raw().dstKind);
 }
 
-template<>
-inline const std::string GpuActivity<CUpti_ActivityMemcpy2>::metadataJson() const {
-  const CUpti_ActivityMemcpy2& memcpy = raw();
+template <>
+inline const std::string
+GpuActivity<CUpti_ActivityMemcpy2>::metadataJson() const {
+  const CUpti_ActivityMemcpy2 &memcpy = raw();
   // clang-format off
   return fmt::format(R"JSON(
       "fromDevice": {}, "inDevice": {}, "toDevice": {},
@@ -126,21 +125,22 @@ inline const std::string GpuActivity<CUpti_ActivityMemcpy2>::metadataJson() cons
   // clang-format on
 }
 
-template<>
+template <>
 inline const std::string GpuActivity<CUpti_ActivityMemset>::name() const {
-  const char* memory_kind =
-    memoryKindString((CUpti_ActivityMemoryKind)raw().memoryKind);
+  const char *memory_kind =
+      memoryKindString((CUpti_ActivityMemoryKind)raw().memoryKind);
   return fmt::format("Memset ({})", memory_kind);
 }
 
-template<>
+template <>
 inline ActivityType GpuActivity<CUpti_ActivityMemset>::type() const {
   return ActivityType::GPU_MEMSET;
 }
 
-template<>
-inline const std::string GpuActivity<CUpti_ActivityMemset>::metadataJson() const {
-  const CUpti_ActivityMemset& memset = raw();
+template <>
+inline const std::string
+GpuActivity<CUpti_ActivityMemset>::metadataJson() const {
+  const CUpti_ActivityMemset &memset = raw();
   // clang-format off
   return fmt::format(R"JSON(
       "device": {}, "context": {},
@@ -152,38 +152,34 @@ inline const std::string GpuActivity<CUpti_ActivityMemset>::metadataJson() const
   // clang-format on
 }
 
-inline void RuntimeActivity::log(ActivityLogger& logger) const {
+inline void RuntimeActivity::log(ActivityLogger &logger) const {
   logger.handleActivity(*this);
 }
 
-inline void OverheadActivity::log(ActivityLogger& logger) const {
+inline void OverheadActivity::log(ActivityLogger &logger) const {
   logger.handleActivity(*this);
 }
 
-inline bool OverheadActivity::flowStart() const {
-  return false;
-}
+inline bool OverheadActivity::flowStart() const { return false; }
 
-inline const std::string OverheadActivity::metadataJson() const {
-  return "";
-}
+inline const std::string OverheadActivity::metadataJson() const { return ""; }
 
 inline bool RuntimeActivity::flowStart() const {
   return activity_.cbid == CUPTI_RUNTIME_TRACE_CBID_cudaLaunchKernel_v7000 ||
-      (activity_.cbid >= CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020 &&
-       activity_.cbid <= CUPTI_RUNTIME_TRACE_CBID_cudaMemset2DAsync_v3020) ||
-      activity_.cbid ==
-          CUPTI_RUNTIME_TRACE_CBID_cudaLaunchCooperativeKernel_v9000 ||
-      activity_.cbid ==
-          CUPTI_RUNTIME_TRACE_CBID_cudaLaunchCooperativeKernelMultiDevice_v9000;
+         (activity_.cbid >= CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020 &&
+          activity_.cbid <= CUPTI_RUNTIME_TRACE_CBID_cudaMemset2DAsync_v3020) ||
+         activity_.cbid ==
+             CUPTI_RUNTIME_TRACE_CBID_cudaLaunchCooperativeKernel_v9000 ||
+         activity_.cbid ==
+             CUPTI_RUNTIME_TRACE_CBID_cudaLaunchCooperativeKernelMultiDevice_v9000;
 }
 
 inline const std::string RuntimeActivity::metadataJson() const {
-  return fmt::format(R"JSON("cbid": {}, "correlation": {})JSON",
-      activity_.cbid, activity_.correlationId);
+  return fmt::format(R"JSON("cbid": {}, "correlation": {})JSON", activity_.cbid,
+                     activity_.correlationId);
 }
 
-template<class T>
+template <class T>
 inline const std::string GpuActivity<T>::metadataJson() const {
   return "";
 }

@@ -10,17 +10,16 @@
 using namespace DMV_NAMESPACE;
 
 TEST(CuptiStringsTest, Valid) {
-  ASSERT_STREQ(
-      runtimeCbidName(CUPTI_RUNTIME_TRACE_CBID_INVALID), "INVALID");
+  ASSERT_STREQ(runtimeCbidName(CUPTI_RUNTIME_TRACE_CBID_INVALID), "INVALID");
   ASSERT_STREQ(
       runtimeCbidName(CUPTI_RUNTIME_TRACE_CBID_cudaDriverGetVersion_v3020),
       "cudaDriverGetVersion");
-  ASSERT_STREQ(runtimeCbidName
-      (CUPTI_RUNTIME_TRACE_CBID_cudaDeviceSynchronize_v3020),
-      "cudaDeviceSynchronize");
   ASSERT_STREQ(
-      runtimeCbidName(CUPTI_RUNTIME_TRACE_CBID_cudaStreamSetAttribute_ptsz_v11000),
-      "cudaStreamSetAttribute_ptsz");
+      runtimeCbidName(CUPTI_RUNTIME_TRACE_CBID_cudaDeviceSynchronize_v3020),
+      "cudaDeviceSynchronize");
+  ASSERT_STREQ(runtimeCbidName(
+                   CUPTI_RUNTIME_TRACE_CBID_cudaStreamSetAttribute_ptsz_v11000),
+               "cudaStreamSetAttribute_ptsz");
 }
 
 TEST(CuptiStringsTest, Invalid) {

@@ -15,11 +15,11 @@ namespace libdmv {
 using namespace libdmv;
 
 class Config : public AbstractConfig {
- public:
+public:
   Config();
-  Config& operator=(const Config&) = delete;
-  Config(Config&&) = delete;
-  Config& operator=(Config&&) = delete;
+  Config &operator=(const Config &) = delete;
+  Config(Config &&) = delete;
+  Config &operator=(Config &&) = delete;
 
   // Return a full copy including feature config object
   std::unique_ptr<Config> clone() const {
@@ -28,37 +28,27 @@ class Config : public AbstractConfig {
     return cfg;
   }
 
-  bool handleOption(const std::string& name, std::string& val) override;
+  bool handleOption(const std::string &name, std::string &val) override;
 
   void setClientDefaults() override;
 
   // Log events to this file
-  const std::string& eventLogFile() const {
-    return eventLogFile_;
-  }
+  const std::string &eventLogFile() const { return eventLogFile_; }
 
   bool activityProfilerEnabled() const {
     return activityProfilerEnabled_ ||
-      activitiesOnDemandTimestamp_.time_since_epoch().count() > 0;
+           activitiesOnDemandTimestamp_.time_since_epoch().count() > 0;
   }
 
   // Log activitiy trace to this file
-  const std::string& activitiesLogFile() const {
-    return activitiesLogFile_;
-  }
+  const std::string &activitiesLogFile() const { return activitiesLogFile_; }
 
   // Log activitiy trace to this url
-  const std::string& activitiesLogUrl() const {
-    return activitiesLogUrl_;
-  }
+  const std::string &activitiesLogUrl() const { return activitiesLogUrl_; }
 
-  void setActivitiesLogUrl(const std::string& url) {
-    activitiesLogUrl_ = url;
-  }
+  void setActivitiesLogUrl(const std::string &url) { activitiesLogUrl_ = url; }
 
-  bool activitiesLogToMemory() const {
-    return activitiesLogToMemory_;
-  }
+  bool activitiesLogToMemory() const { return activitiesLogToMemory_; }
 
   // Is profiling enabled for the given device?
   bool eventProfilerEnabledForDevice(uint32_t dev) const {
@@ -69,9 +59,7 @@ class Config : public AbstractConfig {
   // This controls how often counters are read - if all counters cannot
   // be collected simultaneously then multiple samples are needed to
   // collect all requested counters - see multiplex period.
-  std::chrono::milliseconds samplePeriod() const {
-    return samplePeriod_;
-  }
+  std::chrono::milliseconds samplePeriod() const { return samplePeriod_; }
 
   void setSamplePeriod(std::chrono::milliseconds period) {
     samplePeriod_ = period;
@@ -81,9 +69,7 @@ class Config : public AbstractConfig {
   // counters will be multiplexed at this frequency.
   // Multiplexing can have a large performance impact if done frequently.
   // To avoid a perf impact, keep this at 1s or above.
-  std::chrono::milliseconds multiplexPeriod() const {
-    return multiplexPeriod_;
-  }
+  std::chrono::milliseconds multiplexPeriod() const { return multiplexPeriod_; }
 
   void setMultiplexPeriod(std::chrono::milliseconds period) {
     multiplexPeriod_ = period;
@@ -91,44 +77,34 @@ class Config : public AbstractConfig {
 
   // Report counters at this frequency. Note that several samples can
   // be reported each time, see samplesPerReport.
-  std::chrono::milliseconds reportPeriod() const {
-    return reportPeriod_;
-  }
+  std::chrono::milliseconds reportPeriod() const { return reportPeriod_; }
 
   void setReportPeriod(std::chrono::milliseconds msecs);
 
   // Number of samples dispatched each report period.
   // Must be in the range [1, report period / sample period].
   // In other words, aggregation is supported but not interpolation.
-  int samplesPerReport() const {
-    return samplesPerReport_;
-  }
+  int samplesPerReport() const { return samplesPerReport_; }
 
-  void setSamplesPerReport(int count) {
-    samplesPerReport_ = count;
-  }
+  void setSamplesPerReport(int count) { samplesPerReport_ = count; }
 
   // The names of events to collect
-  const std::set<std::string>& eventNames() const {
-    return eventNames_;
-  }
+  const std::set<std::string> &eventNames() const { return eventNames_; }
 
   // Add additional events to be profiled
-  void addEvents(const std::set<std::string>& names) {
+  void addEvents(const std::set<std::string> &names) {
     eventNames_.insert(names.begin(), names.end());
   }
 
   // The names of metrics to collect
-  const std::set<std::string>& metricNames() const {
-    return metricNames_;
-  }
+  const std::set<std::string> &metricNames() const { return metricNames_; }
 
   // Add additional metrics to be profiled
-  void addMetrics(const std::set<std::string>& names) {
+  void addMetrics(const std::set<std::string> &names) {
     metricNames_.insert(names.begin(), names.end());
   }
 
-  const std::vector<int>& percentiles() const {
+  const std::vector<int> &percentiles() const {
     return eventReportPercentiles_;
   }
 
@@ -160,17 +136,15 @@ class Config : public AbstractConfig {
   }
 
   // The types of activities selected in the configuration file
-  const std::set<ActivityType>& selectedActivityTypes() const {
+  const std::set<ActivityType> &selectedActivityTypes() const {
     return selectedActivityTypes_;
   }
 
-  void setSelectedActivityTypes(const std::set<ActivityType>& types) {
+  void setSelectedActivityTypes(const std::set<ActivityType> &types) {
     selectedActivityTypes_ = types;
   }
 
-  bool isOpInputsCollectionEnabled() const {
-    return enableOpInputsCollection_;
-  }
+  bool isOpInputsCollectionEnabled() const { return enableOpInputsCollection_; }
 
   // Trace for this long
   std::chrono::milliseconds activitiesDuration() const {
@@ -178,26 +152,20 @@ class Config : public AbstractConfig {
   }
 
   // Trace for this many iterations, determined by external API
-  int activitiesRunIterations() const {
-    return activitiesRunIterations_;
-  }
+  int activitiesRunIterations() const { return activitiesRunIterations_; }
 
-  int activitiesMaxGpuBufferSize() const {
-    return activitiesMaxGpuBufferSize_;
-  }
+  int activitiesMaxGpuBufferSize() const { return activitiesMaxGpuBufferSize_; }
 
   std::chrono::seconds activitiesWarmupDuration() const {
     return activitiesWarmupDuration_;
   }
 
-  int activitiesWarmupIterations() const {
-    return activitiesWarmupIterations_;
-  }
+  int activitiesWarmupIterations() const { return activitiesWarmupIterations_; }
 
   // Timestamp at which the profiling to start, requested by the user.
-  const std::chrono::time_point<std::chrono::system_clock> requestTimestamp()
-      const {
-    if  (profileStartTime_.time_since_epoch().count()) {
+  const std::chrono::time_point<std::chrono::system_clock>
+  requestTimestamp() const {
+    if (profileStartTime_.time_since_epoch().count()) {
       return profileStartTime_;
     }
     // If no one requested timestamp, return 0.
@@ -211,20 +179,16 @@ class Config : public AbstractConfig {
 
   bool hasProfileStartTime() const {
     return requestTimestamp_.time_since_epoch().count() > 0 ||
-        profileStartTime_.time_since_epoch().count() > 0;
+           profileStartTime_.time_since_epoch().count() > 0;
   }
 
-  int profileStartIteration() const {
-    return profileStartIteration_;
-  }
+  int profileStartIteration() const { return profileStartIteration_; }
 
   bool hasProfileStartIteration() const {
     return profileStartIteration_ >= 0 && activitiesRunIterations_ > 0;
   }
 
-  void setProfileStartIteration(int iter) {
-    profileStartIteration_ = iter;
-  }
+  void setProfileStartIteration(int iter) { profileStartIteration_ = iter; }
 
   int profileStartIterationRoundUp() const {
     return profileStartIterationRoundUp_;
@@ -243,27 +207,21 @@ class Config : public AbstractConfig {
   // All VLOG* macros will log if the verbose log level is >=
   // the verbosity specified for the verbose log message.
   // Default value is -1, so messages with log level 0 will log by default.
-  int verboseLogLevel() const {
-    return verboseLogLevel_;
-  }
+  int verboseLogLevel() const { return verboseLogLevel_; }
 
   // Modules for which verbose logging is enabled.
   // If empty, logging is enabled for all modules.
-  const std::vector<std::string>& verboseLogModules() const {
+  const std::vector<std::string> &verboseLogModules() const {
     return verboseLogModules_;
   }
 
-  bool sigUsr2Enabled() const {
-    return enableSigUsr2_;
-  }
+  bool sigUsr2Enabled() const { return enableSigUsr2_; }
 
-  bool ipcFabricEnabled() const {
-    return enableIpcFabric_;
-  }
+  bool ipcFabricEnabled() const { return enableIpcFabric_; }
 
-  static std::chrono::milliseconds alignUp(
-      std::chrono::milliseconds duration,
-      std::chrono::milliseconds alignment) {
+  static std::chrono::milliseconds
+  alignUp(std::chrono::milliseconds duration,
+          std::chrono::milliseconds alignment) {
     duration += alignment;
     return duration - (duration % alignment);
   }
@@ -284,49 +242,45 @@ class Config : public AbstractConfig {
   }
 
   // Users may request and set trace id and group trace id.
-  const std::string& requestTraceID() const {
-    return requestTraceID_;
-  }
+  const std::string &requestTraceID() const { return requestTraceID_; }
 
-  void setRequestTraceID(const std::string& tid) {
-    requestTraceID_ = tid;
-  }
+  void setRequestTraceID(const std::string &tid) { requestTraceID_ = tid; }
 
-  const std::string& requestGroupTraceID() const {
+  const std::string &requestGroupTraceID() const {
     return requestGroupTraceID_;
   }
 
-  void setRequestGroupTraceID(const std::string& gtid) {
+  void setRequestGroupTraceID(const std::string &gtid) {
     requestGroupTraceID_ = gtid;
   }
 
   void updateActivityProfilerRequestReceivedTime();
 
-  void printActivityProfilerConfig(std::ostream& s) const override;
+  void printActivityProfilerConfig(std::ostream &s) const override;
 
-  void validate(
-      const std::chrono::time_point<std::chrono::system_clock>& fallbackProfileStartTime) override;
+  void validate(const std::chrono::time_point<std::chrono::system_clock>
+                    &fallbackProfileStartTime) override;
 
-  static void addConfigFactory(
-      std::string name,
-      std::function<AbstractConfig*(Config&)> factory);
+  static void
+  addConfigFactory(std::string name,
+                   std::function<AbstractConfig *(Config &)> factory);
 
-  void print(std::ostream& s) const;
+  void print(std::ostream &s) const;
 
- private:
-  explicit Config(const Config& other) = default;
+private:
+  explicit Config(const Config &other) = default;
 
-  AbstractConfig* cloneDerived(AbstractConfig& parent) const override {
+  AbstractConfig *cloneDerived(AbstractConfig &parent) const override {
     // Clone from AbstractConfig not supported
     assert(false);
     return nullptr;
   }
 
-  uint8_t createDeviceMask(const std::string& val);
+  uint8_t createDeviceMask(const std::string &val);
 
   // Adds valid activity types from the user defined string list in the
   // configuration file
-  void setActivityTypes(const std::vector<std::string>& selected_activities);
+  void setActivityTypes(const std::vector<std::string> &selected_activities);
 
   // Sets the default activity types to be traced
   void selectDefaultActivityTypes() {

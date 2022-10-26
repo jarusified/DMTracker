@@ -7,84 +7,79 @@
 
 namespace libdmv {
 
-const char* memcpyKindString(
-    CUpti_ActivityMemcpyKind kind) {
+const char *memcpyKindString(CUpti_ActivityMemcpyKind kind) {
   switch (kind) {
-    case CUPTI_ACTIVITY_MEMCPY_KIND_HTOD:
-      return "HtoD";
-    case CUPTI_ACTIVITY_MEMCPY_KIND_DTOH:
-      return "DtoH";
-    case CUPTI_ACTIVITY_MEMCPY_KIND_HTOA:
-      return "HtoA";
-    case CUPTI_ACTIVITY_MEMCPY_KIND_ATOH:
-      return "AtoH";
-    case CUPTI_ACTIVITY_MEMCPY_KIND_ATOA:
-      return "AtoA";
-    case CUPTI_ACTIVITY_MEMCPY_KIND_ATOD:
-      return "AtoD";
-    case CUPTI_ACTIVITY_MEMCPY_KIND_DTOA:
-      return "DtoA";
-    case CUPTI_ACTIVITY_MEMCPY_KIND_DTOD:
-      return "DtoD";
-    case CUPTI_ACTIVITY_MEMCPY_KIND_HTOH:
-      return "HtoH";
-    case CUPTI_ACTIVITY_MEMCPY_KIND_PTOP:
-      return "PtoP";
-    default:
-      break;
+  case CUPTI_ACTIVITY_MEMCPY_KIND_HTOD:
+    return "HtoD";
+  case CUPTI_ACTIVITY_MEMCPY_KIND_DTOH:
+    return "DtoH";
+  case CUPTI_ACTIVITY_MEMCPY_KIND_HTOA:
+    return "HtoA";
+  case CUPTI_ACTIVITY_MEMCPY_KIND_ATOH:
+    return "AtoH";
+  case CUPTI_ACTIVITY_MEMCPY_KIND_ATOA:
+    return "AtoA";
+  case CUPTI_ACTIVITY_MEMCPY_KIND_ATOD:
+    return "AtoD";
+  case CUPTI_ACTIVITY_MEMCPY_KIND_DTOA:
+    return "DtoA";
+  case CUPTI_ACTIVITY_MEMCPY_KIND_DTOD:
+    return "DtoD";
+  case CUPTI_ACTIVITY_MEMCPY_KIND_HTOH:
+    return "HtoH";
+  case CUPTI_ACTIVITY_MEMCPY_KIND_PTOP:
+    return "PtoP";
+  default:
+    break;
   }
   return "<unknown>";
 }
 
-const char* memoryKindString(
-    CUpti_ActivityMemoryKind kind) {
+const char *memoryKindString(CUpti_ActivityMemoryKind kind) {
   switch (kind) {
-    case CUPTI_ACTIVITY_MEMORY_KIND_UNKNOWN:
-      return "Unknown";
-    case CUPTI_ACTIVITY_MEMORY_KIND_PAGEABLE:
-      return "Pageable";
-    case CUPTI_ACTIVITY_MEMORY_KIND_PINNED:
-      return "Pinned";
-    case CUPTI_ACTIVITY_MEMORY_KIND_DEVICE:
-      return "Device";
-    case CUPTI_ACTIVITY_MEMORY_KIND_ARRAY:
-      return "Array";
-    case CUPTI_ACTIVITY_MEMORY_KIND_MANAGED:
-      return "Managed";
-    case CUPTI_ACTIVITY_MEMORY_KIND_DEVICE_STATIC:
-      return "Device Static";
-    case CUPTI_ACTIVITY_MEMORY_KIND_MANAGED_STATIC:
-      return "Managed Static";
-    case CUPTI_ACTIVITY_MEMORY_KIND_FORCE_INT:
-      return "Force Int";
-    default:
-      return "Unrecognized";
+  case CUPTI_ACTIVITY_MEMORY_KIND_UNKNOWN:
+    return "Unknown";
+  case CUPTI_ACTIVITY_MEMORY_KIND_PAGEABLE:
+    return "Pageable";
+  case CUPTI_ACTIVITY_MEMORY_KIND_PINNED:
+    return "Pinned";
+  case CUPTI_ACTIVITY_MEMORY_KIND_DEVICE:
+    return "Device";
+  case CUPTI_ACTIVITY_MEMORY_KIND_ARRAY:
+    return "Array";
+  case CUPTI_ACTIVITY_MEMORY_KIND_MANAGED:
+    return "Managed";
+  case CUPTI_ACTIVITY_MEMORY_KIND_DEVICE_STATIC:
+    return "Device Static";
+  case CUPTI_ACTIVITY_MEMORY_KIND_MANAGED_STATIC:
+    return "Managed Static";
+  case CUPTI_ACTIVITY_MEMORY_KIND_FORCE_INT:
+    return "Force Int";
+  default:
+    return "Unrecognized";
   }
 }
 
-const char* overheadKindString(
-    CUpti_ActivityOverheadKind kind) {
+const char *overheadKindString(CUpti_ActivityOverheadKind kind) {
   switch (kind) {
-    case CUPTI_ACTIVITY_OVERHEAD_UNKNOWN:
-      return "Unknown";
-    case CUPTI_ACTIVITY_OVERHEAD_DRIVER_COMPILER:
-      return "Driver Compiler";
-    case CUPTI_ACTIVITY_OVERHEAD_CUPTI_BUFFER_FLUSH:
-      return "Buffer Flush";
-    case CUPTI_ACTIVITY_OVERHEAD_CUPTI_INSTRUMENTATION:
-      return "Instrumentation";
-    case CUPTI_ACTIVITY_OVERHEAD_CUPTI_RESOURCE:
-      return "Resource";
-    case CUPTI_ACTIVITY_OVERHEAD_FORCE_INT:
-      return "Force Int";
-    default:
-      return "Unrecognized";
+  case CUPTI_ACTIVITY_OVERHEAD_UNKNOWN:
+    return "Unknown";
+  case CUPTI_ACTIVITY_OVERHEAD_DRIVER_COMPILER:
+    return "Driver Compiler";
+  case CUPTI_ACTIVITY_OVERHEAD_CUPTI_BUFFER_FLUSH:
+    return "Buffer Flush";
+  case CUPTI_ACTIVITY_OVERHEAD_CUPTI_INSTRUMENTATION:
+    return "Instrumentation";
+  case CUPTI_ACTIVITY_OVERHEAD_CUPTI_RESOURCE:
+    return "Resource";
+  case CUPTI_ACTIVITY_OVERHEAD_FORCE_INT:
+    return "Force Int";
+  default:
+    return "Unrecognized";
   }
 }
 
-
-
-static const char* runtimeCbidNames[] = {
+static const char *runtimeCbidNames[] = {
     "INVALID",
     "cudaDriverGetVersion",
     "cudaRuntimeGetVersion",
@@ -490,10 +485,9 @@ static const char* runtimeCbidNames[] = {
     "cudaGraphExternalSemaphoresWaitNodeSetParams",
     "cudaGraphExecExternalSemaphoresSignalNodeSetParams",
     "cudaGraphExecExternalSemaphoresWaitNodeSetParams",
-    "SIZE"
-};
+    "SIZE"};
 
-const char* runtimeCbidName(CUpti_CallbackId cbid) {
+const char *runtimeCbidName(CUpti_CallbackId cbid) {
   constexpr int names_size =
       sizeof(runtimeCbidNames) / sizeof(runtimeCbidNames[0]);
   if (cbid < 0 || cbid >= names_size) {

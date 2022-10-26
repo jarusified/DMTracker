@@ -13,7 +13,7 @@ enum CUpti_CallbackId {
   CUPTI_CBID_RESOURCE_CONTEXT_DESTROY_STARTING,
 };
 
-using CUcontext = void*;
+using CUcontext = void *;
 
 struct CUpti_ResourceData {
   CUcontext context;
@@ -24,7 +24,7 @@ constexpr int CUPTI_API_EXIT = 0;
 
 struct CUpti_CallbackData {
   CUcontext context;
-  const char* symbolName;
+  const char *symbolName;
   int callbackSite;
 };
 #endif // HAS_CUPTI

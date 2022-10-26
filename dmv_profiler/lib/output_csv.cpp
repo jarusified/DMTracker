@@ -12,9 +12,8 @@
 
 namespace libdmv {
 
-static void write_header(
-    std::ostream& out,
-    const std::vector<int>& percentiles) {
+static void write_header(std::ostream &out,
+                         const std::vector<int> &percentiles) {
   out << "timestamp,delta_ms,device,event_name";
   for (int p : percentiles) {
     out << ",p" << p;
@@ -22,7 +21,7 @@ static void write_header(
   out << ",total" << std::endl;
 }
 
-void EventCSVLogger::update(const Config& config) {
+void EventCSVLogger::update(const Config &config) {
   eventNames_.clear();
   eventNames_.insert(config.eventNames().begin(), config.eventNames().end());
   eventNames_.insert(config.metricNames().begin(), config.metricNames().end());
@@ -34,12 +33,13 @@ void EventCSVLogger::update(const Config& config) {
   }
 }
 
-void EventCSVLogger::handleSample(int device, const Sample& sample, bool from_new_version) {
+void EventCSVLogger::handleSample(int device, const Sample &sample,
+                                  bool from_new_version) {
   using namespace std::chrono;
   if (out_) {
     auto now = system_clock::now();
     auto time = system_clock::to_time_t(now);
-    for (const Stat& s : sample.stats) {
+    for (const Stat &s : sample.stats) {
       if (eventNames_.find(s.name) == eventNames_.end()) {
         continue;
       }
@@ -47,7 +47,7 @@ void EventCSVLogger::handleSample(int device, const Sample& sample, bool from_ne
       *out_ << sample.deltaMsec << ",";
       *out_ << device << ",";
       *out_ << s.name;
-      for (const auto& p : s.percentileValues) {
+      for (const auto &p : s.percentileValues) {
         *out_ << "," << p.second;
       }
       *out_ << "," << s.total << std::endl;
@@ -55,7 +55,7 @@ void EventCSVLogger::handleSample(int device, const Sample& sample, bool from_ne
   }
 }
 
-void EventCSVFileLogger::update(const Config& config) {
+void EventCSVFileLogger::update(const Config &config) {
   if (config.eventLogFile() != filename_) {
     if (of_.is_open()) {
       of_.close();
@@ -71,7 +71,7 @@ void EventCSVFileLogger::update(const Config& config) {
   EventCSVLogger::update(config);
 }
 
-void EventCSVDbgLogger::update(const Config& config) {
+void EventCSVDbgLogger::update(const Config &config) {
   if (out_ && config.verboseLogLevel() < 0) {
     out_ = nullptr;
   } else if (!out_ && config.verboseLogLevel() >= 0) {

@@ -9,12 +9,12 @@ namespace libdmv {
 struct ITraceActivity;
 
 class ActivityTraceInterface {
- public:
+public:
   virtual ~ActivityTraceInterface() {}
-  virtual const std::vector<const ITraceActivity*>* activities() {
+  virtual const std::vector<const ITraceActivity *> *activities() {
     return nullptr;
   }
-  virtual void save(const std::string& path) {}
+  virtual void save(const std::string &path) {}
 };
 
 } // namespace libdmv

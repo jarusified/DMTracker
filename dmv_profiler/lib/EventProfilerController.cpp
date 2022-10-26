@@ -26,23 +26,23 @@ namespace libdmv {
 
 namespace {
 
-vector<std::function<unique_ptr<SampleListener>(const Config&)>>&
+vector<std::function<unique_ptr<SampleListener>(const Config &)>> &
 loggerFactories() {
-  static vector<std::function<unique_ptr<SampleListener>(const Config&)>>
+  static vector<std::function<unique_ptr<SampleListener>(const Config &)>>
       factories;
   return factories;
 }
 
-vector<std::function<unique_ptr<SampleListener>(const Config&)>>&
+vector<std::function<unique_ptr<SampleListener>(const Config &)>> &
 onDemandLoggerFactories() {
-  static vector<std::function<unique_ptr<SampleListener>(const Config&)>>
+  static vector<std::function<unique_ptr<SampleListener>(const Config &)>>
       factories;
   return factories;
 }
 
-vector<unique_ptr<SampleListener>> makeLoggers(const Config& config) {
+vector<unique_ptr<SampleListener>> makeLoggers(const Config &config) {
   vector<unique_ptr<SampleListener>> loggers;
-  for (const auto& factory : loggerFactories()) {
+  for (const auto &factory : loggerFactories()) {
     loggers.push_back(factory(config));
   }
   loggers.push_back(std::make_unique<EventCSVDbgLogger>());
@@ -50,28 +50,26 @@ vector<unique_ptr<SampleListener>> makeLoggers(const Config& config) {
   return loggers;
 }
 
-vector<unique_ptr<SampleListener>> makeOnDemandLoggers(
-    const Config& config) {
+vector<unique_ptr<SampleListener>> makeOnDemandLoggers(const Config &config) {
   vector<unique_ptr<SampleListener>> loggers;
-  for (const auto& factory : onDemandLoggerFactories()) {
+  for (const auto &factory : onDemandLoggerFactories()) {
     loggers.push_back(factory(config));
   }
   loggers.push_back(std::make_unique<EventCSVDbgLogger>());
   return loggers;
 }
 
-vector<unique_ptr<SampleListener>>& loggers(const Config& config) {
+vector<unique_ptr<SampleListener>> &loggers(const Config &config) {
   static auto res = makeLoggers(config);
   return res;
 }
 
-vector<unique_ptr<SampleListener>>& onDemandLoggers(
-    const Config& config) {
+vector<unique_ptr<SampleListener>> &onDemandLoggers(const Config &config) {
   static auto res = makeOnDemandLoggers(config);
   return res;
 }
 
-} // anon namespace
+} // namespace
 
 // Keep an eye on profiling threads.
 // We've observed deadlocks in Cuda11 in libcuda / libcupti..
@@ -79,12 +77,10 @@ namespace detail {
 
 class HeartbeatMonitor {
 
- public:
-  ~HeartbeatMonitor() {
-    stopMonitoring();
-  }
+public:
+  ~HeartbeatMonitor() { stopMonitoring(); }
 
-  static HeartbeatMonitor& instance() {
+  static HeartbeatMonitor &instance() {
     static HeartbeatMonitor monitor;
     return monitor;
   }
@@ -110,18 +106,18 @@ class HeartbeatMonitor {
     }
   }
 
- private:
+private:
   HeartbeatMonitor() = default;
 
   void monitorLoop() {
     std::unique_lock<std::mutex> lock(mutex_);
-    while(!stopMonitor_) {
+    while (!stopMonitor_) {
       auto cv_status = condVar_.wait_for(lock, seconds(period_));
       // Don't perform check on spurious wakeup or on notify
       if (cv_status == std::cv_status::timeout) {
-        for (auto& pair : profilerAliveMap_) {
+        for (auto &pair : profilerAliveMap_) {
           int32_t tid = pair.first;
-          int& i = pair.second;
+          int &i = pair.second;
           if (i == 0) {
             LOG(ERROR) << "Thread " << tid << " appears stuck!";
           }
@@ -135,8 +131,8 @@ class HeartbeatMonitor {
     if (!monitorThread_) {
       VLOG(0) << "Starting monitoring thread";
       stopMonitor_ = false;
-      monitorThread_ = std::make_unique<std::thread>(
-          &HeartbeatMonitor::monitorLoop, this);
+      monitorThread_ =
+          std::make_unique<std::thread>(&HeartbeatMonitor::monitorLoop, this);
     }
   }
 
@@ -163,58 +159,49 @@ class HeartbeatMonitor {
 
 namespace {
 // Profiler map singleton
-std::map<CUcontext, unique_ptr<EventProfilerController>>& profilerMap() {
+std::map<CUcontext, unique_ptr<EventProfilerController>> &profilerMap() {
   static std::map<CUcontext, unique_ptr<EventProfilerController>> instance;
   return instance;
 }
 
-void reportLateSample(
-    int sleepMs,
-    int sampleMs,
-    int reportMs,
-    int reprogramMs) {
+void reportLateSample(int sleepMs, int sampleMs, int reportMs,
+                      int reprogramMs) {
   LOG_EVERY_N(WARNING, 10) << "Lost sample due to delays (ms): " << sleepMs
                            << ", " << sampleMs << ", " << reportMs << ", "
                            << reprogramMs;
 }
 
-void configureHeartbeatMonitor(
-    detail::HeartbeatMonitor& monitor, const Config& base, const Config* onDemand) {
-  seconds base_period =
-      base.eventProfilerHeartbeatMonitorPeriod();
-  seconds on_demand_period = !onDemand ? seconds(0) :
-      onDemand->eventProfilerHeartbeatMonitorPeriod();
-  monitor.setPeriod(
-      on_demand_period > seconds(0) ? on_demand_period : base_period);
+void configureHeartbeatMonitor(detail::HeartbeatMonitor &monitor,
+                               const Config &base, const Config *onDemand) {
+  seconds base_period = base.eventProfilerHeartbeatMonitorPeriod();
+  seconds on_demand_period =
+      !onDemand ? seconds(0) : onDemand->eventProfilerHeartbeatMonitorPeriod();
+  monitor.setPeriod(on_demand_period > seconds(0) ? on_demand_period
+                                                  : base_period);
 }
 
-} // anon namespace
+} // namespace
 
 void EventProfilerController::addLoggerFactory(
-    std::function<unique_ptr<SampleListener>(const Config&)> factory) {
+    std::function<unique_ptr<SampleListener>(const Config &)> factory) {
   loggerFactories().push_back(factory);
 }
 
 void EventProfilerController::addOnDemandLoggerFactory(
-    std::function<unique_ptr<SampleListener>(const Config&)> factory) {
+    std::function<unique_ptr<SampleListener>(const Config &)> factory) {
   onDemandLoggerFactories().push_back(factory);
 }
 
 EventProfilerController::EventProfilerController(
-    CUcontext context,
-    ConfigLoader& configLoader,
-    detail::HeartbeatMonitor& heartbeatMonitor)
+    CUcontext context, ConfigLoader &configLoader,
+    detail::HeartbeatMonitor &heartbeatMonitor)
     : configLoader_(configLoader), heartbeatMonitor_(heartbeatMonitor) {
   auto cupti_events = std::make_unique<CuptiEventApi>(context);
-  auto cupti_metrics =
-      std::make_unique<CuptiMetricApi>(cupti_events->device());
-  configLoader_.addHandler(
-      ConfigLoader::ConfigKind::EventProfiler, this);
+  auto cupti_metrics = std::make_unique<CuptiMetricApi>(cupti_events->device());
+  configLoader_.addHandler(ConfigLoader::ConfigKind::EventProfiler, this);
   auto config = configLoader.getConfigCopy();
   profiler_ = std::make_unique<EventProfiler>(
-      std::move(cupti_events),
-      std::move(cupti_metrics),
-      loggers(*config),
+      std::move(cupti_events), std::move(cupti_metrics), loggers(*config),
       onDemandLoggers(*config));
   profilerThread_ = std::make_unique<std::thread>(
       &EventProfilerController::profilerLoop, this);
@@ -226,15 +213,14 @@ EventProfilerController::~EventProfilerController() {
     stopRunloop_ = true;
     profilerThread_->join();
   }
-  configLoader_.removeHandler(
-      ConfigLoader::ConfigKind::EventProfiler, this);
+  configLoader_.removeHandler(ConfigLoader::ConfigKind::EventProfiler, this);
   VLOG(0) << "Stopped event profiler";
 }
 
 // Must be called under lock
-void EventProfilerController::start(CUcontext ctx, ConfigLoader& configLoader) {
-  profilerMap()[ctx] = unique_ptr<EventProfilerController>(
-      new EventProfilerController(
+void EventProfilerController::start(CUcontext ctx, ConfigLoader &configLoader) {
+  profilerMap()[ctx] =
+      unique_ptr<EventProfilerController>(new EventProfilerController(
           ctx, configLoader, detail::HeartbeatMonitor::instance()));
 }
 
@@ -248,7 +234,7 @@ bool EventProfilerController::canAcceptConfig() {
   return !newOnDemandConfig_;
 }
 
-void EventProfilerController::acceptConfig(const Config& config) {
+void EventProfilerController::acceptConfig(const Config &config) {
   if (config.eventProfilerOnDemandDuration().count() == 0) {
     // Ignore - not for this profiler
     return;
@@ -262,7 +248,7 @@ void EventProfilerController::acceptConfig(const Config& config) {
   LOG(INFO) << "Received new on-demand config";
 }
 
-bool EventProfilerController::enableForDevice(Config& cfg) {
+bool EventProfilerController::enableForDevice(Config &cfg) {
   // FIXME: Use device unique id!
   if (!cfg.eventProfilerEnabledForDevice(profiler_->device())) {
     return false;
@@ -284,8 +270,8 @@ void EventProfilerController::profilerLoop() {
   }
 
   if (!profiler_->setContinuousMode()) {
-    VLOG(0) << "Continuous mode not supported for GPU "
-            << profiler_->device() << ". Not starting Event Profiler.";
+    VLOG(0) << "Continuous mode not supported for GPU " << profiler_->device()
+            << ". Not starting Event Profiler.";
     return;
   }
 
@@ -332,15 +318,15 @@ void EventProfilerController::profilerLoop() {
     if (reconfigure) {
       try {
         profiler_->configure(*config, on_demand_config.get());
-      } catch (const std::exception& ex) {
+      } catch (const std::exception &ex) {
         LOG(ERROR) << "Encountered error while configuring event profiler: "
-            << ex.what();
+                   << ex.what();
         // Exit profiling entirely when encountering an error here
         // as it indicates a serious problem or bug.
         break;
       }
-      configureHeartbeatMonitor(
-          heartbeatMonitor_, *config, on_demand_config.get());
+      configureHeartbeatMonitor(heartbeatMonitor_, *config,
+                                on_demand_config.get());
       reconfigure = false;
       restart = true;
     }

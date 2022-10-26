@@ -9,37 +9,35 @@ namespace libdmv {
 // C++ interface to CUPTI Events C API.
 // Virtual methods are here mainly to allow easier testing.
 class CuptiEventApi {
- public:
+public:
   explicit CuptiEventApi(CUcontext context_);
   virtual ~CuptiEventApi() {}
 
-  CUdevice device() {
-    return device_;
-  }
+  CUdevice device() { return device_; }
 
-  virtual CUpti_EventGroupSets* createGroupSets(
-      std::vector<CUpti_EventID>& ids);
-  virtual void destroyGroupSets(CUpti_EventGroupSets* sets);
+  virtual CUpti_EventGroupSets *
+  createGroupSets(std::vector<CUpti_EventID> &ids);
+  virtual void destroyGroupSets(CUpti_EventGroupSets *sets);
 
   virtual bool setContinuousMode();
 
   virtual void enablePerInstance(CUpti_EventGroup eventGroup);
   virtual uint32_t instanceCount(CUpti_EventGroup eventGroup);
 
-  virtual void enableGroupSet(CUpti_EventGroupSet& set);
-  virtual void disableGroupSet(CUpti_EventGroupSet& set);
+  virtual void enableGroupSet(CUpti_EventGroupSet &set);
+  virtual void disableGroupSet(CUpti_EventGroupSet &set);
 
-  virtual void
-  readEvent(CUpti_EventGroup g, CUpti_EventID id, std::vector<int64_t>& vals);
+  virtual void readEvent(CUpti_EventGroup g, CUpti_EventID id,
+                         std::vector<int64_t> &vals);
   virtual std::vector<CUpti_EventID> eventsInGroup(CUpti_EventGroup g);
 
-  virtual CUpti_EventID eventId(const std::string& name);
+  virtual CUpti_EventID eventId(const std::string &name);
 
- protected:
+protected:
   // Unit testing
   CuptiEventApi() : context_(nullptr), device_(0) {}
 
- private:
+private:
   CUcontext context_;
   CUdevice device_;
 };

@@ -5,9 +5,9 @@
 
 #include "CuptiCallbackApi.h"
 
+#include <algorithm>
 #include <assert.h>
 #include <chrono>
-#include <algorithm>
 #include <mutex>
 #include <shared_mutex>
 
@@ -15,7 +15,6 @@
 #include "cupti_call.h"
 #endif
 #include "Logger.h"
-
 
 namespace libdmv {
 
@@ -44,7 +43,6 @@ static ReaderWriterLock callbackLock_;
  *  See type declrartions in header file.
  */
 
-
 /* callback_switchboard : is the global callback handler we register
  *  with CUPTI. The goal is to make it as efficient as possible
  *  to re-direct to the registered callback(s).
@@ -59,57 +57,53 @@ static void CUPTIAPI callback_switchboard(
 #else
 static void callback_switchboard(
 #endif
-   void* /* unused */,
-   CUpti_CallbackDomain domain,
-   CUpti_CallbackId cbid,
-   const CUpti_CallbackData* cbInfo) {
+    void * /* unused */, CUpti_CallbackDomain domain, CUpti_CallbackId cbid,
+    const CUpti_CallbackData *cbInfo) {
 
   // below statement is likey going to call a mutex
   // on the singleton access
-  CuptiCallbackApi::singleton().__callback_switchboard(
-      domain, cbid, cbInfo);
+  CuptiCallbackApi::singleton().__callback_switchboard(domain, cbid, cbInfo);
 }
 
-
 void CuptiCallbackApi::__callback_switchboard(
-   CUpti_CallbackDomain domain,
-   CUpti_CallbackId cbid,
-   const CUpti_CallbackData* cbInfo) {
+    CUpti_CallbackDomain domain, CUpti_CallbackId cbid,
+    const CUpti_CallbackData *cbInfo) {
   VLOG(0) << "Callback: domain = " << domain << ", cbid = " << cbid;
   CallbackList *cblist = nullptr;
 
   switch (domain) {
 
-    // add the fastest path for kernel launch callbacks
-    // as these are the most frequent ones
-    case CUPTI_CB_DOMAIN_RUNTIME_API:
-      switch (cbid) {
-        case CUPTI_RUNTIME_TRACE_CBID_cudaLaunchKernel_v7000:
-          cblist = &callbacks_.runtime[
-            CUDA_LAUNCH_KERNEL - __RUNTIME_CB_DOMAIN_START];
-          break;
-        default:
-          break;
-      }
+  // add the fastest path for kernel launch callbacks
+  // as these are the most frequent ones
+  case CUPTI_CB_DOMAIN_RUNTIME_API:
+    switch (cbid) {
+    case CUPTI_RUNTIME_TRACE_CBID_cudaLaunchKernel_v7000:
+      cblist =
+          &callbacks_.runtime[CUDA_LAUNCH_KERNEL - __RUNTIME_CB_DOMAIN_START];
       break;
-
-    case CUPTI_CB_DOMAIN_RESOURCE:
-      switch (cbid) {
-        case CUPTI_CBID_RESOURCE_CONTEXT_CREATED:
-          cblist = &callbacks_.resource[
-            RESOURCE_CONTEXT_CREATED - __RESOURCE_CB_DOMAIN_START];
-          break;
-        case CUPTI_CBID_RESOURCE_CONTEXT_DESTROY_STARTING:
-          cblist = &callbacks_.resource[
-            RESOURCE_CONTEXT_DESTROYED - __RESOURCE_CB_DOMAIN_START];
-          break;
-        default:
-          break;
-      }
-      break;
-
     default:
-      return;
+      break;
+    }
+    break;
+
+  case CUPTI_CB_DOMAIN_RESOURCE:
+    switch (cbid) {
+    case CUPTI_CBID_RESOURCE_CONTEXT_CREATED:
+      cblist =
+          &callbacks_
+               .resource[RESOURCE_CONTEXT_CREATED - __RESOURCE_CB_DOMAIN_START];
+      break;
+    case CUPTI_CBID_RESOURCE_CONTEXT_DESTROY_STARTING:
+      cblist = &callbacks_.resource[RESOURCE_CONTEXT_DESTROYED -
+                                    __RESOURCE_CB_DOMAIN_START];
+      break;
+    default:
+      break;
+    }
+    break;
+
+  default:
+    return;
   }
 
   // ignore callbacks that are not handled
@@ -125,8 +119,7 @@ void CuptiCallbackApi::__callback_switchboard(
     ReaderLockGuard rl(callbackLock_);
     int i = 0;
     for (auto it = cblist->begin();
-        it != cblist->end() && i < MAX_CB_FNS_PER_CB;
-        it++, i++) {
+         it != cblist->end() && i < MAX_CB_FNS_PER_CB; it++, i++) {
       callbacks[i] = *it;
     }
     num_cbs = i;
@@ -138,7 +131,7 @@ void CuptiCallbackApi::__callback_switchboard(
   }
 }
 
-CuptiCallbackApi& CuptiCallbackApi::singleton() {
+CuptiCallbackApi &CuptiCallbackApi::singleton() {
   static CuptiCallbackApi instance;
   return instance;
 }
@@ -146,44 +139,42 @@ CuptiCallbackApi& CuptiCallbackApi::singleton() {
 CuptiCallbackApi::CuptiCallbackApi() {
 #ifdef HAS_CUPTI
   lastCuptiStatus_ = CUPTI_ERROR_UNKNOWN;
-  lastCuptiStatus_ = CUPTI_CALL_NOWARN(
-    cuptiSubscribe(&subscriber_,
-      (CUpti_CallbackFunc)callback_switchboard,
-      nullptr));
+  lastCuptiStatus_ = CUPTI_CALL_NOWARN(cuptiSubscribe(
+      &subscriber_, (CUpti_CallbackFunc)callback_switchboard, nullptr));
 
   initSuccess_ = (lastCuptiStatus_ == CUPTI_SUCCESS);
 #endif
 }
 
-CuptiCallbackApi::CallbackList* CuptiCallbackApi::CallbackTable::lookup(
-    CUpti_CallbackDomain domain, CuptiCallBackID cbid) {
+CuptiCallbackApi::CallbackList *
+CuptiCallbackApi::CallbackTable::lookup(CUpti_CallbackDomain domain,
+                                        CuptiCallBackID cbid) {
   size_t idx;
 
   switch (domain) {
 
-    case CUPTI_CB_DOMAIN_RESOURCE:
-      assert(cbid >= __RESOURCE_CB_DOMAIN_START);
-      assert(cbid < __RESOURCE_CB_DOMAIN_END);
-      idx = cbid - __RESOURCE_CB_DOMAIN_START;
-      return &resource.at(idx);
+  case CUPTI_CB_DOMAIN_RESOURCE:
+    assert(cbid >= __RESOURCE_CB_DOMAIN_START);
+    assert(cbid < __RESOURCE_CB_DOMAIN_END);
+    idx = cbid - __RESOURCE_CB_DOMAIN_START;
+    return &resource.at(idx);
 
-    case CUPTI_CB_DOMAIN_RUNTIME_API:
-      assert(cbid >= __RUNTIME_CB_DOMAIN_START);
-      assert(cbid < __RUNTIME_CB_DOMAIN_END);
-      idx = cbid - __RUNTIME_CB_DOMAIN_START;
-      return &runtime.at(idx);
+  case CUPTI_CB_DOMAIN_RUNTIME_API:
+    assert(cbid >= __RUNTIME_CB_DOMAIN_START);
+    assert(cbid < __RUNTIME_CB_DOMAIN_END);
+    idx = cbid - __RUNTIME_CB_DOMAIN_START;
+    return &runtime.at(idx);
 
-    default:
-      LOG(WARNING) << " Unsupported callback domain : " << domain;
-      return nullptr;
+  default:
+    LOG(WARNING) << " Unsupported callback domain : " << domain;
+    return nullptr;
   }
 }
 
-bool CuptiCallbackApi::registerCallback(
-    CUpti_CallbackDomain domain,
-    CuptiCallBackID cbid,
-    CuptiCallbackFn cbfn) {
-  CallbackList* cblist = callbacks_.lookup(domain, cbid);
+bool CuptiCallbackApi::registerCallback(CUpti_CallbackDomain domain,
+                                        CuptiCallBackID cbid,
+                                        CuptiCallbackFn cbfn) {
+  CallbackList *cblist = callbacks_.lookup(domain, cbid);
 
   if (!cblist) {
     LOG(WARNING) << "Could not register callback -- domain = " << domain
@@ -209,14 +200,13 @@ bool CuptiCallbackApi::registerCallback(
   return true;
 }
 
-bool CuptiCallbackApi::deleteCallback(
-    CUpti_CallbackDomain domain,
-    CuptiCallBackID cbid,
-    CuptiCallbackFn cbfn) {
-  CallbackList* cblist = callbacks_.lookup(domain, cbid);
+bool CuptiCallbackApi::deleteCallback(CUpti_CallbackDomain domain,
+                                      CuptiCallBackID cbid,
+                                      CuptiCallbackFn cbfn) {
+  CallbackList *cblist = callbacks_.lookup(domain, cbid);
   if (!cblist) {
-    LOG(WARNING) << "Attempting to remove unsupported callback -- domain = " << domain
-                 << " callback id = " << cbid;
+    LOG(WARNING) << "Attempting to remove unsupported callback -- domain = "
+                 << domain << " callback id = " << cbid;
     return false;
   }
 
@@ -236,24 +226,24 @@ bool CuptiCallbackApi::deleteCallback(
   return true;
 }
 
-bool CuptiCallbackApi::enableCallback(
-    CUpti_CallbackDomain domain, CUpti_CallbackId cbid) {
+bool CuptiCallbackApi::enableCallback(CUpti_CallbackDomain domain,
+                                      CUpti_CallbackId cbid) {
 #ifdef HAS_CUPTI
   if (initSuccess_) {
-    lastCuptiStatus_ = CUPTI_CALL_NOWARN(
-        cuptiEnableCallback(1, subscriber_, domain, cbid));
+    lastCuptiStatus_ =
+        CUPTI_CALL_NOWARN(cuptiEnableCallback(1, subscriber_, domain, cbid));
     return (lastCuptiStatus_ == CUPTI_SUCCESS);
   }
 #endif
   return false;
 }
 
-bool CuptiCallbackApi::disableCallback(
-    CUpti_CallbackDomain domain, CUpti_CallbackId cbid) {
+bool CuptiCallbackApi::disableCallback(CUpti_CallbackDomain domain,
+                                       CUpti_CallbackId cbid) {
 #ifdef HAS_CUPTI
   if (initSuccess_) {
-    lastCuptiStatus_ = CUPTI_CALL_NOWARN(
-        cuptiEnableCallback(0, subscriber_, domain, cbid));
+    lastCuptiStatus_ =
+        CUPTI_CALL_NOWARN(cuptiEnableCallback(0, subscriber_, domain, cbid));
     return (lastCuptiStatus_ == CUPTI_SUCCESS);
   }
 #endif

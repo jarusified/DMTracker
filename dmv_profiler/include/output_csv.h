@@ -13,30 +13,31 @@
 namespace libdmv {
 
 class EventCSVLogger : public SampleListener {
- public:
-  void update(const Config& config) override;
-  void handleSample(int device, const Sample& sample, bool from_new_version) override;
+public:
+  void update(const Config &config) override;
+  void handleSample(int device, const Sample &sample,
+                    bool from_new_version) override;
 
- protected:
+protected:
   EventCSVLogger() : out_(nullptr) {}
 
-  std::ostream* out_;
+  std::ostream *out_;
   std::set<std::string> eventNames_;
   std::vector<int> percentiles_;
 };
 
 class EventCSVFileLogger : public EventCSVLogger {
- public:
-  void update(const Config& config) override;
+public:
+  void update(const Config &config) override;
 
- private:
+private:
   std::ofstream of_;
   std::string filename_;
 };
 
 class EventCSVDbgLogger : public EventCSVLogger {
- public:
-  void update(const Config& config) override;
+public:
+  void update(const Config &config) override;
 };
 
 } // namespace libdmv

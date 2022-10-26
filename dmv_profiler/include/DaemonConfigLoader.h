@@ -11,7 +11,7 @@
 namespace libdmv {
 
 class DaemonConfigLoader {
- public:
+public:
   virtual ~DaemonConfigLoader() {}
 
   // Return the base config from the daemon

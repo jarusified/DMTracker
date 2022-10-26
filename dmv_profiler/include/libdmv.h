@@ -1,16 +1,16 @@
 #pragma once
 
-#include <iostream>
 #include <atomic>
 #include <chrono>
+#include <deque>
 #include <functional>
+#include <iostream>
 #include <memory>
 #include <mutex>
-#include <string>
 #include <set>
+#include <string>
 #include <thread>
 #include <vector>
-#include <deque>
 
 #include "ActivityProfilerInterface.h"
 #include "ActivityTraceInterface.h"
@@ -18,13 +18,13 @@
 #include "ClientInterface.h"
 #include "GenericTraceActivity.h"
 #include "IActivityProfiler.h"
-#include "TraceSpan.h"
 #include "ThreadUtil.h"
+#include "TraceSpan.h"
 
 extern "C" {
-  void suppresslibdmvLogMessages();
-  int InitializeInjection(void);
-  void libdmv_init(bool cpuOnly, bool logOnError);
+void suppresslibdmvLogMessages();
+int InitializeInjection(void);
+void libdmv_init(bool cpuOnly, bool logOnError);
 }
 
 namespace libdmv {
@@ -33,19 +33,18 @@ class Config;
 class ConfigLoader;
 
 struct CpuTraceBuffer {
-  template <class... Args>
-  void emplace_activity(Args&&... args) {
+  template <class... Args> void emplace_activity(Args &&...args) {
     activities.emplace_back(
         std::make_unique<GenericTraceActivity>(std::forward<Args>(args)...));
   }
 
-  static GenericTraceActivity& toRef(
-      std::unique_ptr<GenericTraceActivity>& ref) {
+  static GenericTraceActivity &
+  toRef(std::unique_ptr<GenericTraceActivity> &ref) {
     return *ref;
   }
 
-  static const GenericTraceActivity& toRef(
-      const std::unique_ptr<GenericTraceActivity>& ref) {
+  static const GenericTraceActivity &
+  toRef(const std::unique_ptr<GenericTraceActivity> &ref) {
     return *ref;
   }
 
@@ -55,18 +54,16 @@ struct CpuTraceBuffer {
 };
 
 using ChildActivityProfilerFactory =
-  std::function<std::unique_ptr<IActivityProfiler>()>;
+    std::function<std::unique_ptr<IActivityProfiler>()>;
 
 class libdmvApi {
- public:
-
-  explicit libdmvApi(ConfigLoader& configLoader)
-      : configLoader_(configLoader) {
-  }
+public:
+  explicit libdmvApi(ConfigLoader &configLoader)
+      : configLoader_(configLoader) {}
 
   // Called by client that supports tracing API.
   // libdmv can still function without this.
-  void registerClient(ClientInterface* client);
+  void registerClient(ClientInterface *client);
 
   // Called by libdmv on init
   void registerProfiler(std::unique_ptr<ActivityProfilerInterface> profiler) {
@@ -75,15 +72,13 @@ class libdmvApi {
     initClientIfRegistered();
   }
 
-  ActivityProfilerInterface& activityProfiler() {
+  ActivityProfilerInterface &activityProfiler() {
     // LOG (INFO) << "Return the pointer";
     libdmv_init(false, true);
     return *activityProfiler_;
   }
 
-  ClientInterface* client() {
-    return client_;
-  }
+  ClientInterface *client() { return client_; }
 
   void initProfilerIfRegistered() {
     // LOG (INFO) << "Init profiler";
@@ -102,21 +97,14 @@ class libdmvApi {
     return activityProfiler_ && activityProfiler_->isInitialized();
   }
 
-  bool isProfilerRegistered() const {
-    return activityProfiler_ != nullptr;
-  }
+  bool isProfilerRegistered() const { return activityProfiler_ != nullptr; }
 
-  void suppressLogMessages() {
-    suppresslibdmvLogMessages();
-  }
+  void suppressLogMessages() { suppresslibdmvLogMessages(); }
 
   // Provides access to profier configuration manaegement
-  ConfigLoader& configLoader() {
-    return configLoader_;
-  }
+  ConfigLoader &configLoader() { return configLoader_; }
 
-  void registerProfilerFactory(
-      ChildActivityProfilerFactory factory) {
+  void registerProfilerFactory(ChildActivityProfilerFactory factory) {
     if (isProfilerInitialized()) {
       activityProfiler_->addChildActivityProfiler(factory());
     } else {
@@ -124,13 +112,12 @@ class libdmvApi {
     }
   }
 
- private:
-
+private:
   void initChildActivityProfilers() {
     if (!isProfilerInitialized()) {
       return;
     }
-    for (const auto& factory : childProfilerFactories_) {
+    for (const auto &factory : childProfilerFactories_) {
       activityProfiler_->addChildActivityProfiler(factory());
     }
     childProfilerFactories_.clear();
@@ -139,9 +126,9 @@ class libdmvApi {
   // Client is initialized once both it and libdmv has registered
   void initClientIfRegistered();
 
-  ConfigLoader& configLoader_;
+  ConfigLoader &configLoader_;
   std::unique_ptr<ActivityProfilerInterface> activityProfiler_{};
-  ClientInterface* client_{};
+  ClientInterface *client_{};
   int32_t clientRegisterThread_{0};
 
   bool isLoaded_{false};
@@ -149,6 +136,6 @@ class libdmvApi {
 };
 
 // Singleton
-libdmvApi& api();
+libdmvApi &api();
 
 } // namespace libdmv

@@ -8,18 +8,14 @@
 // Implement a simple scope handler allowing a function to release
 // resources when an error or exception occurs
 
-template <typename T>
-class ScopeExit {
- public:
+template <typename T> class ScopeExit {
+public:
   explicit ScopeExit(T t) : t(t) {}
-  ~ScopeExit() {
-    t();
-  }
+  ~ScopeExit() { t(); }
   T t;
 };
 
-template <typename T>
-ScopeExit<T> makeScopeExit(T t) {
+template <typename T> ScopeExit<T> makeScopeExit(T t) {
   return ScopeExit<T>(t);
 };
 
@@ -27,6 +23,5 @@ ScopeExit<T> makeScopeExit(T t) {
 #define __DMV_CONCAT(name, line) name##line
 #define ANON_VAR(name, line) __DMV_CONCAT(name, line)
 
-#define SCOPE_EXIT(func)                                      \
-  const auto ANON_VAR(SCOPE_BLOCK, __LINE__) =                \
-      makeScopeExit([=]() { func; })
+#define SCOPE_EXIT(func)                                                       \
+  const auto ANON_VAR(SCOPE_BLOCK, __LINE__) = makeScopeExit([=]() { func; })

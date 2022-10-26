@@ -7,8 +7,8 @@
 
 #include <fmt/format.h>
 #include <fstream>
-#include <time.h>
 #include <map>
+#include <time.h>
 
 #include "Config.h"
 #ifdef HAS_CUPTI
@@ -28,14 +28,14 @@ static constexpr char kFlowStart = 's';
 static constexpr char kFlowEnd = 'f';
 
 #ifdef __linux__
-static constexpr char kDefaultLogFileFmt[] =
-    "/tmp/libdmv_activities_{}.json";
+static constexpr char kDefaultLogFileFmt[] = "/tmp/libdmv_activities_{}.json";
 #else
 static constexpr char kDefaultLogFileFmt[] = "libdmv_activities_{}.json";
 #endif
 
-std::string& ChromeTraceLogger::sanitizeStrForJSON(std::string& value) {
-// Replace all backslashes with forward slash because Windows paths causing JSONDecodeError.
+std::string &ChromeTraceLogger::sanitizeStrForJSON(std::string &value) {
+// Replace all backslashes with forward slash because Windows paths causing
+// JSONDecodeError.
 #ifdef _WIN32
   std::replace(value.begin(), value.end(), '\\', '/');
 #endif
@@ -43,23 +43,26 @@ std::string& ChromeTraceLogger::sanitizeStrForJSON(std::string& value) {
 }
 
 void ChromeTraceLogger::metadataToJSON(
-    const std::unordered_map<std::string, std::string>& metadata) {
-  for (const auto& kv : metadata) {
+    const std::unordered_map<std::string, std::string> &metadata) {
+  for (const auto &kv : metadata) {
     traceOf_ << fmt::format(R"JSON(
-  "{}": {},)JSON", kv.first, kv.second);
+  "{}": {},)JSON",
+                            kv.first, kv.second);
   }
 }
 
 void ChromeTraceLogger::handleTraceStart(
-    const std::unordered_map<std::string, std::string>& metadata) {
+    const std::unordered_map<std::string, std::string> &metadata) {
   traceOf_ << fmt::format(R"JSON(
 {{
-  "schemaVersion": {},)JSON", kSchemaVersion);
+  "schemaVersion": {},)JSON",
+                          kSchemaVersion);
 
 #ifdef HAS_CUPTI
   traceOf_ << fmt::format(R"JSON(
   "deviceProperties": [{}
-  ],)JSON", devicePropertiesJson());
+  ],)JSON",
+                          devicePropertiesJson());
 #endif
 
   metadataToJSON(metadata);
@@ -80,15 +83,14 @@ void ChromeTraceLogger::openTraceFile() {
   }
 }
 
-ChromeTraceLogger::ChromeTraceLogger(const std::string& traceFileName) {
+ChromeTraceLogger::ChromeTraceLogger(const std::string &traceFileName) {
   fileName_ = traceFileName.empty() ? defaultFileName() : traceFileName;
   traceOf_.clear(std::ios_base::badbit);
   openTraceFile();
 }
 
-void ChromeTraceLogger::handleDeviceInfo(
-    const DeviceInfo& info,
-    uint64_t time) {
+void ChromeTraceLogger::handleDeviceInfo(const DeviceInfo &info,
+                                         uint64_t time) {
   if (!traceOf_) {
     return;
   }
@@ -124,9 +126,8 @@ void ChromeTraceLogger::handleDeviceInfo(
   // clang-format on
 }
 
-void ChromeTraceLogger::handleResourceInfo(
-    const ResourceInfo& info,
-    int64_t time) {
+void ChromeTraceLogger::handleResourceInfo(const ResourceInfo &info,
+                                           int64_t time) {
   if (!traceOf_) {
     return;
   }
@@ -154,15 +155,14 @@ void ChromeTraceLogger::handleResourceInfo(
   // clang-format on
 }
 
-void ChromeTraceLogger::handleOverheadInfo(
-    const OverheadInfo& info,
-    int64_t time) {
+void ChromeTraceLogger::handleOverheadInfo(const OverheadInfo &info,
+                                           int64_t time) {
   if (!traceOf_) {
     return;
   }
 
-  // TOOD: reserve pid = -1 for overhead but we need to rethink how to scale this for
-  // other metadata
+  // TOOD: reserve pid = -1 for overhead but we need to rethink how to scale
+  // this for other metadata
   // clang-format off
   traceOf_ << fmt::format(R"JSON(
   {{
@@ -184,7 +184,7 @@ void ChromeTraceLogger::handleOverheadInfo(
   // clang-format on
 }
 
-void ChromeTraceLogger::handleTraceSpan(const TraceSpan& span) {
+void ChromeTraceLogger::handleTraceSpan(const TraceSpan &span) {
   if (!traceOf_) {
     return;
   }
@@ -218,7 +218,7 @@ void ChromeTraceLogger::handleTraceSpan(const TraceSpan& span) {
   addIterationMarker(span);
 }
 
-void ChromeTraceLogger::addIterationMarker(const TraceSpan& span) {
+void ChromeTraceLogger::addIterationMarker(const TraceSpan &span) {
   if (!traceOf_) {
     return;
   }
@@ -235,7 +235,7 @@ void ChromeTraceLogger::addIterationMarker(const TraceSpan& span) {
 }
 
 void ChromeTraceLogger::handleGenericInstantEvent(
-    const libdmv::ITraceActivity& op) {
+    const libdmv::ITraceActivity &op) {
   if (!traceOf_) {
     return;
   }
@@ -249,12 +249,11 @@ void ChromeTraceLogger::handleGenericInstantEvent(
       {}
     }}
   }},)JSON",
-      toString(op.type()), op.name(), op.deviceId(), op.resourceId(),
-      op.timestamp(), op.metadataJson());
+                          toString(op.type()), op.name(), op.deviceId(),
+                          op.resourceId(), op.timestamp(), op.metadataJson());
 }
 
-void ChromeTraceLogger::handleActivity(
-    const libdmv::ITraceActivity& op) {
+void ChromeTraceLogger::handleActivity(const libdmv::ITraceActivity &op) {
   if (!traceOf_) {
     return;
   }
@@ -266,7 +265,7 @@ void ChromeTraceLogger::handleActivity(
 
   int64_t ts = op.timestamp();
   int64_t duration = op.duration();
-  if (op.type() ==  ActivityType::GPU_USER_ANNOTATION) {
+  if (op.type() == ActivityType::GPU_USER_ANNOTATION) {
     // The GPU user annotations start at the same time as the
     // first associated GPU op. Since they appear later
     // in the trace file, this causes a visualization issue in Chrome.
@@ -283,8 +282,7 @@ void ChromeTraceLogger::handleActivity(
   if (op.traceSpan()) {
     span = fmt::format(R"JSON(
       "Trace name": "{}", "Trace iteration": {},)JSON",
-        op.traceSpan()->name,
-        op.traceSpan()->iteration);
+                       op.traceSpan()->name, op.traceSpan()->iteration);
   }
   int device = op.deviceId();
   int resource = op.resourceId();
@@ -310,26 +308,25 @@ void ChromeTraceLogger::handleActivity(
 }
 
 void ChromeTraceLogger::handleGenericActivity(
-    const libdmv::GenericTraceActivity& op) {
-        handleActivity(op);
+    const libdmv::GenericTraceActivity &op) {
+  handleActivity(op);
 }
 
-void ChromeTraceLogger::handleGenericLink(const ITraceActivity& act) {
+void ChromeTraceLogger::handleGenericLink(const ITraceActivity &act) {
   static struct {
     int type;
     char longName[24];
     char shortName[16];
-  } flow_names[] = {
-    {kLinkFwdBwd, "forward_backward", "fwd_bwd"},
-    {kLinkAsyncCpuGpu, "async_cpu_to_gpu", "async_gpu"}
-  };
-  for (auto& flow : flow_names) {
+  } flow_names[] = {{kLinkFwdBwd, "forward_backward", "fwd_bwd"},
+                    {kLinkAsyncCpuGpu, "async_cpu_to_gpu", "async_gpu"}};
+  for (auto &flow : flow_names) {
     if (act.flowType() == flow.type) {
       // Link the activities via flow ID in source and destination.
       // The source node must return true from flowStart()
       // and the destination node false.
       if (act.flowStart()) {
-        handleLink(kFlowStart, act, act.flowId(), flow.longName, flow.shortName);
+        handleLink(kFlowStart, act, act.flowId(), flow.longName,
+                   flow.shortName);
       } else {
         handleLink(kFlowEnd, act, act.flowId(), flow.longName, flow.shortName);
       }
@@ -339,12 +336,9 @@ void ChromeTraceLogger::handleGenericLink(const ITraceActivity& act) {
   LOG(WARNING) << "Unknown flow type: " << act.flowType();
 }
 
-void ChromeTraceLogger::handleLink(
-    char type,
-    const ITraceActivity& e,
-    int64_t id,
-    const std::string& cat,
-    const std::string& name) {
+void ChromeTraceLogger::handleLink(char type, const ITraceActivity &e,
+                                   int64_t id, const std::string &cat,
+                                   const std::string &name) {
   if (!traceOf_) {
     return;
   }
@@ -361,7 +355,7 @@ void ChromeTraceLogger::handleLink(
 
 void ChromeTraceLogger::finalizeTraceInternal(
     int64_t endTime,
-    std::unordered_map<std::string, std::vector<std::string>>& metadata) {
+    std::unordered_map<std::string, std::vector<std::string>> &metadata) {
   if (!traceOf_) {
     LOG(ERROR) << "Failed to write to log file!";
     return;
@@ -409,10 +403,9 @@ void ChromeTraceLogger::finalizeTraceInternal(
 }
 
 void ChromeTraceLogger::finalizeTrace(
-    const Config& /*unused*/,
-    std::unique_ptr<ActivityBuffers> /*unused*/,
+    const Config & /*unused*/, std::unique_ptr<ActivityBuffers> /*unused*/,
     int64_t endTime,
-    std::unordered_map<std::string, std::vector<std::string>>& metadata) {
+    std::unordered_map<std::string, std::vector<std::string>> &metadata) {
   ChromeTraceLogger::finalizeTraceInternal(endTime, metadata);
   UST_LOGGER_MARK_COMPLETED(kPostProcessingStage);
 }
