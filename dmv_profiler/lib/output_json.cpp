@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #include "output_json.h"
 
 #include <fmt/format.h>
@@ -392,7 +387,7 @@ void ChromeTraceLogger::finalizeTraceInternal(
     }
   }
   metadataToJSON(PreparedMetadata);
-  
+
   // Putting this here because the last entry MUST not end with a comma.
   traceOf_ << fmt::format(R"JSON(
   "traceName": "{}"

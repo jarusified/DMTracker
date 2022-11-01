@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #include "CuptiActivityProfiler.h"
 
 #include <atomic>
@@ -17,8 +12,6 @@
 
 #ifdef HAS_CUPTI
 #include <cupti.h>
-// TODO(T90238193)
-// @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
 #include "CudaUtil.h"
 #include "cuda_call.h"
 #include "cupti_call.h"
@@ -30,9 +23,6 @@
 #include "CuptiActivity.h"
 #include "CuptiActivity.tpp"
 #include "CuptiActivityApi.h"
-#endif // HAS_CUPTI
-#ifdef HAS_ROCTRACER
-#include "RoctracerActivityApi.h"
 #endif
 #include "output_base.h"
 

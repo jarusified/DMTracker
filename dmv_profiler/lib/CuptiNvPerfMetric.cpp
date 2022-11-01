@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #ifdef HAS_CUPTI
 #include <cuda_runtime_api.h>
 #if defined(USE_CUPTI_RANGE_PROFILER) && defined(CUDART_VERSION) &&            \
@@ -26,8 +21,7 @@ namespace libdmv {
 // to NVIDIA PerfWorks APIs.
 namespace nvperf {
 
-// Largely based on NVIDIA sample code provided with CUDA release
-//  files Metric.cpp and Eval.cpp
+// Largely based on NVIDIA sample code provided with CUDA release files Metric.cpp and Eval.cpp
 
 // -------------------------------------------------
 // Metric and Counter Data Configuration
