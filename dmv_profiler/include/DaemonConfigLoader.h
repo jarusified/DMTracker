@@ -1,17 +1,12 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <cstdint>
 #include <string>
 
-namespace KINETO_NAMESPACE {
+namespace libdmv {
 
 class DaemonConfigLoader {
- public:
+public:
   virtual ~DaemonConfigLoader() {}
 
   // Return the base config from the daemon
@@ -27,4 +22,4 @@ class DaemonConfigLoader {
   virtual void setCommunicationFabric(bool enabled) = 0;
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace libdmv

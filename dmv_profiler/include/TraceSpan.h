@@ -1,29 +1,18 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <atomic>
 #include <string>
 #include <thread>
 
-namespace libkineto {
+namespace libdmv {
 
 struct TraceSpan {
   TraceSpan() = delete;
-  TraceSpan(
-      int64_t startTime, int64_t endTime, std::string name)
-      : startTime(startTime), endTime(endTime), name(std::move(name)) {
-  }
-  TraceSpan(
-      int opCount, int it, std::string name, std::string prefix)
-      : opCount(opCount),
-        iteration(it),
-        name(std::move(name)),
-        prefix(std::move(prefix)) {
-  }
+  TraceSpan(int64_t startTime, int64_t endTime, std::string name)
+      : startTime(startTime), endTime(endTime), name(std::move(name)) {}
+  TraceSpan(int opCount, int it, std::string name, std::string prefix)
+      : opCount(opCount), iteration(it), name(std::move(name)),
+        prefix(std::move(prefix)) {}
 
   // FIXME: change to duration?
   int64_t startTime{0};
@@ -36,4 +25,4 @@ struct TraceSpan {
   std::string prefix;
 };
 
-} // namespace libkineto
+} // namespace libdmv

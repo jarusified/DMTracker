@@ -1,30 +1,6 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree.
-
-def get_libkineto_cupti_srcs(with_api = True):
+def get_libdmv_cupti_srcs(with_api = True):
     return [
-        "lib/CudaDeviceProperties.cpp",
-        "lib/CuptiActivityApi.cpp",
-        "lib/CuptiActivityPlatform.cpp",
-        "lib/CuptiCallbackApi.cpp",
-        "lib/CuptiEventApi.cpp",
-        "lib/CuptiMetricApi.cpp",
-        "lib/CuptiRangeProfiler.cpp",
-        "lib/CuptiRangeProfilerApi.cpp",
-        "lib/CuptiRangeProfilerConfig.cpp",
-        "lib/CuptiNvPerfMetric.cpp",
-        "lib/Demangle.cpp",
-        "lib/EventProfiler.cpp",
-        "lib/EventProfilerController.cpp",
-        "lib/WeakSymbols.cpp",
-        "lib/cupti_strings.cpp",
-    ] + (get_libkineto_cpu_only_srcs(with_api))
-
-def get_libkineto_cpu_only_srcs(with_api = True):
-    return [
-        "lib/libkineto_api.cpp",
+        "lib/libdmv.cpp",
         "lib/AbstractConfig.cpp",
         "lib/CuptiActivityProfiler.cpp",
         "lib/ActivityProfilerController.cpp",
@@ -33,7 +9,41 @@ def get_libkineto_cpu_only_srcs(with_api = True):
         "lib/Config.cpp",
         "lib/ConfigLoader.cpp",
         "lib/CuptiActivityApi.cpp",
-        "lib/Demangle.cpp",
+        "lib/GenericTraceActivity.cpp",
+        "lib/ILoggerObserver.cpp",
+        "lib/Logger.cpp",
+        "lib/init.cpp",
+        "lib/output_csv.cpp",
+        "lib/output_json.cpp",
+        "lib/ThreadUtil.cpp",
+        "lib/CudaDeviceProperties.cpp",
+        "lib/CuptiActivityApi.cpp",
+        "lib/CuptiActivityPlatform.cpp",
+        "lib/CuptiCallbackApi.cpp",
+        "lib/CuptiEventApi.cpp",
+        "lib/CuptiMetricApi.cpp",
+	    "lib/CuptiNvmlGpuUtilization.cpp",
+        "lib/CuptiRangeProfiler.cpp",
+        "lib/CuptiRangeProfilerApi.cpp",
+        "lib/CuptiRangeProfilerConfig.cpp",
+        "lib/CuptiNvPerfMetric.cpp",
+        "lib/EventProfiler.cpp",
+        "lib/EventProfilerController.cpp",
+        "lib/WeakSymbols.cpp",
+        "lib/cupti_strings.cpp"
+    ] + (get_libdmv_cpu_only_srcs(with_api))
+
+def get_libdmv_cpu_only_srcs(with_api = True):
+    return [
+        "lib/libdmv.cpp",
+        "lib/AbstractConfig.cpp",
+        "lib/CuptiActivityProfiler.cpp",
+        "lib/ActivityProfilerController.cpp",
+        "lib/ActivityProfilerProxy.cpp",
+        "lib/ActivityType.cpp",
+        "lib/Config.cpp",
+        "lib/ConfigLoader.cpp",
+        "lib/CuptiActivityApi.cpp",
         "lib/GenericTraceActivity.cpp",
         "lib/ILoggerObserver.cpp",
         "lib/Logger.cpp",
@@ -43,7 +53,7 @@ def get_libkineto_cpu_only_srcs(with_api = True):
         "lib/ThreadUtil.cpp",
     ]
 
-def get_libkineto_public_headers():
+def get_libdmv_public_headers():
     return [
         "include/AbstractConfig.h",
         "include/ActivityProfilerInterface.h",
@@ -57,11 +67,11 @@ def get_libkineto_public_headers():
         "include/ITraceActivity.h",
         "include/TraceSpan.h",
         "include/ThreadUtil.h",
-        "include/libkineto.h",
+        "include/libdmv.h",
         "include/time_since_epoch.h",
     ]
 
-# kineto code should be updated to not have to
+# dmv code should be updated to not have to
 # suppress these warnings.
 KINETO_COMPILER_FLAGS = [
     "-fexceptions",

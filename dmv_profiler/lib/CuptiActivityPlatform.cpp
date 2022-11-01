@@ -1,13 +1,8 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #include <chrono>
 
 namespace chrono = std::chrono;
 
-namespace KINETO_NAMESPACE {
+namespace libdmv {
 
 #ifdef _WIN32
 uint64_t epochs_diff() {
@@ -28,9 +23,7 @@ uint64_t unixEpochTimestamp(uint64_t ts) {
   return ts + diff;
 }
 #else
-uint64_t unixEpochTimestamp(uint64_t ts) {
-  return ts;
-}
+uint64_t unixEpochTimestamp(uint64_t ts) { return ts; }
 #endif // _WIN32
 
-} // namespace KINETO_NAMESPACE
+} // namespace libdmv

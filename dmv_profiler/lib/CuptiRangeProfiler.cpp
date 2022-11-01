@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #include <Logger.h>
 #include <functional>
 #include <string>
@@ -11,21 +6,18 @@
 #include <unordered_set>
 #include <utility>
 
-// TODO(T90238193)
-// @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
-#include "output_base.h"
 #include "CuptiRangeProfiler.h"
 #include "CuptiRangeProfilerConfig.h"
-#include "Demangle.h"
+#include "output_base.h"
 
-namespace KINETO_NAMESPACE {
+namespace libdmv {
 
 const ActivityType kProfActivityType = ActivityType::CUDA_PROFILER_RANGE;
 const std::set<ActivityType> kSupportedActivities{kProfActivityType};
 
 const std::string kProfilerName{"CuptiRangeProfiler"};
 
-static ICuptiRBProfilerSessionFactory& getFactory() {
+static ICuptiRBProfilerSessionFactory &getFactory() {
   static CuptiRBProfilerSessionFactory factory_;
   return factory_;
 }
@@ -40,30 +32,27 @@ namespace {
 CuptiProfilerPrePostCallback cuptiProfilerPreRunCb;
 CuptiProfilerPrePostCallback cuptiProfilerPostRunCb;
 
-
 /* Following are aliases to a set of CUPTI metrics that can be
  * used to derived measures like FLOPs etc.
  */
 std::unordered_map<std::string, std::vector<std::string>> kDerivedMetrics = {
-  {"kineto__cuda_core_flops", {
-    "smsp__sass_thread_inst_executed_op_dadd_pred_on.sum",
-    "smsp__sass_thread_inst_executed_op_dfma_pred_on.sum",
-    "smsp__sass_thread_inst_executed_op_dmul_pred_on.sum",
-    "smsp__sass_thread_inst_executed_op_hadd_pred_on.sum",
-    "smsp__sass_thread_inst_executed_op_hfma_pred_on.sum",
-    "smsp__sass_thread_inst_executed_op_hmul_pred_on.sum",
-    "smsp__sass_thread_inst_executed_op_fadd_pred_on.sum",
-    "smsp__sass_thread_inst_executed_op_ffma_pred_on.sum",
-    "smsp__sass_thread_inst_executed_op_fmul_pred_on.sum"}},
-  {"kineto__tensor_core_insts", {
-    "sm__inst_executed_pipe_tensor.sum"}},
+    {"kineto__cuda_core_flops",
+     {"smsp__sass_thread_inst_executed_op_dadd_pred_on.sum",
+      "smsp__sass_thread_inst_executed_op_dfma_pred_on.sum",
+      "smsp__sass_thread_inst_executed_op_dmul_pred_on.sum",
+      "smsp__sass_thread_inst_executed_op_hadd_pred_on.sum",
+      "smsp__sass_thread_inst_executed_op_hfma_pred_on.sum",
+      "smsp__sass_thread_inst_executed_op_hmul_pred_on.sum",
+      "smsp__sass_thread_inst_executed_op_fadd_pred_on.sum",
+      "smsp__sass_thread_inst_executed_op_ffma_pred_on.sum",
+      "smsp__sass_thread_inst_executed_op_fmul_pred_on.sum"}},
+    {"kineto__tensor_core_insts", {"sm__inst_executed_pipe_tensor.sum"}},
 };
 
-} // namespace;
-
+} // namespace
 
 CuptiRangeProfilerSession::CuptiRangeProfilerSession(
-    const Config& config, ICuptiRBProfilerSessionFactory& factory) {
+    const Config &config, ICuptiRBProfilerSessionFactory &factory) {
 
   // CUPTI APIs can conflict with other monitoring systems like DCGM
   // or NSight / NVProf. The pre and post run hooks enable users to
@@ -74,17 +63,17 @@ CuptiRangeProfilerSession::CuptiRangeProfilerSession(
     cuptiProfilerPreRunCb();
   }
 
-  const CuptiRangeProfilerConfig& cupti_config =
-    CuptiRangeProfilerConfig::get(config);
+  const CuptiRangeProfilerConfig &cupti_config =
+      CuptiRangeProfilerConfig::get(config);
 
   std::vector<std::string> cupti_metrics;
-  const auto& requested_metrics = cupti_config.activitiesCuptiMetrics();
+  const auto &requested_metrics = cupti_config.activitiesCuptiMetrics();
 
-  for (const auto& metric : requested_metrics) {
+  for (const auto &metric : requested_metrics) {
     auto it = kDerivedMetrics.find(metric);
     if (it != kDerivedMetrics.end()) {
       // add all the fundamental metrics
-      for (const auto& m : it->second) {
+      for (const auto &m : it->second) {
         cupti_metrics.push_back(m);
       }
     } else {
@@ -98,21 +87,19 @@ CuptiRangeProfilerSession::CuptiRangeProfilerSession(
     replayType_ = CUPTI_KernelReplay;
   }
 
-  LOG(INFO) << "Configuring " << cupti_metrics.size()
-            << " CUPTI metrics";
+  LOG(INFO) << "Configuring " << cupti_metrics.size() << " CUPTI metrics";
 
   int max_ranges = cupti_config.cuptiProfilerMaxRanges();
-  for (const auto& m : cupti_metrics) {
+  for (const auto &m : cupti_metrics) {
     LOG(INFO) << "\t" << m;
   }
 
-  CuptiRangeProfilerOptions opts{
-    .metricNames = cupti_metrics,
-    .deviceId = 0,
-    .maxRanges = max_ranges,
-    .numNestingLevels = 1,
-    .cuContext = nullptr,
-    .unitTest = false};
+  CuptiRangeProfilerOptions opts{.metricNames = cupti_metrics,
+                                 .deviceId = 0,
+                                 .maxRanges = max_ranges,
+                                 .numNestingLevels = 1,
+                                 .cuContext = nullptr,
+                                 .unitTest = false};
 
   for (auto device_id : CuptiRBProfilerSession::getActiveDevices()) {
     LOG(INFO) << "Init CUPTI range profiler on gpu = " << device_id
@@ -123,23 +110,22 @@ CuptiRangeProfilerSession::CuptiRangeProfilerSession(
 }
 
 void CuptiRangeProfilerSession::start() {
-  for (auto& profiler: profilers_) {
+  for (auto &profiler : profilers_) {
     // user range or auto range
     profiler->asyncStartAndEnable(rangeType_, replayType_);
   }
 }
 
 void CuptiRangeProfilerSession::stop() {
-  for (auto& profiler: profilers_) {
+  for (auto &profiler : profilers_) {
     profiler->disableAndStop();
   }
 }
 
 void CuptiRangeProfilerSession::addRangeEvents(
-    const CuptiProfilerResult& result,
-    const CuptiRBProfilerSession* profiler) {
-  const auto& metricNames = result.metricNames;
-  auto& activities = traceBuffer_.activities;
+    const CuptiProfilerResult &result, const CuptiRBProfilerSession *profiler) {
+  const auto &metricNames = result.metricNames;
+  auto &activities = traceBuffer_.activities;
   bool use_kernel_names = false;
   int num_kernels = 0;
 
@@ -161,16 +147,13 @@ void CuptiRangeProfilerSession::addRangeEvents(
           interval = duration / result.rangeVals.size();
 
   int ridx = 0;
-  for (const auto& measurement : result.rangeVals) {
+  for (const auto &measurement : result.rangeVals) {
     bool use_kernel_as_range = use_kernel_names && (ridx < num_kernels);
-    traceBuffer_.emplace_activity(
-        traceBuffer_.span,
-        kProfActivityType,
-        use_kernel_as_range ?
-          demangle(profiler->getKernelNames()[ridx]) :
-          measurement.rangeName
-    );
-    auto& event = activities.back();
+    traceBuffer_.emplace_activity(traceBuffer_.span, kProfActivityType,
+                                  use_kernel_as_range
+                                      ? profiler->getKernelNames()[ridx]
+                                      : measurement.rangeName);
+    auto &event = activities.back();
     event->startTime = startTime + interval * ridx;
     event->endTime = startTime + interval * (ridx + 1);
     event->device = profiler->deviceId();
@@ -183,14 +166,14 @@ void CuptiRangeProfilerSession::addRangeEvents(
   }
 }
 
-void CuptiRangeProfilerSession::processTrace(ActivityLogger& logger) {
+void CuptiRangeProfilerSession::processTrace(ActivityLogger &logger) {
   if (profilers_.size() == 0) {
     LOG(WARNING) << "Nothing to report";
     return;
   }
 
   traceBuffer_.span = profilers_[0]->getProfilerTraceSpan();
-  for (auto& profiler: profilers_) {
+  for (auto &profiler : profilers_) {
     bool verbose = VLOG_IS_ON(1);
     auto result = profiler->evaluateMetrics(verbose);
 
@@ -203,11 +186,10 @@ void CuptiRangeProfilerSession::processTrace(ActivityLogger& logger) {
     addRangeEvents(result, profiler.get());
   }
 
-  for (const auto& event : traceBuffer_.activities) {
+  for (const auto &event : traceBuffer_.activities) {
     static_assert(
-        std::is_same<
-            std::remove_reference<decltype(event)>::type,
-            const std::unique_ptr<GenericTraceActivity>>::value,
+        std::is_same<std::remove_reference<decltype(event)>::type,
+                     const std::unique_ptr<GenericTraceActivity>>::value,
         "handleActivity is unsafe and relies on the caller to maintain not "
         "only lifetime but also address stability.");
     logger.handleActivity(*event);
@@ -221,52 +203,44 @@ void CuptiRangeProfilerSession::processTrace(ActivityLogger& logger) {
   }
 }
 
-std::vector<std::string> CuptiRangeProfilerSession::errors() {
-  return {};
-}
+std::vector<std::string> CuptiRangeProfilerSession::errors() { return {}; }
 
 /* ----------------------------------------
  * Implement CuptiRangeProfiler
  * ----------------------------------------
  */
-CuptiRangeProfiler::CuptiRangeProfiler()
-  : CuptiRangeProfiler(getFactory()) {}
+CuptiRangeProfiler::CuptiRangeProfiler() : CuptiRangeProfiler(getFactory()) {}
 
-CuptiRangeProfiler::CuptiRangeProfiler(ICuptiRBProfilerSessionFactory& factory)
-  : factory_(factory) {}
+CuptiRangeProfiler::CuptiRangeProfiler(ICuptiRBProfilerSessionFactory &factory)
+    : factory_(factory) {}
 
-void CuptiRangeProfiler::setPreRunCallback(
-    CuptiProfilerPrePostCallback fn) {
+void CuptiRangeProfiler::setPreRunCallback(CuptiProfilerPrePostCallback fn) {
   cuptiProfilerPreRunCb = fn;
 }
 
-void CuptiRangeProfiler::setPostRunCallback(
-    CuptiProfilerPrePostCallback fn) {
+void CuptiRangeProfiler::setPostRunCallback(CuptiProfilerPrePostCallback fn) {
   cuptiProfilerPostRunCb = fn;
 }
 
-const std::string& CuptiRangeProfiler::name() const {
-  return kProfilerName;
-}
+const std::string &CuptiRangeProfiler::name() const { return kProfilerName; }
 
-const std::set<ActivityType>& CuptiRangeProfiler::availableActivities()
-    const {
+const std::set<ActivityType> &CuptiRangeProfiler::availableActivities() const {
   return kSupportedActivities;
 }
 
 // TODO remove activity_types from this interface in the future
-std::unique_ptr<IActivityProfilerSession> CuptiRangeProfiler::configure(
-    const std::set<ActivityType>& /*activity_types*/,
-    const Config& config) {
-  const auto& activity_types_ = config.selectedActivityTypes();
+std::unique_ptr<IActivityProfilerSession>
+CuptiRangeProfiler::configure(const std::set<ActivityType> & /*activity_types*/,
+                              const Config &config) {
+  const auto &activity_types_ = config.selectedActivityTypes();
   if (activity_types_.find(kProfActivityType) == activity_types_.end()) {
     return nullptr;
   }
 
   if (activity_types_.size() > 1) {
     LOG(WARNING) << kProfilerName << " cannot be run in combination with"
-                << " other cuda activity profilers, please configure"
-                << " only one activity type  : cuda_profiler_range";
+                 << " other cuda activity profilers, please configure"
+                 << " only one activity type  : cuda_profiler_range";
     return nullptr;
   }
 
@@ -274,11 +248,9 @@ std::unique_ptr<IActivityProfilerSession> CuptiRangeProfiler::configure(
 }
 
 std::unique_ptr<IActivityProfilerSession>
-CuptiRangeProfiler::configure(
-    int64_t /*ts_ms*/,
-    int64_t /*duration_ms*/,
-    const std::set<ActivityType>& activity_types,
-    const Config& config) {
+CuptiRangeProfiler::configure(int64_t /*ts_ms*/, int64_t /*duration_ms*/,
+                              const std::set<ActivityType> &activity_types,
+                              const Config &config) {
   return configure(activity_types, config);
 };
 
@@ -300,10 +272,9 @@ CuptiRangeProfilerInit::CuptiRangeProfilerInit() {
     return;
   }
 
-  // Register the activity profiler instance with libkineto api
-  api().registerProfilerFactory([&]() {
-    return std::make_unique<CuptiRangeProfiler>();
-  });
+  // Register the activity profiler instance with libdmv api
+  api().registerProfilerFactory(
+      [&]() { return std::make_unique<CuptiRangeProfiler>(); });
 }
 
 CuptiRangeProfilerInit::~CuptiRangeProfilerInit() {
@@ -312,4 +283,4 @@ CuptiRangeProfilerInit::~CuptiRangeProfilerInit() {
   }
 }
 
-} // namespace KINETO_NAMESPACE
+} // namespace libdmv

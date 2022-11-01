@@ -19,7 +19,7 @@ source ./env/bin/activate
 . /g/g91/kesavan/spack/share/spack/setup-env.sh
 export PATH=/g/g91/kesavan/spack/bin:$PATH
 
-spack install fmt googletest@1.8.1
+spack install fmt@9.0.0 googletest@1.8.1
 
 spack load fmt googletest/gdlwgea
 

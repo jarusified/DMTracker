@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <cstdint>
@@ -10,11 +5,11 @@
 #include <utility>
 #include <vector>
 
-namespace libkineto {
+namespace libdmv {
 
 int32_t systemThreadId();
 int32_t threadId();
-bool setThreadName(const std::string& name);
+bool setThreadName(const std::string &name);
 std::string getThreadName();
 
 int32_t processId();
@@ -24,4 +19,4 @@ std::string processName(int32_t pid);
 // and its parents.
 std::vector<std::pair<int32_t, std::string>> pidCommandPairsOfAncestors();
 
-} // namespace libkineto
+} // namespace libdmv

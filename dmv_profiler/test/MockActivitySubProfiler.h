@@ -1,74 +1,66 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
+#include <deque>
 #include <memory>
 #include <set>
-#include <deque>
 
 #include "IActivityProfiler.h"
 #include "output_base.h"
 
-namespace libkineto {
+namespace libdmv {
 
-class MockProfilerSession: public IActivityProfilerSession {
+class MockProfilerSession : public IActivityProfilerSession {
 
-  public:
-    explicit MockProfilerSession() {}
+public:
+  explicit MockProfilerSession() {}
 
-    void start() override {
-      start_count++;
-      status_ = TraceStatus::RECORDING;
-    }
+  void start() override {
+    start_count++;
+    status_ = TraceStatus::RECORDING;
+  }
 
-    void stop() override {
-      stop_count++;
-      status_ = TraceStatus::PROCESSING;
-    }
+  void stop() override {
+    stop_count++;
+    status_ = TraceStatus::PROCESSING;
+  }
 
-    std::vector<std::string> errors() override {
-      return {};
-    }
+  std::vector<std::string> errors() override { return {}; }
 
-    void processTrace(ActivityLogger& logger) override;
+  void processTrace(ActivityLogger &logger) override;
 
-    void set_test_activities(std::deque<GenericTraceActivity>&& acs) {
-      test_activities_ = std::move(acs);
-    }
+  void set_test_activities(std::deque<GenericTraceActivity> &&acs) {
+    test_activities_ = std::move(acs);
+  }
 
-    std::unique_ptr<CpuTraceBuffer> getTraceBuffer() override;
+  std::unique_ptr<CpuTraceBuffer> getTraceBuffer() override;
 
-    int start_count = 0;
-    int stop_count = 0;
-  private:
-    std::deque<GenericTraceActivity> test_activities_;
-};
+  int start_count = 0;
+  int stop_count = 0;
 
-
-class MockActivityProfiler: public IActivityProfiler {
-
- public:
-  explicit MockActivityProfiler(std::deque<GenericTraceActivity>& activities);
-
-  const std::string& name() const override;
-
-  const std::set<ActivityType>& availableActivities() const override;
-
-  std::unique_ptr<IActivityProfilerSession> configure(
-      const std::set<ActivityType>& activity_types,
-      const Config& config) override;
-
-  std::unique_ptr<IActivityProfilerSession> configure(
-      int64_t ts_ms,
-      int64_t duration_ms,
-      const std::set<ActivityType>& activity_types,
-      const Config& config) override;
-
- private:
+private:
   std::deque<GenericTraceActivity> test_activities_;
 };
 
-} // namespace libkineto
+class MockActivityProfiler : public IActivityProfiler {
+
+public:
+  explicit MockActivityProfiler(std::deque<GenericTraceActivity> &activities);
+
+  const std::string &name() const override;
+
+  const std::set<ActivityType> &availableActivities() const override;
+
+  std::unique_ptr<IActivityProfilerSession>
+  configure(const std::set<ActivityType> &activity_types,
+            const Config &config) override;
+
+  std::unique_ptr<IActivityProfilerSession>
+  configure(int64_t ts_ms, int64_t duration_ms,
+            const std::set<ActivityType> &activity_types,
+            const Config &config) override;
+
+private:
+  std::deque<GenericTraceActivity> test_activities_;
+};
+
+} // namespace libdmv

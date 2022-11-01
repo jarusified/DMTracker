@@ -1,15 +1,10 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <string>
 
 #include "ActivityType.h"
 
-namespace libkineto {
+namespace libdmv {
 
 class ActivityLogger;
 struct TraceSpan;
@@ -37,11 +32,11 @@ struct ITraceActivity {
   virtual ActivityType type() const = 0;
   virtual const std::string name() const = 0;
   // Optional linked activity
-  virtual const ITraceActivity* linkedActivity() const = 0;
+  virtual const ITraceActivity *linkedActivity() const = 0;
   // Optional containing trace object
-  virtual const TraceSpan* traceSpan() const = 0;
+  virtual const TraceSpan *traceSpan() const = 0;
   // Log activity
-  virtual void log(ActivityLogger& logger) const = 0;
+  virtual void log(ActivityLogger &logger) const = 0;
   // Return json formatted metadata
   // FIXME: Return iterator to dynamic type map here instead
   virtual const std::string metadataJson() const = 0;
@@ -53,4 +48,4 @@ struct ITraceActivity {
   }
 };
 
-} // namespace libkineto
+} // namespace libdmv

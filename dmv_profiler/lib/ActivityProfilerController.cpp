@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #include "ActivityProfilerController.h"
 
 #include <chrono>
@@ -11,9 +6,6 @@
 #include "ActivityLoggerFactory.h"
 #include "ActivityTrace.h"
 #include "CuptiActivityApi.h"
-#ifdef HAS_ROCTRACER
-#include "RoctracerActivityApi.h"
-#endif
 #include "ThreadUtil.h"
 #include "output_json.h"
 #include "output_membuf.h"
@@ -22,12 +14,11 @@
 
 using namespace std::chrono;
 
-namespace KINETO_NAMESPACE {
+namespace libdmv {
 
 constexpr milliseconds kProfilerIntervalMsecs(1000);
 
-#if !USE_GOOGLE_LOG
-static std::unique_ptr<LoggerCollector>& loggerCollectorFactory() {
+static std::unique_ptr<LoggerCollector> &loggerCollectorFactory() {
   static std::unique_ptr<LoggerCollector> factory = nullptr;
   return factory;
 }
@@ -36,10 +27,9 @@ void ActivityProfilerController::setLoggerCollectorFactory(
     std::function<std::unique_ptr<LoggerCollector>()> factory) {
   loggerCollectorFactory() = factory();
 }
-#endif // !USE_GOOGLE_LOG
 
 ActivityProfilerController::ActivityProfilerController(
-    ConfigLoader& configLoader, bool cpuOnly)
+    ConfigLoader &configLoader, bool cpuOnly)
     : configLoader_(configLoader) {
 #ifdef HAS_ROCTRACER
   profiler_ = std::make_unique<CuptiActivityProfiler>(
@@ -50,16 +40,13 @@ ActivityProfilerController::ActivityProfilerController(
 #endif
   configLoader_.addHandler(ConfigLoader::ConfigKind::ActivityProfiler, this);
 
-#if !USE_GOOGLE_LOG
   if (loggerCollectorFactory()) {
     Logger::addLoggerObserver(loggerCollectorFactory().get());
   }
-#endif // !USE_GOOGLE_LOG
 }
 
 ActivityProfilerController::~ActivityProfilerController() {
-  configLoader_.removeHandler(
-      ConfigLoader::ConfigKind::ActivityProfiler, this);
+  configLoader_.removeHandler(ConfigLoader::ConfigKind::ActivityProfiler, this);
   if (profilerThread_) {
     // signaling termination of the profiler loop
     stopRunloop_ = true;
@@ -68,32 +55,30 @@ ActivityProfilerController::~ActivityProfilerController() {
     profilerThread_ = nullptr;
   }
 
-#if !USE_GOOGLE_LOG
   if (loggerCollectorFactory()) {
     Logger::removeLoggerObserver(loggerCollectorFactory().get());
   }
-#endif // !USE_GOOGLE_LOG
 }
 
 static ActivityLoggerFactory initLoggerFactory() {
   ActivityLoggerFactory factory;
-  factory.addProtocol("file", [](const std::string& url) {
-      return std::unique_ptr<ActivityLogger>(new ChromeTraceLogger(url));
+  factory.addProtocol("file", [](const std::string &url) {
+    return std::unique_ptr<ActivityLogger>(new ChromeTraceLogger(url));
   });
   return factory;
 }
 
-static ActivityLoggerFactory& loggerFactory() {
+static ActivityLoggerFactory &loggerFactory() {
   static ActivityLoggerFactory factory = initLoggerFactory();
   return factory;
 }
 
 void ActivityProfilerController::addLoggerFactory(
-    const std::string& protocol, ActivityLoggerFactory::FactoryFunc factory) {
+    const std::string &protocol, ActivityLoggerFactory::FactoryFunc factory) {
   loggerFactory().addProtocol(protocol, factory);
 }
 
-static std::unique_ptr<ActivityLogger> makeLogger(const Config& config) {
+static std::unique_ptr<ActivityLogger> makeLogger(const Config &config) {
   if (config.activitiesLogToMemory()) {
     return std::make_unique<MemoryTraceLogger>(config);
   }
@@ -104,7 +89,7 @@ bool ActivityProfilerController::canAcceptConfig() {
   return !profiler_->isActive();
 }
 
-void ActivityProfilerController::acceptConfig(const Config& config) {
+void ActivityProfilerController::acceptConfig(const Config &config) {
   VLOG(1) << "acceptConfig";
   if (config.activityProfilerEnabled()) {
     scheduleTrace(config);
@@ -112,19 +97,22 @@ void ActivityProfilerController::acceptConfig(const Config& config) {
 }
 
 bool ActivityProfilerController::shouldActivateTimestampConfig(
-    const std::chrono::time_point<std::chrono::system_clock>& now) {
+    const std::chrono::time_point<std::chrono::system_clock> &now) {
   if (asyncRequestConfig_->hasProfileStartIteration()) {
     return false;
   }
   // Note on now + kProfilerIntervalMsecs
   // Profiler interval does not align perfectly up to startTime - warmup.
-  // Waiting until the next tick won't allow sufficient time for the profiler to warm up.
-  // So check if we are very close to the warmup time and trigger warmup.
-  if (now + kProfilerIntervalMsecs
-      >= (asyncRequestConfig_->requestTimestamp() - asyncRequestConfig_->activitiesWarmupDuration())) {
-    LOG(INFO) << "Received on-demand activity trace request by "
-              << " profile timestamp = "
-              << asyncRequestConfig_->requestTimestamp().time_since_epoch().count();
+  // Waiting until the next tick won't allow sufficient time for the profiler to
+  // warm up. So check if we are very close to the warmup time and trigger
+  // warmup.
+  if (now + kProfilerIntervalMsecs >=
+      (asyncRequestConfig_->requestTimestamp() -
+       asyncRequestConfig_->activitiesWarmupDuration())) {
+    LOG(INFO)
+        << "Received on-demand activity trace request by "
+        << " profile timestamp = "
+        << asyncRequestConfig_->requestTimestamp().time_since_epoch().count();
     return true;
   }
   return false;
@@ -142,24 +130,25 @@ bool ActivityProfilerController::shouldActivateIterationConfig(
   }
 
   LOG(INFO) << "Received on-demand activity trace request by "
-                " profile start iteration = "
+               " profile start iteration = "
             << asyncRequestConfig_->profileStartIteration()
             << ", current iteration = " << currentIter;
   // Re-calculate the start iter if requested iteration is in the past.
   if (currentIter > rootIter) {
-    auto newProfileStart = currentIter +
-        asyncRequestConfig_->activitiesWarmupIterations();
+    auto newProfileStart =
+        currentIter + asyncRequestConfig_->activitiesWarmupIterations();
     // Use Start Iteration Round Up if it is present.
     if (asyncRequestConfig_->profileStartIterationRoundUp() > 0) {
       // round up to nearest multiple
       auto divisor = asyncRequestConfig_->profileStartIterationRoundUp();
       auto rem = newProfileStart % divisor;
       newProfileStart += ((rem == 0) ? 0 : divisor - rem);
-      LOG(INFO) << "Rounding up profiler start iteration to : " << newProfileStart;
+      LOG(INFO) << "Rounding up profiler start iteration to : "
+                << newProfileStart;
       asyncRequestConfig_->setProfileStartIteration(newProfileStart);
       if (currentIter != asyncRequestConfig_->startIterationIncludingWarmup()) {
-        // Ex. Current 9, start 8, warmup 5, roundup 100. Resolves new start to 100,
-        // with warmup starting at 95. So don't start now.
+        // Ex. Current 9, start 8, warmup 5, roundup 100. Resolves new start to
+        // 100, with warmup starting at 95. So don't start now.
         return false;
       }
     } else {
@@ -171,7 +160,7 @@ bool ActivityProfilerController::shouldActivateIterationConfig(
 }
 
 void ActivityProfilerController::profilerLoop() {
-  setThreadName("Kineto Activity Profiler");
+  setThreadName("DMV Activity Profiler");
   VLOG(0) << "Entering activity profiler loop";
 
   auto now = system_clock::now();
@@ -202,8 +191,8 @@ void ActivityProfilerController::profilerLoop() {
     if (profiler_->isActive()) {
       next_wakeup_time = profiler_->performRunLoopStep(now, next_wakeup_time);
       VLOG(1) << "Profiler loop: "
-          << duration_cast<milliseconds>(system_clock::now() - now).count()
-          << "ms";
+              << duration_cast<milliseconds>(system_clock::now() - now).count()
+              << "ms";
     }
   }
 
@@ -242,7 +231,7 @@ void ActivityProfilerController::activateConfig(
   asyncRequestConfig_ = nullptr;
 }
 
-void ActivityProfilerController::scheduleTrace(const Config& config) {
+void ActivityProfilerController::scheduleTrace(const Config &config) {
   VLOG(1) << "scheduleTrace";
   if (profiler_->isActive()) {
     LOG(WARNING) << "Ignored request - profiler busy";
@@ -275,7 +264,7 @@ void ActivityProfilerController::scheduleTrace(const Config& config) {
   }
 }
 
-void ActivityProfilerController::prepareTrace(const Config& config) {
+void ActivityProfilerController::prepareTrace(const Config &config) {
   // Requests from ActivityProfilerApi have higher priority than
   // requests from other sources (signal, daemon).
   // Cancel any ongoing request and refuse new ones.
@@ -283,8 +272,8 @@ void ActivityProfilerController::prepareTrace(const Config& config) {
   if (profiler_->isActive()) {
     LOG(WARNING) << "Cancelling current trace request in order to start "
                  << "higher priority synchronous request";
-    if (libkineto::api().client()) {
-      libkineto::api().client()->stop();
+    if (libdmv::api().client()) {
+      libdmv::api().client()->stop();
     }
     profiler_->stopTrace(now);
     profiler_->reset();
@@ -298,7 +287,8 @@ void ActivityProfilerController::startTrace() {
   profiler_->startTrace(std::chrono::system_clock::now());
 }
 
-std::unique_ptr<ActivityTraceInterface> ActivityProfilerController::stopTrace() {
+std::unique_ptr<ActivityTraceInterface>
+ActivityProfilerController::stopTrace() {
   profiler_->stopTrace(std::chrono::system_clock::now());
   UST_LOGGER_MARK_COMPLETED(kCollectionStage);
 
@@ -308,9 +298,9 @@ std::unique_ptr<ActivityTraceInterface> ActivityProfilerController::stopTrace() 
   return std::make_unique<ActivityTrace>(std::move(logger), loggerFactory());
 }
 
-void ActivityProfilerController::addMetadata(
-    const std::string& key, const std::string& value) {
+void ActivityProfilerController::addMetadata(const std::string &key,
+                                             const std::string &value) {
   profiler_->addMetadata(key, value);
 }
 
-} // namespace KINETO_NAMESPACE
+} // namespace libdmv

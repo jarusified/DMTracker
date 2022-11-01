@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <algorithm>
@@ -15,55 +10,48 @@
 
 #include "Config.h"
 
-// TODO(T90238193)
-// @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
 #include "ILoggerObserver.h"
 
-namespace libkineto {
-  class LibkinetoApi;
+namespace libdmv {
+class LibDmvApi;
 }
 
-namespace KINETO_NAMESPACE {
+namespace libdmv {
 
-using namespace libkineto;
+using namespace libdmv;
 class DaemonConfigLoader;
 
 class ConfigLoader {
- public:
+public:
+  static ConfigLoader &instance();
 
-  static ConfigLoader& instance();
-
-  enum ConfigKind {
-    ActivityProfiler = 0,
-    EventProfiler,
-    NumConfigKinds
-  };
+  enum ConfigKind { ActivityProfiler = 0, EventProfiler, NumConfigKinds };
 
   struct ConfigHandler {
     virtual ~ConfigHandler() {}
     virtual bool canAcceptConfig() = 0;
-    virtual void acceptConfig(const Config& cfg) = 0;
+    virtual void acceptConfig(const Config &cfg) = 0;
   };
 
-  void addHandler(ConfigKind kind, ConfigHandler* handler) {
+  void addHandler(ConfigKind kind, ConfigHandler *handler) {
     std::lock_guard<std::mutex> lock(updateThreadMutex_);
     handlers_[kind].push_back(handler);
     startThread();
   }
 
-  void removeHandler(ConfigKind kind, ConfigHandler* handler) {
+  void removeHandler(ConfigKind kind, ConfigHandler *handler) {
     std::lock_guard<std::mutex> lock(updateThreadMutex_);
-    auto it = std::find(
-        handlers_[kind].begin(), handlers_[kind].end(), handler);
+    auto it =
+        std::find(handlers_[kind].begin(), handlers_[kind].end(), handler);
     if (it != handlers_[kind].end()) {
       handlers_[kind].erase(it);
     }
   }
 
-  void notifyHandlers(const Config& cfg) {
+  void notifyHandlers(const Config &cfg) {
     std::lock_guard<std::mutex> lock(updateThreadMutex_);
-    for (auto& key_val : handlers_) {
-      for (ConfigHandler* handler : key_val.second) {
+    for (auto &key_val : handlers_) {
+      for (ConfigHandler *handler : key_val.second) {
         handler->acceptConfig(cfg);
       }
     }
@@ -71,7 +59,7 @@ class ConfigLoader {
 
   bool canHandlerAcceptConfig(ConfigKind kind) {
     std::lock_guard<std::mutex> lock(updateThreadMutex_);
-    for (ConfigHandler* handler : handlers_[kind]) {
+    for (ConfigHandler *handler : handlers_[kind]) {
       if (!handler->canAcceptConfig()) {
         return false;
       }
@@ -95,7 +83,7 @@ class ConfigLoader {
     return config_->clone();
   }
 
-  bool hasNewConfig(const Config& oldConfig);
+  bool hasNewConfig(const Config &oldConfig);
   int contextCountForGpu(uint32_t gpu);
 
   void handleOnDemandSignal();
@@ -103,35 +91,35 @@ class ConfigLoader {
   static void setDaemonConfigLoaderFactory(
       std::function<std::unique_ptr<DaemonConfigLoader>()> factory);
 
- private:
+private:
   ConfigLoader();
   ~ConfigLoader();
 
-  const char* configFileName();
-  DaemonConfigLoader* daemonConfigLoader();
+  const char *configFileName();
+  DaemonConfigLoader *daemonConfigLoader();
 
   void startThread();
   void updateConfigThread();
   void updateBaseConfig();
 
   // Create configuration when receiving SIGUSR2
-  void configureFromSignal(
-      std::chrono::time_point<std::chrono::system_clock> now,
-      Config& config);
+  void
+  configureFromSignal(std::chrono::time_point<std::chrono::system_clock> now,
+                      Config &config);
 
   // Create configuration when receiving request from a daemon
-  void configureFromDaemon(
-      std::chrono::time_point<std::chrono::system_clock> now,
-      Config& config);
+  void
+  configureFromDaemon(std::chrono::time_point<std::chrono::system_clock> now,
+                      Config &config);
 
   std::string readOnDemandConfigFromDaemon(
       std::chrono::time_point<std::chrono::system_clock> now);
 
   std::mutex configLock_;
-  std::atomic<const char*> configFileName_{nullptr};
+  std::atomic<const char *> configFileName_{nullptr};
   std::unique_ptr<Config> config_;
   std::unique_ptr<DaemonConfigLoader> daemonConfigLoader_;
-  std::map<ConfigKind, std::vector<ConfigHandler*>> handlers_;
+  std::map<ConfigKind, std::vector<ConfigHandler *>> handlers_;
 
   std::chrono::seconds configUpdateIntervalSecs_;
   std::chrono::seconds onDemandConfigUpdateIntervalSecs_;
@@ -142,4 +130,4 @@ class ConfigLoader {
   std::atomic_bool onDemandSignal_{false};
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace libdmv

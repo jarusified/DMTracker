@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <algorithm>
@@ -21,14 +16,14 @@
 #include "CuptiMetricApi.h"
 #include "SampleListener.h"
 
-namespace KINETO_NAMESPACE {
+namespace libdmv {
 
 // Helper function for computing percentiles (nearest-rank).
 // Modifies the input.
 template <typename T>
-inline PercentileList& percentiles(std::vector<T> values, PercentileList& pcs) {
+inline PercentileList &percentiles(std::vector<T> values, PercentileList &pcs) {
   auto size = values.size();
-  for (auto& x : pcs) {
+  for (auto &x : pcs) {
     int idx = std::min(size - 1, (x.first * size) / 100);
     std::nth_element(values.begin(), values.begin() + idx, values.end());
     x.second = SampleValue(values[idx]);
@@ -38,8 +33,8 @@ inline PercentileList& percentiles(std::vector<T> values, PercentileList& pcs) {
 
 // Helper function for normalizing a percentile list
 // Modifies the input
-inline PercentileList& normalize(PercentileList& pcs, double sf) {
-  for (auto& pc : pcs) {
+inline PercentileList &normalize(PercentileList &pcs, double sf) {
+  for (auto &pc : pcs) {
     pc.second *= sf;
   }
   return pcs;
@@ -57,32 +52,31 @@ struct SampleSlice {
 
 // A sampled event
 class Event {
- public:
+public:
   /* implicit */ Event(std::string name) : name(std::move(name)) {}
-  /* implicit */ Event(const char* name) : name(name) {}
+  /* implicit */ Event(const char *name) : name(name) {}
   Event() : name("INVALID") {}
 
-  Event(const Event&) = delete;
-  Event& operator=(const Event&) = delete;
-  Event(Event&&) = default;
-  Event& operator=(Event&&) = default;
+  Event(const Event &) = delete;
+  Event &operator=(const Event &) = delete;
+  Event(Event &&) = default;
+  Event &operator=(Event &&) = default;
 
-  void addSample(
-      std::chrono::time_point<std::chrono::system_clock> timestamp,
-      const std::vector<int64_t>& values) {
+  void addSample(std::chrono::time_point<std::chrono::system_clock> timestamp,
+                 const std::vector<int64_t> &values) {
     assert(values.size() == instanceCount);
     samples_.emplace_back(timestamp, values);
   }
 
   // Sum samples for a single domain instance
-  int64_t sumInstance(int i, const SampleSlice& slice) const;
+  int64_t sumInstance(int i, const SampleSlice &slice) const;
 
   // Sum all samples across all domain instances
-  int64_t sumAll(const SampleSlice& slice) const;
+  int64_t sumAll(const SampleSlice &slice) const;
 
   // Create list of percentiles
-  PercentileList& percentiles(PercentileList& pcs, const SampleSlice& slice)
-      const;
+  PercentileList &percentiles(PercentileList &pcs,
+                              const SampleSlice &slice) const;
 
   void eraseSamples(int count) {
     auto end = samples_.begin();
@@ -90,15 +84,11 @@ class Event {
     samples_.erase(samples_.begin(), end);
   }
 
-  void clearSamples() {
-    samples_.clear();
-  }
+  void clearSamples() { samples_.clear(); }
 
-  int sampleCount() {
-    return samples_.size();
-  }
+  int sampleCount() { return samples_.size(); }
 
-  void printSamples(std::ostream& s, CUdevice device) const;
+  void printSamples(std::ostream &s, CUdevice device) const;
 
   // Event name (see nvprof --query-events)
   std::string name;
@@ -106,53 +96,47 @@ class Event {
   // Number of domain instances for this event, e.g. number of SMs
   int instanceCount = 0;
 
- private:
-  std::pair<int, int> toIdxRange(const SampleSlice& slice) const {
+private:
+  std::pair<int, int> toIdxRange(const SampleSlice &slice) const {
     int size = (samples_.size() - slice.offset) / slice.count;
     return std::make_pair(slice.offset + (slice.index * size), size);
   }
 
   // List of collected samples, where each sample has values for
   // one or more domain instances
-  using Sample = std::pair<
-      std::chrono::time_point<std::chrono::system_clock>,
-      std::vector<int64_t>>;
+  using Sample = std::pair<std::chrono::time_point<std::chrono::system_clock>,
+                           std::vector<int64_t>>;
   std::list<Sample> samples_;
 };
 
 class Metric {
- public:
-  Metric(
-      std::string name,
-      CUpti_MetricID id,
-      std::vector<CUpti_EventID> events,
-      CUpti_MetricEvaluationMode eval_mode,
-      CuptiMetricApi& cupti_metrics);
+public:
+  Metric(std::string name, CUpti_MetricID id, std::vector<CUpti_EventID> events,
+         CUpti_MetricEvaluationMode eval_mode, CuptiMetricApi &cupti_metrics);
 
   struct CalculatedValues {
     std::vector<SampleValue> perInstance;
     SampleValue total;
   };
 
-  struct CalculatedValues calculate(
-      std::map<CUpti_EventID, Event>& events,
-      std::chrono::nanoseconds sample_duration,
-      const SampleSlice& slice);
+  struct CalculatedValues calculate(std::map<CUpti_EventID, Event> &events,
+                                    std::chrono::nanoseconds sample_duration,
+                                    const SampleSlice &slice);
 
-  int instanceCount(std::map<CUpti_EventID, Event>& events) {
+  int instanceCount(std::map<CUpti_EventID, Event> &events) {
     return events[events_[0]].instanceCount;
   }
 
-  void printDescription(std::ostream& s) const;
+  void printDescription(std::ostream &s) const;
 
   std::string name;
 
- private:
+private:
   CUpti_MetricID id_;
   std::vector<CUpti_EventID> events_;
   CUpti_MetricEvaluationMode evalMode_;
   // Calls to CUPTI is encapsulated behind this interface
-  CuptiMetricApi& cuptiMetrics_;
+  CuptiMetricApi &cuptiMetrics_;
   CUpti_MetricValueKind valueKind_;
 };
 
@@ -163,69 +147,59 @@ class Metric {
  * A group set contains zero or one groups per domain.
  */
 class EventGroupSet {
- public:
-  EventGroupSet(
-      CUpti_EventGroupSet& set,
-      std::map<CUpti_EventID, Event>& events,
-      CuptiEventApi& cupti);
+public:
+  EventGroupSet(CUpti_EventGroupSet &set,
+                std::map<CUpti_EventID, Event> &events, CuptiEventApi &cupti);
   ~EventGroupSet();
 
-  EventGroupSet(const EventGroupSet&) = delete;
-  EventGroupSet& operator=(const EventGroupSet&) = delete;
-  EventGroupSet(EventGroupSet&&) = default;
-  EventGroupSet& operator=(EventGroupSet&&) = delete;
+  EventGroupSet(const EventGroupSet &) = delete;
+  EventGroupSet &operator=(const EventGroupSet &) = delete;
+  EventGroupSet(EventGroupSet &&) = default;
+  EventGroupSet &operator=(EventGroupSet &&) = delete;
 
   // Number of groups = number of domains profiled
-  int groupCount() const {
-    return set_.numEventGroups;
-  }
+  int groupCount() const { return set_.numEventGroups; }
 
   void setEnabled(bool enabled);
   // Take a sample of counters in this group set
   void collectSample();
-  void printDescription(std::ostream& s) const;
+  void printDescription(std::ostream &s) const;
 
- private:
-  CUpti_EventGroupSet& set_;
-  std::map<CUpti_EventID, Event>& events_;
+private:
+  CUpti_EventGroupSet &set_;
+  std::map<CUpti_EventID, Event> &events_;
   // Calls to CUPTI is encapsulated behind this interface
-  CuptiEventApi& cuptiEvents_;
+  CuptiEventApi &cuptiEvents_;
   bool enabled_;
 };
 
 // The sampler
 class EventProfiler {
- public:
+public:
   explicit EventProfiler(
       std::unique_ptr<CuptiEventApi> cupti_events,
       std::unique_ptr<CuptiMetricApi> cupti_metrics,
-      std::vector<std::unique_ptr<SampleListener>>& loggers,
-      std::vector<std::unique_ptr<SampleListener>>& onDemandLoggers);
-  EventProfiler(const EventProfiler&) = delete;
-  EventProfiler& operator=(const EventProfiler&) = delete;
+      std::vector<std::unique_ptr<SampleListener>> &loggers,
+      std::vector<std::unique_ptr<SampleListener>> &onDemandLoggers);
+  EventProfiler(const EventProfiler &) = delete;
+  EventProfiler &operator=(const EventProfiler &) = delete;
   ~EventProfiler();
 
-  void configure(Config& config, Config* onDemandConfig);
+  void configure(Config &config, Config *onDemandConfig);
 
-  bool isOnDemandActive() {
-    return !!onDemandConfig_;
-  }
+  bool isOnDemandActive() { return !!onDemandConfig_; }
 
   // Print the counter sets. Multiple sets will be multiplexed.
-  void printSets(std::ostream& s) const;
+  void printSets(std::ostream &s) const;
 
   // Print metrics descriptions
-  void printMetrics(std::ostream& s) const;
+  void printMetrics(std::ostream &s) const;
 
-  bool enableForDevice(Config& cfg);
+  bool enableForDevice(Config &cfg);
 
-  CUdevice device() {
-    return cuptiEvents_->device();
-  }
+  CUdevice device() { return cuptiEvents_->device(); }
 
-  bool setContinuousMode() {
-    return cuptiEvents_->setContinuousMode();
-  }
+  bool setContinuousMode() { return cuptiEvents_->setContinuousMode(); }
 
   std::chrono::milliseconds samplePeriod() {
     return mergedConfig_->samplePeriod();
@@ -235,9 +209,7 @@ class EventProfiler {
     return mergedConfig_->multiplexPeriod();
   }
 
-  std::chrono::milliseconds reportPeriod() {
-    return config_->reportPeriod();
-  }
+  std::chrono::milliseconds reportPeriod() { return config_->reportPeriod(); }
 
   std::chrono::milliseconds onDemandReportPeriod() {
     return onDemandConfig_->reportPeriod();
@@ -249,13 +221,9 @@ class EventProfiler {
   void reportSamples();
   void reportOnDemandSamples();
 
-  bool enabled() {
-    return sets_.size() > 0;
-  }
+  bool enabled() { return sets_.size() > 0; }
 
-  bool multiplexEnabled() {
-    return sets_.size() > 1;
-  }
+  bool multiplexEnabled() { return sets_.size() > 1; }
 
   // Multiplex counters.
   void enableNextCounterSet();
@@ -272,22 +240,22 @@ class EventProfiler {
   }
 
   void clearSamples() {
-    for (auto& pair : events_) {
+    for (auto &pair : events_) {
       pair.second.clearSamples();
     }
     baseSamples_ = 0;
     onDemandSamples_ = 0;
   }
 
- private:
+private:
   // Functions to initialize profiler based on Config settings.
-  bool applyConfig(const Config& config);
-  bool initEventsAndMetrics(const Config& config);
-  void initEvents(const std::set<std::string>& eventNames);
-  void initMetrics(const std::set<std::string>& metricNames);
+  bool applyConfig(const Config &config);
+  bool initEventsAndMetrics(const Config &config);
+  void initEvents(const std::set<std::string> &eventNames);
+  void initMetrics(const std::set<std::string> &metricNames);
   bool initEventGroups();
 
-  PercentileList initPercentiles(const std::vector<int>& percentiles) {
+  PercentileList initPercentiles(const std::vector<int> &percentiles) {
     PercentileList res;
     res.reserve(percentiles.size());
     for (int p : percentiles) {
@@ -297,21 +265,21 @@ class EventProfiler {
   }
 
   // Notify listeners of collected samples
-  void dispatchSamples(
-      const Config& config,
-      const std::vector<std::unique_ptr<SampleListener>>& loggers,
-      int report_nr);
+  void
+  dispatchSamples(const Config &config,
+                  const std::vector<std::unique_ptr<SampleListener>> &loggers,
+                  int report_nr);
 
   void eraseSamples(int count) {
-    for (auto& pair : events_) {
+    for (auto &pair : events_) {
       pair.second.eraseSamples(count);
     }
   }
 
-  void updateLoggers(Config& config, Config* on_demand_config);
+  void updateLoggers(Config &config, Config *on_demand_config);
 
   // Print all collected samples since last clear.
-  void printAllSamples(std::ostream& s, CUdevice device) const;
+  void printAllSamples(std::ostream &s, CUdevice device) const;
 
   // Calls to CUPTI is encapsulated behind these interfaces
   std::unique_ptr<CuptiEventApi> cuptiEvents_;
@@ -325,7 +293,7 @@ class EventProfiler {
   // The event group set object returned by Cupti.
   // Saved s.t. we can call cuptiEventGroupSetsDestroy to free memory when
   // the object is no longer needed.
-  CUpti_EventGroupSets* eventGroupSets_ = nullptr;
+  CUpti_EventGroupSets *eventGroupSets_ = nullptr;
   // Current multiplexed counter set
   int curEnabledSet_{0};
 
@@ -337,8 +305,8 @@ class EventProfiler {
 
   // Shared between profiler threads
   // Vectors are read-only but calling loggers require lock
-  const std::vector<std::unique_ptr<SampleListener>>& loggers_;
-  const std::vector<std::unique_ptr<SampleListener>>& onDemandLoggers_;
+  const std::vector<std::unique_ptr<SampleListener>> &loggers_;
+  const std::vector<std::unique_ptr<SampleListener>> &onDemandLoggers_;
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace libdmv

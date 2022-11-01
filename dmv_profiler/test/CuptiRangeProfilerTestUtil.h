@@ -1,24 +1,19 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
+#include <gtest/gtest.h>
 #include <stdlib.h>
 #include <unordered_map>
-#include <gtest/gtest.h>
 
 // TODO(T90238193)
 // @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
 #include "CuptiRangeProfilerApi.h"
 
-namespace KINETO_NAMESPACE {
+namespace DMV_NAMESPACE {
 
 #if HAS_CUPTI_RANGE_PROFILER
 
 class MockCuptiRBProfilerSession : public CuptiRBProfilerSession {
- public:
-  explicit MockCuptiRBProfilerSession(const CuptiRangeProfilerOptions& opts)
-    : CuptiRBProfilerSession(opts) {}
+public:
+  explicit MockCuptiRBProfilerSession(const CuptiRangeProfilerOptions &opts)
+      : CuptiRBProfilerSession(opts) {}
 
   void beginPass() override {
     LOG(INFO) << " Mock CUPTI begin pass";
@@ -32,7 +27,7 @@ class MockCuptiRBProfilerSession : public CuptiRBProfilerSession {
 
   void flushCounterData() override {}
 
-  void pushRange(const std::string& rangeName) override {
+  void pushRange(const std::string &rangeName) override {
     LOG(INFO) << " Mock CUPTI pushrange ( " << rangeName << " )";
     ranges_started++;
   }
@@ -47,9 +42,7 @@ class MockCuptiRBProfilerSession : public CuptiRBProfilerSession {
     runChecks();
   }
 
-  void enable() override {
-    enabled = true;
-  }
+  void enable() override { enabled = true; }
   void disable() override {}
 
   CuptiProfilerResult evaluateMetrics(bool /*verbose*/) override {
@@ -57,9 +50,8 @@ class MockCuptiRBProfilerSession : public CuptiRBProfilerSession {
   }
 
 protected:
-  void startInternal(
-      CUpti_ProfilerRange profilerRange,
-      CUpti_ProfilerReplayMode profilerReplayMode) override {
+  void startInternal(CUpti_ProfilerRange profilerRange,
+                     CUpti_ProfilerReplayMode profilerReplayMode) override {
     profilerStartTs_ = std::chrono::high_resolution_clock::now();
     curRange_ = profilerRange;
     curReplay_ = profilerReplayMode;
@@ -71,44 +63,43 @@ private:
     EXPECT_EQ(ranges_started, ranges_ended);
   }
 
- public:
+public:
   int passes_started = 0;
   int passes_ended = 0;
   int ranges_started = 0;
   int ranges_ended = 0;
   bool enabled = false;
 
-  static std::unordered_map<int, CuptiProfilerResult>& getResults();
+  static std::unordered_map<int, CuptiProfilerResult> &getResults();
 };
 
 struct MockCuptiRBProfilerSessionFactory : ICuptiRBProfilerSessionFactory {
-  std::unique_ptr<CuptiRBProfilerSession> make(
-      const CuptiRangeProfilerOptions& _opts) override {
+  std::unique_ptr<CuptiRBProfilerSession>
+  make(const CuptiRangeProfilerOptions &_opts) override {
     auto opts = _opts;
     opts.unitTest = true;
     return std::make_unique<MockCuptiRBProfilerSession>(opts);
   }
 
-  MockCuptiRBProfilerSession* asDerived(CuptiRBProfilerSession* base) {
-    return dynamic_cast<MockCuptiRBProfilerSession*>(base);
+  MockCuptiRBProfilerSession *asDerived(CuptiRBProfilerSession *base) {
+    return dynamic_cast<MockCuptiRBProfilerSession *>(base);
   }
 };
 
 inline void simulateCudaContextCreate(CUcontext context, uint32_t dev) {
-  testing::trackCudaCtx(
-      context, dev, CUPTI_CBID_RESOURCE_CONTEXT_CREATED);
+  testing::trackCudaCtx(context, dev, CUPTI_CBID_RESOURCE_CONTEXT_CREATED);
 }
 
 inline void simulateCudaContextDestroy(CUcontext context, uint32_t dev) {
-  testing::trackCudaCtx(
-      context, dev, CUPTI_CBID_RESOURCE_CONTEXT_DESTROY_STARTING);
+  testing::trackCudaCtx(context, dev,
+                        CUPTI_CBID_RESOURCE_CONTEXT_DESTROY_STARTING);
 }
 
-inline void simulateKernelLaunch(
-    CUcontext context, const std::string& kernelName) {
+inline void simulateKernelLaunch(CUcontext context,
+                                 const std::string &kernelName) {
   testing::trackCudaKernelLaunch(context, kernelName.c_str());
 }
 
 #endif // HAS_CUPTI_RANGE_PROFILER
 
-} // namespace KINETO_NAMESPACE
+} // namespace DMV_NAMESPACE

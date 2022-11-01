@@ -1,26 +1,20 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #include <gtest/gtest.h>
 
 #include "src/cupti_strings.h"
 
-using namespace KINETO_NAMESPACE;
+using namespace DMV_NAMESPACE;
 
 TEST(CuptiStringsTest, Valid) {
-  ASSERT_STREQ(
-      runtimeCbidName(CUPTI_RUNTIME_TRACE_CBID_INVALID), "INVALID");
+  ASSERT_STREQ(runtimeCbidName(CUPTI_RUNTIME_TRACE_CBID_INVALID), "INVALID");
   ASSERT_STREQ(
       runtimeCbidName(CUPTI_RUNTIME_TRACE_CBID_cudaDriverGetVersion_v3020),
       "cudaDriverGetVersion");
-  ASSERT_STREQ(runtimeCbidName
-      (CUPTI_RUNTIME_TRACE_CBID_cudaDeviceSynchronize_v3020),
-      "cudaDeviceSynchronize");
   ASSERT_STREQ(
-      runtimeCbidName(CUPTI_RUNTIME_TRACE_CBID_cudaStreamSetAttribute_ptsz_v11000),
-      "cudaStreamSetAttribute_ptsz");
+      runtimeCbidName(CUPTI_RUNTIME_TRACE_CBID_cudaDeviceSynchronize_v3020),
+      "cudaDeviceSynchronize");
+  ASSERT_STREQ(runtimeCbidName(
+                   CUPTI_RUNTIME_TRACE_CBID_cudaStreamSetAttribute_ptsz_v11000),
+               "cudaStreamSetAttribute_ptsz");
 }
 
 TEST(CuptiStringsTest, Invalid) {

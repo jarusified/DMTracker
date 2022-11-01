@@ -28,3 +28,4 @@ src/data/*
 
 *.svg
 CMakeFiles/*
+src/client/node_modules/*

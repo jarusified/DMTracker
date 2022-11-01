@@ -1,15 +1,10 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #include "CudaUtil.h"
 
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <mutex>
 
-namespace KINETO_NAMESPACE {
+namespace libdmv {
 
 bool gpuAvailable = false;
 
@@ -26,4 +21,4 @@ bool isGpuAvailable() {
   return gpuAvailable;
 }
 
-} // namespace KINETO_NAMESPACE
+} // namespace libdmv

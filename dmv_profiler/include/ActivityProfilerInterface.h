@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <memory>
@@ -10,11 +5,11 @@
 #include <thread>
 #include <vector>
 
-#include "ActivityType.h"
 #include "ActivityTraceInterface.h"
+#include "ActivityType.h"
 #include "IActivityProfiler.h"
 
-namespace libkineto {
+namespace libdmv {
 
 class ActivityProfilerController;
 struct CpuTraceBuffer;
@@ -22,22 +17,18 @@ class Config;
 
 class ActivityProfilerInterface {
 
- public:
-  virtual ~ActivityProfilerInterface() {};
+public:
+  virtual ~ActivityProfilerInterface(){};
 
   virtual void init() {}
-  virtual bool isInitialized() {
-    return false;
-  }
-  virtual bool isActive(){
-    return false;
-  }
+  virtual bool isInitialized() { return false; }
+  virtual bool isActive() { return false; }
 
   // *** Asynchronous API ***
   // Instead of starting and stopping the trace manually, provide a start time
   // and duration and / or iteration stop criterion.
   // Tracing terminates when either condition is met.
-  virtual void scheduleTrace(const std::string& configStr) {}
+  virtual void scheduleTrace(const std::string &configStr) {}
 
   // *** Synchronous API ***
   // These must be called in order:
@@ -48,9 +39,8 @@ class ActivityProfilerInterface {
   // Call prepareTrace to enable tracing, then run the region to trace
   // at least once (and ideally run the same code that is to be traced) to
   // allow tracing structures to be initialized.
-  virtual void prepareTrace(
-      const std::set<ActivityType>& activityTypes,
-      const std::string& configStr = "") {}
+  virtual void prepareTrace(const std::set<ActivityType> &activityTypes,
+                            const std::string &configStr = "") {}
 
   // Start recording, potentially reusing any buffers allocated since
   // prepareTrace was called.
@@ -68,14 +58,13 @@ class ActivityProfilerInterface {
 
   // *** TraceActivity API ***
   // FIXME: Pass activityProfiler interface into clientInterface?
-  virtual void pushCorrelationId(uint64_t id){}
-  virtual void popCorrelationId(){}
-  virtual void transferCpuTrace(
-      std::unique_ptr<CpuTraceBuffer> traceBuffer){}
+  virtual void pushCorrelationId(uint64_t id) {}
+  virtual void popCorrelationId() {}
+  virtual void transferCpuTrace(std::unique_ptr<CpuTraceBuffer> traceBuffer) {}
 
   // Correlation ids for user defined spans
-  virtual void pushUserCorrelationId(uint64_t){}
-  virtual void popUserCorrelationId(){}
+  virtual void pushUserCorrelationId(uint64_t) {}
+  virtual void popUserCorrelationId() {}
 
   // Saves information for the current thread to be used in profiler output
   // Client must record any new kernel thread where the activity has occured.
@@ -83,12 +72,13 @@ class ActivityProfilerInterface {
 
   // Record trace metadata, currently supporting only string key and values,
   // values with the same key are overwritten
-  virtual void addMetadata(const std::string& key, const std::string& value) = 0;
+  virtual void addMetadata(const std::string &key,
+                           const std::string &value) = 0;
 
   // Add a child activity profiler, this enables frameworks in the application
   // to enable custom framework events.
-  virtual void addChildActivityProfiler(
-      std::unique_ptr<IActivityProfiler> profiler) {}
+  virtual void
+  addChildActivityProfiler(std::unique_ptr<IActivityProfiler> profiler) {}
 };
 
-} // namespace libkineto
+} // namespace libdmv

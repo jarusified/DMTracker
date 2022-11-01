@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #include "ActivityProfilerProxy.h"
 
 #include "ActivityProfilerController.h"
@@ -11,16 +6,13 @@
 #include "Logger.h"
 #include <chrono>
 
-namespace KINETO_NAMESPACE {
+namespace libdmv {
 
-ActivityProfilerProxy::ActivityProfilerProxy(
-    bool cpuOnly, ConfigLoader& configLoader)
-  : cpuOnly_(cpuOnly), configLoader_(configLoader) {
-}
+ActivityProfilerProxy::ActivityProfilerProxy(bool cpuOnly,
+                                             ConfigLoader &configLoader)
+    : cpuOnly_(cpuOnly), configLoader_(configLoader) {}
 
-ActivityProfilerProxy::~ActivityProfilerProxy() {
-  delete controller_;
-};
+ActivityProfilerProxy::~ActivityProfilerProxy() { delete controller_; };
 
 void ActivityProfilerProxy::init() {
   if (!controller_) {
@@ -28,19 +20,18 @@ void ActivityProfilerProxy::init() {
   }
 }
 
-void ActivityProfilerProxy::scheduleTrace(const std::string& configStr) {
+void ActivityProfilerProxy::scheduleTrace(const std::string &configStr) {
   Config config;
   config.parse(configStr);
   controller_->scheduleTrace(config);
 }
 
-void ActivityProfilerProxy::scheduleTrace(const Config& config) {
+void ActivityProfilerProxy::scheduleTrace(const Config &config) {
   controller_->scheduleTrace(config);
 }
 
 void ActivityProfilerProxy::prepareTrace(
-    const std::set<ActivityType>& activityTypes,
-    const std::string& configStr) {
+    const std::set<ActivityType> &activityTypes, const std::string &configStr) {
   Config config;
   bool validate_required = true;
 
@@ -63,50 +54,43 @@ void ActivityProfilerProxy::prepareTrace(
   controller_->prepareTrace(config);
 }
 
-void ActivityProfilerProxy::startTrace() {
-  controller_->startTrace();
-}
+void ActivityProfilerProxy::startTrace() { controller_->startTrace(); }
 
-std::unique_ptr<ActivityTraceInterface>
-ActivityProfilerProxy::stopTrace() {
+std::unique_ptr<ActivityTraceInterface> ActivityProfilerProxy::stopTrace() {
   return controller_->stopTrace();
 }
 
-void ActivityProfilerProxy::step() {
-  controller_->step();
-}
+void ActivityProfilerProxy::step() { controller_->step(); }
 
-bool ActivityProfilerProxy::isActive() {
-  return controller_->isActive();
-}
+bool ActivityProfilerProxy::isActive() { return controller_->isActive(); }
 
 void ActivityProfilerProxy::pushCorrelationId(uint64_t id) {
-  CuptiActivityApi::pushCorrelationID(id,
-    CuptiActivityApi::CorrelationFlowType::Default);
+  CuptiActivityApi::pushCorrelationID(
+      id, CuptiActivityApi::CorrelationFlowType::Default);
 }
 
 void ActivityProfilerProxy::popCorrelationId() {
   CuptiActivityApi::popCorrelationID(
-    CuptiActivityApi::CorrelationFlowType::Default);
+      CuptiActivityApi::CorrelationFlowType::Default);
 }
 
 void ActivityProfilerProxy::pushUserCorrelationId(uint64_t id) {
-  CuptiActivityApi::pushCorrelationID(id,
-    CuptiActivityApi::CorrelationFlowType::User);
+  CuptiActivityApi::pushCorrelationID(
+      id, CuptiActivityApi::CorrelationFlowType::User);
 }
 
 void ActivityProfilerProxy::popUserCorrelationId() {
   CuptiActivityApi::popCorrelationID(
-    CuptiActivityApi::CorrelationFlowType::User);
+      CuptiActivityApi::CorrelationFlowType::User);
 }
 
 void ActivityProfilerProxy::transferCpuTrace(
-   std::unique_ptr<CpuTraceBuffer> traceBuffer) {
+    std::unique_ptr<CpuTraceBuffer> traceBuffer) {
   controller_->transferCpuTrace(std::move(traceBuffer));
 }
 
-void ActivityProfilerProxy::addMetadata(
-    const std::string& key, const std::string& value) {
+void ActivityProfilerProxy::addMetadata(const std::string &key,
+                                        const std::string &value) {
   controller_->addMetadata(key, value);
 }
 
@@ -119,4 +103,4 @@ void ActivityProfilerProxy::addChildActivityProfiler(
   controller_->addChildActivityProfiler(std::move(profiler));
 }
 
-} // namespace libkineto
+} // namespace libdmv

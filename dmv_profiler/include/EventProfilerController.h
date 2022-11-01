@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #pragma once
 
 #include <atomic>
@@ -15,7 +10,7 @@
 
 #include "ConfigLoader.h"
 
-namespace KINETO_NAMESPACE {
+namespace libdmv {
 
 class Config;
 class ConfigLoader;
@@ -27,40 +22,39 @@ class HeartbeatMonitor;
 }
 
 class EventProfilerController : public ConfigLoader::ConfigHandler {
- public:
-  EventProfilerController(const EventProfilerController&) = delete;
-  EventProfilerController& operator=(const EventProfilerController&) = delete;
+public:
+  EventProfilerController(const EventProfilerController &) = delete;
+  EventProfilerController &operator=(const EventProfilerController &) = delete;
 
   ~EventProfilerController();
 
-  static void start(CUcontext ctx, ConfigLoader& configLoader);
+  static void start(CUcontext ctx, ConfigLoader &configLoader);
   static void stop(CUcontext ctx);
 
   static void addLoggerFactory(
-      std::function<std::unique_ptr<SampleListener>(const Config&)> factory);
+      std::function<std::unique_ptr<SampleListener>(const Config &)> factory);
 
   static void addOnDemandLoggerFactory(
-      std::function<std::unique_ptr<SampleListener>(const Config&)> factory);
+      std::function<std::unique_ptr<SampleListener>(const Config &)> factory);
 
   bool canAcceptConfig() override;
 
-  void acceptConfig(const Config& config) override;
+  void acceptConfig(const Config &config) override;
 
- private:
-  explicit EventProfilerController(
-      CUcontext context,
-      ConfigLoader& configLoader,
-      detail::HeartbeatMonitor& heartbeatMonitor);
-  bool enableForDevice(Config& cfg);
+private:
+  explicit EventProfilerController(CUcontext context,
+                                   ConfigLoader &configLoader,
+                                   detail::HeartbeatMonitor &heartbeatMonitor);
+  bool enableForDevice(Config &cfg);
   void profilerLoop();
 
-  ConfigLoader& configLoader_;
+  ConfigLoader &configLoader_;
   std::unique_ptr<Config> newOnDemandConfig_;
-  detail::HeartbeatMonitor& heartbeatMonitor_;
+  detail::HeartbeatMonitor &heartbeatMonitor_;
   std::unique_ptr<EventProfiler> profiler_;
   std::unique_ptr<std::thread> profilerThread_;
   std::atomic_bool stopRunloop_{false};
   std::mutex mutex_;
 };
 
-} // namespace KINETO_NAMESPACE
+} // namespace libdmv

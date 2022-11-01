@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
@@ -10,7 +9,7 @@
 #include "OptionParser.h"
 #include "Utility.h"
 #include "cudacommon.h"
-#include "libkineto.h"
+#include "libdmv.h"
 
 using namespace std;
 
@@ -219,7 +218,7 @@ int main(int argc, char *argv[])
         bool properties = op.getOptionBool("properties");
         bool quiet = op.getOptionBool("quiet");
         string metricsfile = op.getOptionString("metricsFile");
-	string traceFile = op.getOptionString("traceFile");
+	    string traceFile = op.getOptionString("traceFile");
 
         int device;
         device = op.getOptionVecInt("device")[0];
@@ -245,21 +244,27 @@ int main(int argc, char *argv[])
 
         // Add Profiler 
         // Kineto config
-        std::set<libkineto::ActivityType> types = {
-            libkineto::ActivityType::CONCURRENT_KERNEL,
-            libkineto::ActivityType::GPU_MEMCPY,
-            libkineto::ActivityType::GPU_MEMSET,
-            libkineto::ActivityType::CUDA_RUNTIME,
-            libkineto::ActivityType::EXTERNAL_CORRELATION,
+        std::set<libdmv::ActivityType> types = {
+            libdmv::ActivityType::CONCURRENT_KERNEL,
+            libdmv::ActivityType::GPU_MEMCPY,
+            libdmv::ActivityType::GPU_MEMSET,
+            libdmv::ActivityType::CUDA_RUNTIME,
+            libdmv::ActivityType::EXTERNAL_CORRELATION,
         };
 
-        std::string profiler_config = "ACTIVITIES_WARMUP_PERIOD_SECS=0\n "
-                                    "CUPTI_PROFILER_METRICS=kineto__cuda_core_flops\n "
-                                    "CUPTI_PROFILER_ENABLE_PER_KERNEL=true\n "
-                                    "ACTIVITIES_DURATION_SECS=0";
+        std::vector<std::string> metrics = {
+            "kineto__cuda_core_flops",
+            "sm__inst_executed.sum",
+            "l1tex__data_bank_conflicts_pipe_lsu.sum",
+        };
+        auto metricsConfigStr = fmt::format("CUPTI_PROFILER_METRICS = {}", fmt::join(metrics, ","));
 
-        auto &profiler = libkineto::api().activityProfiler();
-        libkineto::api().initProfilerIfRegistered();
+//        std::string profiler_config = fmt::format("ACTIVITIES_WARMUP_PERIOD_SECS=0\n {}\n CUPTI_PROFILER_ENABLE_PER_KERNEL=true \n ACTIVITIES_DURATION_SECS=0", metricsConfigStr);
+
+	std::string profiler_config = "";
+
+        auto &profiler = libdmv::api().activityProfiler();
+        libdmv::api().initProfilerIfRegistered();
         profiler.prepareTrace(types, profiler_config);
         auto isActive = profiler.isActive();
 

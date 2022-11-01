@@ -1,15 +1,10 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #include "Config.h"
 
 #include <stdlib.h>
 
+#include <chrono>
 #include <fmt/chrono.h>
 #include <fmt/format.h>
-#include <chrono>
 #include <fstream>
 #include <iomanip>
 #include <istream>
@@ -26,7 +21,7 @@ using namespace std::chrono;
 using std::string;
 using std::vector;
 
-namespace KINETO_NAMESPACE {
+namespace libdmv {
 
 constexpr milliseconds kDefaultSamplePeriodMsecs(1000);
 constexpr milliseconds kDefaultMultiplexPeriodMsecs(1000);
@@ -60,14 +55,17 @@ constexpr char kActivityTypesKey[] = "ACTIVITY_TYPES";
 constexpr char kActivitiesLogFileKey[] = "ACTIVITIES_LOG_FILE";
 constexpr char kActivitiesDurationKey[] = "ACTIVITIES_DURATION_SECS";
 constexpr char kActivitiesDurationMsecsKey[] = "ACTIVITIES_DURATION_MSECS";
-constexpr char kActivitiesWarmupDurationSecsKey[] = "ACTIVITIES_WARMUP_PERIOD_SECS";
+constexpr char kActivitiesWarmupDurationSecsKey[] =
+    "ACTIVITIES_WARMUP_PERIOD_SECS";
 constexpr char kActivitiesMaxGpuBufferSizeKey[] =
     "ACTIVITIES_MAX_GPU_BUFFER_SIZE_MB";
 
 // Client Interface
-constexpr char kClientInterfaceEnableOpInputsCollection[] = "CLIENT_INTERFACE_ENABLE_OP_INPUTS_COLLECTION";
+constexpr char kClientInterfaceEnableOpInputsCollection[] =
+    "CLIENT_INTERFACE_ENABLE_OP_INPUTS_COLLECTION";
 
-constexpr char kActivitiesWarmupIterationsKey[] = "ACTIVITIES_WARMUP_ITERATIONS";
+constexpr char kActivitiesWarmupIterationsKey[] =
+    "ACTIVITIES_WARMUP_ITERATIONS";
 constexpr char kActivitiesIterationsKey[] = "ACTIVITIES_ITERATIONS";
 // Common
 
@@ -108,11 +106,11 @@ constexpr char kProfileStartIterationKey[] = "PROFILE_START_ITERATION";
 //   The profile will then be collected on the next multiple of 1000 ie. 3000
 // Note PROFILE_START_ITERATION_ROUNDUP will also take precedence over
 // PROFILE_START_TIME.
-constexpr char kProfileStartIterationRoundUpKey[]
-  = "PROFILE_START_ITERATION_ROUNDUP";
+constexpr char kProfileStartIterationRoundUpKey[] =
+    "PROFILE_START_ITERATION_ROUNDUP";
 
 // Enable on-demand trigger via kill -USR2 <pid>
-// When triggered in this way, /tmp/libkineto.conf will be used as config.
+// When triggered in this way, /tmp/libdmv.conf will be used as config.
 constexpr char kEnableSigUsr2Key[] = "ENABLE_SIGUSR2";
 
 // Enable communication through IPC Fabric
@@ -136,24 +134,23 @@ namespace {
 
 struct FactoryMap {
 
-  void addFactory(
-      std::string name,
-      std::function<AbstractConfig*(Config&)> factory) {
+  void addFactory(std::string name,
+                  std::function<AbstractConfig *(Config &)> factory) {
     std::lock_guard<std::mutex> lock(lock_);
     factories_[name] = factory;
   }
 
-  void addFeatureConfigs(Config& cfg) {
+  void addFeatureConfigs(Config &cfg) {
     std::lock_guard<std::mutex> lock(lock_);
-    for (const auto& p : factories_) {
+    for (const auto &p : factories_) {
       cfg.addFeature(p.first, p.second(cfg));
     }
   }
 
-// Config factories are shared between objects and since
-// config objects can be created by multiple threads, we need a lock.
+  // Config factories are shared between objects and since
+  // config objects can be created by multiple threads, we need a lock.
   std::mutex lock_;
-  std::map<std::string, std::function<AbstractConfig*(Config&)>> factories_;
+  std::map<std::string, std::function<AbstractConfig *(Config &)>> factories_;
 };
 
 std::shared_ptr<FactoryMap> configFactories() {
@@ -170,8 +167,7 @@ std::shared_ptr<FactoryMap> configFactories() {
 } // namespace
 
 void Config::addConfigFactory(
-    std::string name,
-    std::function<AbstractConfig*(Config&)> factory) {
+    std::string name, std::function<AbstractConfig *(Config &)> factory) {
   auto factories = configFactories();
   if (factories) {
     factories->addFactory(name, factory);
@@ -179,12 +175,11 @@ void Config::addConfigFactory(
 }
 
 static string defaultTraceFileName() {
-  return fmt::format("/tmp/libkineto_activities_{}.json", processId());
+  return fmt::format("/tmp/libdmv_activities_{}.json", processId());
 }
 
 Config::Config()
-    : verboseLogLevel_(-1),
-      samplePeriod_(kDefaultSamplePeriodMsecs),
+    : verboseLogLevel_(-1), samplePeriod_(kDefaultSamplePeriodMsecs),
       reportPeriod_(duration_cast<milliseconds>(kDefaultReportPeriodSecs)),
       samplesPerReport_(kDefaultSamplesPerReport),
       eventProfilerOnDemandDuration_(seconds(0)),
@@ -201,29 +196,24 @@ Config::Config()
       activitiesDuration_(kDefaultActivitiesProfileDurationMSecs),
       activitiesRunIterations_(0),
       activitiesOnDemandTimestamp_(milliseconds(0)),
-      profileStartTime_(milliseconds(0)),
-      profileStartIteration_(-1),
-      profileStartIterationRoundUp_(-1),
-      requestTimestamp_(milliseconds(0)),
-      enableSigUsr2_(false),
-      enableIpcFabric_(false) {
+      profileStartTime_(milliseconds(0)), profileStartIteration_(-1),
+      profileStartIterationRoundUp_(-1), requestTimestamp_(milliseconds(0)),
+      enableSigUsr2_(false), enableIpcFabric_(false) {
   auto factories = configFactories();
   if (factories) {
     factories->addFeatureConfigs(*this);
   }
 }
 
-uint8_t Config::createDeviceMask(const string& val) {
+uint8_t Config::createDeviceMask(const string &val) {
   uint8_t res = 0;
-  for (const auto& d : splitAndTrim(val, ',')) {
+  for (const auto &d : splitAndTrim(val, ',')) {
     res |= 1 << toIntRange(d, 0, kMaxDevices - 1);
   }
   return res;
 }
 
-const seconds Config::maxRequestAge() const {
-  return kMaxRequestAge;
-}
+const seconds Config::maxRequestAge() const { return kMaxRequestAge; }
 
 static std::string getTimeStr(time_point<system_clock> t) {
   std::time_t t_c = system_clock::to_time_t(t);
@@ -234,16 +224,13 @@ static time_point<system_clock> handleRequestTimestamp(int64_t ms) {
   auto t = time_point<system_clock>(milliseconds(ms));
   auto now = system_clock::now();
   if (t > now) {
-    throw std::invalid_argument(fmt::format(
-        "Invalid {}: {} - time is in future",
-        kRequestTimestampKey,
-        getTimeStr(t)));
+    throw std::invalid_argument(
+        fmt::format("Invalid {}: {} - time is in future", kRequestTimestampKey,
+                    getTimeStr(t)));
   } else if ((now - t) > kMaxRequestAge) {
     throw std::invalid_argument(fmt::format(
         "Invalid {}: {} - time is more than {}s in the past",
-        kRequestTimestampKey,
-        getTimeStr(t),
-        kMaxRequestAge.count()));
+        kRequestTimestampKey, getTimeStr(t), kMaxRequestAge.count()));
   }
   return t;
 }
@@ -262,19 +249,17 @@ static time_point<system_clock> handleProfileStartTime(int64_t start_time_ms) {
   auto now = system_clock::now();
   if ((now - t) > kMaxRequestAge) {
     throw std::invalid_argument(fmt::format(
-      "Invalid {}: {} - start time is more than {}s in the past",
-      kProfileStartTimeKey,
-      getTimeStr(t),
-      kMaxRequestAge.count()));
+        "Invalid {}: {} - start time is more than {}s in the past",
+        kProfileStartTimeKey, getTimeStr(t), kMaxRequestAge.count()));
   }
   return t;
 }
 
 void Config::setActivityTypes(
-  const std::vector<std::string>& selected_activities) {
+    const std::vector<std::string> &selected_activities) {
   selectedActivityTypes_.clear();
   if (selected_activities.size() > 0) {
-    for (const auto& activity : selected_activities) {
+    for (const auto &activity : selected_activities) {
       if (activity == "") {
         continue;
       }
@@ -283,7 +268,7 @@ void Config::setActivityTypes(
   }
 }
 
-bool Config::handleOption(const std::string& name, std::string& val) {
+bool Config::handleOption(const std::string &name, std::string &val) {
   // Event Profiler
   if (!name.compare(kEventsKey)) {
     vector<string> event_names = splitAndTrim(val, ',');
@@ -314,8 +299,7 @@ bool Config::handleOption(const std::string& name, std::string& val) {
 
   // Activity Profiler
   else if (!name.compare(kActivitiesDurationKey)) {
-    activitiesDuration_ =
-        duration_cast<milliseconds>(seconds(toInt32(val)));
+    activitiesDuration_ = duration_cast<milliseconds>(seconds(toInt32(val)));
     activitiesOnDemandTimestamp_ = timestamp();
   } else if (!name.compare(kActivityTypesKey)) {
     vector<string> activity_types = splitAndTrim(toLower(val), ',');
@@ -351,8 +335,7 @@ bool Config::handleOption(const std::string& name, std::string& val) {
 
   // Common
   else if (!name.compare(kRequestTimestampKey)) {
-    LOG(INFO) << kRequestTimestampKey
-              << " has been deprecated - please use "
+    LOG(INFO) << kRequestTimestampKey << " has been deprecated - please use "
               << kProfileStartTimeKey;
     requestTimestamp_ = handleRequestTimestamp(toInt64(val));
   } else if (!name.compare(kProfileStartTimeKey)) {
@@ -381,7 +364,7 @@ void Config::setClientDefaults() {
 }
 
 void Config::validate(
-    const time_point<system_clock>& fallbackProfileStartTime) {
+    const time_point<system_clock> &fallbackProfileStartTime) {
   if (samplePeriod_.count() == 0) {
     LOG(WARNING) << "Sample period must be greater than 0, setting to 1ms";
     samplePeriod_ = milliseconds(1);
@@ -430,15 +413,15 @@ void Config::validate(
   }
 
   if (!hasProfileStartTime()) {
-    VLOG(0)
-        << "No explicit timestamp has been set. "
-        << "Defaulting it to now + activitiesWarmupDuration with buffer.";
-    profileStartTime_ = fallbackProfileStartTime +
-        activitiesWarmupDuration() + kDefaultBufferUntilWarmup;
+    VLOG(0) << "No explicit timestamp has been set. "
+            << "Defaulting it to now + activitiesWarmupDuration with buffer.";
+    profileStartTime_ = fallbackProfileStartTime + activitiesWarmupDuration() +
+                        kDefaultBufferUntilWarmup;
   }
 
   if (profileStartIterationRoundUp_ == 0) {
-    // setting to 0 will mess up modulo arithmetic, set it to -1 so it has no effect
+    // setting to 0 will mess up modulo arithmetic, set it to -1 so it has no
+    // effect
     LOG(WARNING) << "Profiler start iteration round up should be >= 1.";
     profileStartIterationRoundUp_ = -1;
   }
@@ -454,15 +437,14 @@ void Config::validate(
   }
 }
 
-void Config::setReportPeriod(milliseconds msecs) {
-  reportPeriod_ = msecs;
-}
+void Config::setReportPeriod(milliseconds msecs) { reportPeriod_ = msecs; }
 
-void Config::printActivityProfilerConfig(std::ostream& s) const {
+void Config::printActivityProfilerConfig(std::ostream &s) const {
   s << "Log file: " << activitiesLogFile() << std::endl;
   if (hasProfileStartIteration()) {
     s << "Trace start Iteration: " << profileStartIteration() << std::endl;
-    s << "Trace warmup Iterations: " << activitiesWarmupIterations() << std::endl;
+    s << "Trace warmup Iterations: " << activitiesWarmupIterations()
+      << std::endl;
     s << "Trace profile Iterations: " << activitiesRunIterations() << std::endl;
     if (profileStartIterationRoundUp() > 0) {
       s << "Trace start iteration roundup : " << profileStartIterationRoundUp()
@@ -481,14 +463,14 @@ void Config::printActivityProfilerConfig(std::ostream& s) const {
   s << "Max GPU buffer size: " << activitiesMaxGpuBufferSize() / 1024 / 1024
     << "MB" << std::endl;
 
-  std::vector<const char*> activities;
-  for (const auto& activity : selectedActivityTypes_) {
+  std::vector<const char *> activities;
+  for (const auto &activity : selectedActivityTypes_) {
     activities.push_back(toString(activity));
   }
-  s << "Enabled activities: "
-    << fmt::format("{}", fmt::join(activities, ",")) << std::endl;
+  s << "Enabled activities: " << fmt::format("{}", fmt::join(activities, ","))
+    << std::endl;
 
   AbstractConfig::printActivityProfilerConfig(s);
 }
 
-} // namespace KINETO_NAMESPACE
+} // namespace libdmv

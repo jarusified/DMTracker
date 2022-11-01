@@ -7,16 +7,16 @@
 
 #ifndef _MSC_VER
 #include <pthread.h>
-#include <unistd.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
+#include <unistd.h>
 #else // _MSC_VER
-#include <locale>
 #include <codecvt>
+#include <locale>
 #define WIN32_LEAN_AND_MEAN
 #define NOGDI
-#include <windows.h>
 #include <processthreadsapi.h>
+#include <windows.h>
 #undef ERROR
 #endif // _MSC_VER
 
@@ -28,13 +28,13 @@
 #include <iostream>
 #include <string>
 
-namespace libkineto {
+namespace libdmv {
 
 namespace {
 thread_local int32_t _pid = 0;
 thread_local int32_t _tid = 0;
 thread_local int32_t _sysTid = 0;
-}
+} // namespace
 
 int32_t processId() {
   if (!_pid) {
@@ -67,11 +67,11 @@ int32_t threadId() {
     pthread_threadid_np(nullptr, &tid);
     _tid = tid;
 #elif defined _MSC_VER
-  _tid = (int32_t)GetCurrentThreadId();
+    _tid = (int32_t)GetCurrentThreadId();
 #else
-  pthread_t pth = pthread_self();
-  int32_t* ptr = reinterpret_cast<int32_t*>(&pth);
-  _tid = *ptr;
+    pthread_t pth = pthread_self();
+    int32_t *ptr = reinterpret_cast<int32_t *>(&pth);
+    _tid = *ptr;
 #endif
   }
   return _tid;
@@ -80,25 +80,28 @@ int32_t threadId() {
 namespace {
 static constexpr size_t kMaxThreadNameLength = 16;
 
-static constexpr const char* basename(const char* s, int off = 0) {
-  return !s[off]
-      ? s
-      : s[off] == '/' ? basename(&s[off + 1]) : basename(s, off + 1);
+static constexpr const char *basename(const char *s, int off = 0) {
+  return !s[off]         ? s
+         : s[off] == '/' ? basename(&s[off + 1])
+                         : basename(s, off + 1);
 }
 #if defined(_MSC_VER)
-void *getKernel32Func(const char* procName) {
+void *getKernel32Func(const char *procName) {
   return GetProcAddress(GetModuleHandleA("KERNEL32.DLL"), procName);
 }
 #endif
-}
+} // namespace
 
-bool setThreadName(const std::string& name) {
+bool setThreadName(const std::string &name) {
 #ifdef __APPLE__
   return 0 == pthread_setname_np(name.c_str());
 #elif defined _MSC_VER
-  // Per https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setthreaddescription
+  // Per
+  // https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setthreaddescription
   // Use runtime linking to set thread description
-  static auto _SetThreadDescription = reinterpret_cast<decltype(&SetThreadDescription)>(getKernel32Func("SetThreadDescription"));
+  static auto _SetThreadDescription =
+      reinterpret_cast<decltype(&SetThreadDescription)>(
+          getKernel32Func("SetThreadDescription"));
   if (!_SetThreadDescription) {
     return false;
   }
@@ -116,16 +119,18 @@ std::string getThreadName() {
   char buf[kMaxThreadNameLength] = "";
   if (
 #ifndef __ANDROID__
-    pthread_getname_np(pthread_self(), buf, kMaxThreadNameLength) != 0
+      pthread_getname_np(pthread_self(), buf, kMaxThreadNameLength) != 0
 #else
-    prctl(PR_GET_NAME, buf, kMaxThreadNameLength) != 0
+      prctl(PR_GET_NAME, buf, kMaxThreadNameLength) != 0
 #endif
   ) {
     return "Unknown";
   }
   return buf;
 #else // _MSC_VER
-  static auto _GetThreadDescription = reinterpret_cast<decltype(&GetThreadDescription)>(getKernel32Func("GetThreadDescription"));
+  static auto _GetThreadDescription =
+      reinterpret_cast<decltype(&GetThreadDescription)>(
+          getKernel32Func("GetThreadDescription"));
   if (!_GetThreadDescription) {
     return "Unknown";
   }
@@ -146,9 +151,9 @@ std::string getThreadName() {
 // the 16 character limit that /proc/pid/status and /prod/pid/comm has.
 std::string processName(int32_t pid) {
 #ifdef __linux__
-  FILE* cmdfile = fopen(fmt::format("/proc/{}/cmdline", pid).c_str(), "r");
+  FILE *cmdfile = fopen(fmt::format("/proc/{}/cmdline", pid).c_str(), "r");
   if (cmdfile != nullptr) {
-    char* command = nullptr;
+    char *command = nullptr;
     int scanned = fscanf(cmdfile, "%ms", &command);
     fclose(cmdfile);
     if (scanned > 0 && command) {
@@ -168,12 +173,12 @@ constexpr int kMaxParentPids = 10;
 // Return a pair of <parent_pid, command_of_current_pid>
 static std::pair<int32_t, std::string> parentPidAndCommand(int32_t pid) {
 #ifdef __linux__
-  FILE* statfile = fopen(fmt::format("/proc/{}/stat", pid).c_str(), "r");
+  FILE *statfile = fopen(fmt::format("/proc/{}/stat", pid).c_str(), "r");
   if (statfile == nullptr) {
     return std::make_pair(0, "");
   }
   int32_t parent_pid;
-  char* command = nullptr;
+  char *command = nullptr;
   int scanned = fscanf(statfile, "%*d (%m[^)]) %*c %d", &command, &parent_pid);
   fclose(statfile);
   std::pair<int32_t, std::string> ret;
@@ -198,11 +203,12 @@ std::vector<std::pair<int32_t, std::string>> pidCommandPairsOfAncestors() {
   pairs.reserve(kMaxParentPids + 1);
   int32_t curr_pid = processId();
   for (int i = 0; i <= kMaxParentPids && curr_pid > 1; i++) {
-    std::pair<int32_t, std::string> ppid_and_comm = parentPidAndCommand(curr_pid);
+    std::pair<int32_t, std::string> ppid_and_comm =
+        parentPidAndCommand(curr_pid);
     pairs.push_back(std::make_pair(curr_pid, ppid_and_comm.second));
     curr_pid = ppid_and_comm.first;
   }
   return pairs;
 }
 
-} // namespace libkineto
+} // namespace libdmv

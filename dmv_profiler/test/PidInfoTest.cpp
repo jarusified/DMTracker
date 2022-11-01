@@ -1,8 +1,3 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
-
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 #include "include/ThreadUtil.h"
 
 #include <atomic>
@@ -11,7 +6,7 @@
 #include <fmt/format.h>
 #include <gtest/gtest.h>
 
-using namespace KINETO_NAMESPACE;
+using namespace DMV_NAMESPACE;
 
 TEST(ThreadNameTest, setAndGet) {
   setThreadName("ThreadNameTest");
