@@ -24,7 +24,7 @@ CuptiNvmlGpuUtilization::CuptiNvmlGpuUtilization(
     int const &deviceID, std::string const &filename) {
   char name[nvml_device_name_buffer_size];
   
-    // Initialize NVML library
+  // Initialize NVML library
   NVML_RT_CALL(nvmlInit());
 
   // Query device handle
@@ -37,7 +37,7 @@ CuptiNvmlGpuUtilization::CuptiNvmlGpuUtilization(
   time_steps_.reserve(size_of_vector);
 
   /* Create thread to gather GPU stats */
-  // std::thread threadStart(getStats, &nvml );  // threadStart starts running
+  // std::thread threadStart(getStats());  // threadStart starts running
 
   // Open file
   outfile_.open(filename_, std::ios::out);
@@ -49,6 +49,10 @@ CuptiNvmlGpuUtilization::CuptiNvmlGpuUtilization(
 CuptiNvmlGpuUtilization::~CuptiNvmlGpuUtilization() {
   NVML_RT_CALL(nvmlShutdown());
   dumpData();
+}
+
+void CuptiNvmlGpuUtilization::getStats_temp(){
+  return;
 }
 
 void CuptiNvmlGpuUtilization::getStats() {

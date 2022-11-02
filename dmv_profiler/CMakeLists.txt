@@ -89,8 +89,6 @@ if (NOT CUDA_INCLUDE_DIRS)
     set(CUDA_INCLUDE_DIRS "${CUDA_SOURCE_DIR}/include")
 endif()
 
-set(PYBIND_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/pybind11/include")
-
 target_include_directories(base PUBLIC
       $<BUILD_INTERFACE:${LIBDMV_INCLUDE_DIR}>
       $<BUILD_INTERFACE:${LIBDMV_SOURCE_DIR}>
@@ -98,7 +96,7 @@ target_include_directories(base PUBLIC
       $<BUILD_INTERFACE:${CUPTI_INCLUDE_DIR}>
       $<BUILD_INTERFACE:${CUDA_INCLUDE_DIRS}>)
 
-add_subdirectory(pybind)
+# add_subdirectory(pybind)
 
 if(DMV_LIBRARY_TYPE STREQUAL "default")
   add_library(dmv $<TARGET_OBJECTS:base>)
@@ -129,3 +127,5 @@ install(FILES ${LIBDMV_PUBLIC_HEADERS}
 
 install(EXPORT dmvLibraryConfig DESTINATION share/cmake/dmv
   FILE dmvLibraryConfig.cmake)
+
+# add_subdirectory(test)

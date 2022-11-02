@@ -23,8 +23,8 @@
 
 extern "C" {
 void suppresslibdmvLogMessages();
-int InitializeInjection(void);
 void libdmv_init(bool cpuOnly, bool logOnError);
+void libdmv_fin(bool cpuOnly, bool logOnError);
 }
 
 namespace libdmv {
@@ -67,13 +67,11 @@ public:
 
   // Called by libdmv on init
   void registerProfiler(std::unique_ptr<ActivityProfilerInterface> profiler) {
-    // LOG (INFO) << "Registering profiler";
     activityProfiler_ = std::move(profiler);
     initClientIfRegistered();
   }
 
   ActivityProfilerInterface &activityProfiler() {
-    // LOG (INFO) << "Return the pointer";
     libdmv_init(false, true);
     return *activityProfiler_;
   }

@@ -13,7 +13,7 @@ void kineto::warmup(void) {
   // for kineto_playground
 	size_t bytes = 1000;
 	float* mem = NULL;
-	auto error = cudaMalloc(&mem, bytes);
+	int error = cudaMalloc(&mem, bytes);
   if (error != cudaSuccess) {
     printf("cudaMalloc failed during kineto_playground warmup. error code: %d", error);
     return;

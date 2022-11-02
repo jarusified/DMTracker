@@ -3,14 +3,15 @@
 
 #include "ActivityProfilerProxy.h"
 #include "Config.h"
+
 #ifdef HAS_CUPTI
 #include "CuptiActivityApi.h"
 #include "CuptiCallbackApi.h"
 #include "CuptiNvmlGpuUtilization.h"
 #include "CuptiRangeProfiler.h"
 #include "EventProfilerController.h"
-#endif
 #include "cupti_call.h"
+#endif
 #include "libdmv.h"
 
 #include "Logger.h"
@@ -32,7 +33,7 @@ static void initProfilers(CUpti_CallbackDomain /*domain*/,
   if (!initialized) {
     libdmv::api().initProfilerIfRegistered();
     initialized = true;
-    VLOG(0) << "libdmv profilers activated";
+    LOG(INFO) << "libdmv profilers activated";
   }
   if (getenv("DMV_DISABLE_EVENT_PROFILER") != nullptr) {
     VLOG(0) << "Event profiler disabled via env var";
@@ -93,7 +94,7 @@ void libdmv_init(bool cpuOnly, bool logOnError) {
     if (cbapi.initSuccess()) {
       const CUpti_CallbackDomain domain = CUPTI_CB_DOMAIN_RESOURCE;
       status = cbapi.registerCallback(
-          domain, CuptiCallbackApi::RESOURCE_CONTEXT_CREATED, initProfilers);
+          domain, CuptiCallbackApi::CUDA_LAUNCH_KERNEL, initProfilers);
       status =
           status && cbapi.registerCallback(
                         domain, CuptiCallbackApi::RESOURCE_CONTEXT_DESTROYED,
@@ -127,12 +128,19 @@ void libdmv_init(bool cpuOnly, bool logOnError) {
       rangeProfilerInit = std::make_unique<CuptiRangeProfilerInit>();
     }
 
-    if (initGpuUtilization) {
-      gpuUtilizationInit = std::make_unique<CuptiNvmlGpuUtilization>(0, "gpu_0.csv");
+    // if (initGpuUtilization) {
+      // int dev {};
+      // cudaGetDevice(&dev);
+      // cudaSetDevice(dev);
 
-      /* Create thread to gather GPU stats */
-      // std::thread threadStart(CuptiNvmlGpuUtilization::getStats, &gpuUtilizationInit);
-    }
+      // std::string const filename = { "data/gpuStats.csv" };
+
+      // Create NVML class to retrieve GPU stats
+      // CuptiNvmlGpuUtilization nvml(0, filename);
+
+      // Create thread to gather GPU stats
+      // std::thread threadStart(&CuptiNvmlGpuUtilization::getStats_temp, &nvml);
+    // }
   }
 
   if (shouldPreloadCuptiInstrumentation()) {
@@ -146,13 +154,13 @@ void libdmv_init(bool cpuOnly, bool logOnError) {
       std::make_unique<ActivityProfilerProxy>(cpuOnly, config_loader));
 }
 
-// The cuda driver calls this function if the CUDA_INJECTION64_PATH environment
-// variable is set
-int InitializeInjection(void) {
-  LOG(INFO) << "Injection mode: Initializing libdmv";
-  libdmv_init(false /*cpuOnly*/, true /*logOnError*/);
-  return 1;
-}
+// void libdmv_fin(bool cpuOnly, bool logOnError) {
+//   if (!cpuOnly) {
+//     std::thread threadKill(&CuptiNvmlGpuUtilization::killThread, &nvml);
+//     threadStart.join();
+//     threadKill.join();
+//   }
+// }
 
 void suppresslibdmvLogMessages() { SET_LOG_SEVERITY_LEVEL(ERROR); }
 

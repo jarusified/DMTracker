@@ -20,6 +20,7 @@ class CuptiNvmlGpuUtilization {
     CuptiNvmlGpuUtilization(int const &deviceID, std::string const &filename);
     ~CuptiNvmlGpuUtilization();
     void getStats();
+    void getStats_temp();
     void killThread();
 
   private:
