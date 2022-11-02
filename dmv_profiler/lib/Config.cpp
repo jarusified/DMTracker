@@ -452,8 +452,9 @@ void Config::printActivityProfilerConfig(std::ostream &s) const {
     }
   } else if (hasProfileStartTime()) {
     std::time_t t_c = system_clock::to_time_t(requestTimestamp());
-    LOG(INFO) << "Trace start time: "
-              << fmt::format("{:%Y-%m-%d %H:%M:%S}", fmt::localtime(t_c));
+    LOG(INFO) << "\n################ Config #################### ";
+    s << "Trace start time: "
+              << fmt::format("{:%Y-%m-%d %H:%M:%S}", fmt::localtime(t_c)) << std::endl;
     s << "Trace duration: " << activitiesDuration().count() << "ms"
       << std::endl;
     s << "Warmup duration: " << activitiesWarmupDuration().count() << "s"
@@ -469,6 +470,8 @@ void Config::printActivityProfilerConfig(std::ostream &s) const {
   }
   s << "Enabled activities: " << fmt::format("{}", fmt::join(activities, ","))
     << std::endl;
+  
+  s << std::endl;
 
   AbstractConfig::printActivityProfilerConfig(s);
 }
