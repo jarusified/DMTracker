@@ -13,42 +13,22 @@ A large number of code bases have started exploiting the collaborative execution
 
 Furthermore, the setup requires `spack` to be installed. Refer to the
 documentation [spack](https://github.com/spack/spack).
-```
-source linux-setup.sh
-```
-
-Note: Make sure the environment variables, $FMT_SOURCE_DIR, $GOOGLETEST_SOURCE_DIR and $CUDA_SOURCE_DIR are pointing to the correct paths.
 
  ## Installation
 
 ```
-pip install .
+source {ARCH}-setup.sh
 ```
 
-If only the C++ library needs to be installed,
+`ARCH` can be `linux` or `lassen`.
+
+
+## Usage examples (C++)
 
 ```
-cmake . -DFMT_SOURCE_DIR=$FMT_SOURCE_DIR -DGOOGLETEST_SOURCE_DIR=$GOOGLETEST_SOURCE_DIR -DCUDA_SOURCE_DIR=$CUDA_SOURCE_DIR
-cmake --build .
-```
-
-## Usage examples (c++)
-
-Compile the examples folder.
-```
-export KINETO_SOURCE_DIR=/path/to/the/dmv_profiler
 cd examples
-cmake . -DFMT_SOURCE_DIR=$FMT_SOURCE_DIR  -DCUDA_SOURCE_DIR=$CUDA_SOURCE_DIR -DPYBIND_SOURCE_DIR=$PYBIND_SOURCE_DIR 
-make
+source build.sh
 ```
-
-This should install the binaries for the different experiments. Refer the
-internal `readme` files inside each experiment for usage.
-
-
-## Usage examples (python)
-
-TODO
 
 ## Environment 
 
