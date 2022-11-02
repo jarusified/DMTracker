@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "-fPIC")
 include(GNUInstallDirs)
 
 # function to extract filelists from main.bzl file
-find_package(PythonInterp)
+find_package (PythonInterp 3.6)
 function(get_filelist name outputvar)
   execute_process(
     COMMAND "${PYTHON_EXECUTABLE}" -c
@@ -51,12 +51,7 @@ IF (NOT CUDA_SOURCE_DIR OR NOT CUPTI_INCLUDE_DIR OR NOT CUDA_cupti_LIBRARY)
 endif()
 
 # Define file lists
-if (NOT LIBDMV_NOCUPTI)
-    get_filelist("get_libdmv_cpu_only_srcs(with_api=False)" LIBDMV_SRCS)
-    message(INFO " CUPTI unavailable or disabled - not building GPU profilers")
-else()
-    get_filelist("get_libdmv_cupti_srcs(with_api=True)" LIBDMV_SRCS)
-endif()
+get_filelist("get_libdmv_cupti_srcs(with_api=True)" LIBDMV_SRCS)
 get_filelist("get_libdmv_public_headers()" LIBDMV_PUBLIC_HEADERS)
 
 add_library(base OBJECT ${LIBDMV_SRCS})

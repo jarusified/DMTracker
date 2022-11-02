@@ -131,7 +131,7 @@ void libdmv_init(bool cpuOnly, bool logOnError) {
       gpuUtilizationInit = std::make_unique<CuptiNvmlGpuUtilization>(0, "gpu_0.csv");
 
       /* Create thread to gather GPU stats */
-      std::thread threadStart(CuptiNvmlGpuUtilization::getStats, &gpuUtilizationInit);
+      // std::thread threadStart(CuptiNvmlGpuUtilization::getStats, &gpuUtilizationInit);
     }
   }
 

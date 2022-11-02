@@ -1,0 +1,5 @@
+CMakeFiles/*
+common/CMakeFiles/*
+sqrt/CMakeFiles/*
+cublas-gemm/CMakeFiles/*
+cutlass-gemm/CMakeFiles/*
