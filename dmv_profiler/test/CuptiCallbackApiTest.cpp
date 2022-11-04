@@ -7,12 +7,11 @@
 #include <thread>
 
 using namespace std::chrono;
-using namespace DMV_NAMESPACE;
 using namespace libdmv;
 
 const size_t some_data = 42;
 
-std::atomic<int> simple_cb_calls = 0;
+std::atomic_int simple_cb_calls(0);
 
 void simple_cb(CUpti_CallbackDomain domain, CUpti_CallbackId cbid,
                const CUpti_CallbackData *cbInfo) {

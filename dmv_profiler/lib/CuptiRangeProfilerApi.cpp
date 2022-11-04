@@ -9,15 +9,12 @@
 
 #ifdef HAS_CUPTI
 #include "cupti_call.h"
+#include "CuptiCallbackApiMock.h"
+#include "CuptiRangeProfilerApi.h"
 #endif
 
 #include "Logger.h"
 #include "time_since_epoch.h"
-
-// TODO(T90238193)
-// @lint-ignore-every CLANGTIDY facebook-hte-RelativeInclude
-#include "CuptiCallbackApiMock.h"
-#include "CuptiRangeProfilerApi.h"
 
 #if HAS_CUPTI_RANGE_PROFILER
 #include "cupti_call.h"
@@ -106,8 +103,7 @@ inline uint32_t getDevID(CUcontext ctx) {
 //   2. Callbacks on kernel launches to track the name of automatic
 //      ranges that correspond to names of kernels
 //   3. Lastly CUPTI range profiler has to be enabled on the same thread
-//   executing
-//      the CUDA kernels. We use Callbacks to enable the profiler
+//      executing the CUDA kernels. We use Callbacks to enable the profiler
 //      asynchronously from another thread.
 
 void disableKernelCallbacks();

@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.16)
 project(binding)
 
+set(PYBIND_INCLUDE_DIR "${PYBIND_SOURCE_DIR}/pybind11")
+
 add_subdirectory(pybind11)
 pybind11_add_module(dmv_profiler "main.cpp")
 target_link_directories(dmv_profiler PUBLIC "${CUDA_LIB_DIR}")
-include_directories(dmv_profiler PRIVATE ${LIBKINETO_PUBLIC_HEADERS} ${CUPTI_INCLUDE_DIR})
+include_directories(dmv_profiler PRIVATE ${LIBDMV_INCLUDE_DIR} ${CUPTI_INCLUDE_DIR})
 
 find_library(CUPTI_LIBRARY cupti HINTS "${CUPTI_LIB_DIR}")
 find_library(CUDA_LIBRARY cudart HINTS "${CUPTI_LIB_DIR}")

@@ -22,7 +22,7 @@ int main() {
   };
 
   std::string profiler_config = "ACTIVITIES_WARMUP_PERIOD_SECS=5\n "
-                                "CUPTI_PROFILER_METRICS=kineto__cuda_core_flops\n "
+                                "CUPTI_PROFILER_METRICS=flop_count_dp\n "
                                 "CUPTI_PROFILER_ENABLE_PER_KERNEL=true\n "
                                 "ACTIVITIES_DURATION_SECS=5";
 

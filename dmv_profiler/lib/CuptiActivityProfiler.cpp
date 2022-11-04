@@ -15,17 +15,14 @@
 #include "CudaUtil.h"
 #include "cuda_call.h"
 #include "cupti_call.h"
-#endif
-
-#include "Config.h"
-#include "time_since_epoch.h"
-#ifdef HAS_CUPTI
 #include "CuptiActivity.h"
 #include "CuptiActivity.tpp"
 #include "CuptiActivityApi.h"
 #endif
-#include "output_base.h"
 
+#include "Config.h"
+#include "time_since_epoch.h"
+#include "output_base.h"
 #include "Logger.h"
 #include "ThreadUtil.h"
 

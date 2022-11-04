@@ -1,4 +1,7 @@
 #!/bin/zsh
+
+# TODO (surajk): Add scripts to install dependencies to /tpl folder.
+
 # Create a Python env for the project.
 if [ ! -d "env" ]; then
   echo "Virtualenv `env` not created. Creating one!!"
@@ -7,15 +10,17 @@ fi
 
 source env/bin/activate
 
-# if ! [ -x "$(command -v spack)" ]; then
-#   echo 'Error: spack is not installed. Please refer https://spack-tutorial.readthedocs.io/en/latest/tutorial_basics.html for installation.' >&2
-# fi
+if ! [ -x "$(command -v spack)" ]; then
+  echo 'Error: spack is not installed. Please refer https://spack-tutorial.readthedocs.io/en/latest/tutorial_basics.html for installation.' >&2
+fi
 
 spack install fmt googletest py-pybind11
 
 spack load fmt googletest py-pybind11
 
-# TODO (surajk): Add pybind as a git-submodule.
+# Find CUDA source path
+CUDA_SOURCE_DIR=$(which nvcc | cut -d'/' -f-6)
+echo "FOUND CUDA: " ${CUDA_SOURCE_DIR}
 
 export CUDA_SOURCE_DIR=/usr/local/cuda-11.7
 export FMT_SOURCE_DIR=`spack location -i fmt`
