@@ -96,16 +96,14 @@ target_include_directories(base PUBLIC
       $<BUILD_INTERFACE:${CUPTI_INCLUDE_DIR}>
       $<BUILD_INTERFACE:${CUDA_INCLUDE_DIRS}>)
 
-# add_subdirectory(pybind)
+add_subdirectory(pybind)
 
 if(DMV_LIBRARY_TYPE STREQUAL "default")
   add_library(dmv $<TARGET_OBJECTS:base>)
 elseif(DMV_LIBRARY_TYPE STREQUAL "static")
-  add_library(dmv STATIC
-    $<TARGET_OBJECTS:base>)
+  add_library(dmv STATIC $<TARGET_OBJECTS:base>)
 elseif(DMV_LIBRARY_TYPE STREQUAL "shared")
-  add_library(dmv SHARED
-    $<TARGET_OBJECTS:base>)
+  add_library(dmv SHARED $<TARGET_OBJECTS:base>)
   set_property(TARGET base PROPERTY POSITION_INDEPENDENT_CODE ON)
   set_target_properties(dmv PROPERTIES
     CXX_VISIBILITY_PRESET hidden)
