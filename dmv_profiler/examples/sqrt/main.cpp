@@ -1,11 +1,9 @@
 #include <string>
 #include <iostream>
-#include <filesystem>
 
 #include "libdmv.h"
 #include "main.cuh"
 
-namespace fs = std::filesystem;
 
 int main() {
   std::string kFileName = "kineto-basic-playground_perf.json";
@@ -45,8 +43,7 @@ int main() {
 
     auto trace = profiler.stopTrace();
     std::cout << "Stopped and processed trace. Got " << trace->activities()->size() << " activities.\n";
-    std::string currDirPath = fs::current_path();
-    std::string filePath = currDirPath + "/" + kFileName;
+    std::string filePath = "./" + kFileName;
     trace->save(filePath);
   }
   return 0;
