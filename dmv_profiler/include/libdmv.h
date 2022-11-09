@@ -72,14 +72,13 @@ public:
   }
 
   ActivityProfilerInterface &activityProfiler() {
-    libdmv_init(false, true);
+    if(!activityProfiler_) libdmv_init(false, true);
     return *activityProfiler_;
   }
 
   ClientInterface *client() { return client_; }
 
   void initProfilerIfRegistered() {
-    // LOG (INFO) << "Init profiler";
     static std::once_flag once;
     if (activityProfiler_) {
       std::call_once(once, [this] {
