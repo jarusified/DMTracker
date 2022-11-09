@@ -10,6 +10,7 @@ project(use-case VERSION 0.1 LANGUAGES CXX C CUDA)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
+set(CMAKE_CXX_COMPILE_OPTIONS_PIE "-fPIC -g")
 
 #FetchContent_Declare(fmt
 #  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
@@ -56,6 +57,7 @@ endif()
 
 add_subdirectory(common)
 add_subdirectory(sqrt)
+# add_subdirectory(distributed-volume-path-tracing)
 # add_subdirectory(cutlass-gemm)
 # add_subdirectory(marbl-matprops-miniapp)
 # add_subdirectory(cublas-gemm)
