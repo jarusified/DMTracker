@@ -20,4 +20,4 @@ cmake . -DCUDA_SOURCE_DIR=$CUDA_SOURCE_DIR -DFMT_SOURCE_DIR=$FMT_SOURCE_DIR -DGO
 export DMV_SOURCE_DIR=$(pwd)
 echo "DMV_SOURCE_DIR        = $DMV_SOURCE_DIR"
 
-cmake --build .
+cmake --build . --parallel 16
