@@ -18,7 +18,7 @@ using namespace libdmv;
 
 namespace libdmv {
 
-static constexpr int kSchemaVersion = 1;
+static constexpr int kSchemaVersion = 2;
 static constexpr char kFlowStart = 's';
 static constexpr char kFlowEnd = 'f';
 
@@ -51,13 +51,12 @@ void ChromeTraceLogger::handleTraceStart(
   traceOf_ << fmt::format(R"JSON(
 {{
   "schemaVersion": {},)JSON",
-                          kSchemaVersion);
+  kSchemaVersion);
 
 #ifdef HAS_CUPTI
   traceOf_ << fmt::format(R"JSON(
-  "deviceProperties": [{}
-  ],)JSON",
-                          devicePropertiesJson());
+    "deviceProps": [{}
+  ],)JSON", devicePropertiesJson());
 #endif
 
   metadataToJSON(metadata);
@@ -244,8 +243,8 @@ void ChromeTraceLogger::handleGenericInstantEvent(
       {}
     }}
   }},)JSON",
-                          toString(op.type()), op.name(), op.deviceId(),
-                          op.resourceId(), op.timestamp(), op.metadataJson());
+    toString(op.type()), op.name(), op.deviceId(),
+    op.resourceId(), op.timestamp(), op.metadataJson());
 }
 
 void ChromeTraceLogger::handleActivity(const libdmv::ITraceActivity &op) {
@@ -293,7 +292,6 @@ void ChromeTraceLogger::handleActivity(const libdmv::ITraceActivity &op) {
   }},)JSON",
           toString(op.type()), op.name(), device, resource,
           ts, duration,
-          // args
           span,
           op.correlationId(), separator, op_metadata);
   // clang-format on

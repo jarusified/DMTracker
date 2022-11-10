@@ -345,7 +345,7 @@ void CuptiActivityProfiler::handleRuntimeActivity(
   if (isBlockListedRuntimeCbid(activity->cbid)) {
     return;
   }
-  VLOG(2) << activity->correlationId
+  LOG(INFO) << activity->correlationId
           << ": CUPTI_ACTIVITY_KIND_RUNTIME, cbid=" << activity->cbid
           << " tid=" << activity->threadId;
   int32_t tid = activity->threadId;
@@ -436,7 +436,7 @@ inline void CuptiActivityProfiler::handleGpuActivity(const ITraceActivity &act,
     return;
   }
   checkTimestampOrder(&act);
-  VLOG(2) << act.correlationId() << ": " << act.name();
+  LOG(INFO) << act.correlationId() << ": CUPTI_ACTIVITY_KIND_GPU "  << act.name();
   recordStream(act.deviceId(), act.resourceId(), "");
   act.log(*logger);
   updateGpuNetSpan(act);
@@ -492,7 +492,7 @@ void CuptiActivityProfiler::handleCuptiActivity(const CUpti_Activity *record,
                       logger);
     break;
   case CUPTI_ACTIVITY_KIND_MEMCPY:
-    handleGpuActivity(reinterpret_cast<const CUpti_ActivityMemcpy *>(record),
+    handleGpuActivity(reinterpret_cast<const CUpti_ActivityMemcpy5 *>(record),
                       logger);
     break;
   case CUPTI_ACTIVITY_KIND_MEMCPY2:
@@ -603,7 +603,7 @@ void CuptiActivityProfiler::configure(const Config &config,
 #endif
     if (VLOG_IS_ON(1)) {
       auto t2 = system_clock::now();
-      addOverheadSample (setupOverhead_,
+      addOverheadSample(setupOverhead_,
                         duration_cast<microseconds>(t2 - timestamp).count());
     }
   }

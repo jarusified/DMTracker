@@ -64,12 +64,12 @@ inline std::string memcpyName(uint8_t kind, uint8_t src, uint8_t dst) {
 }
 
 template <>
-inline ActivityType GpuActivity<CUpti_ActivityMemcpy>::type() const {
+inline ActivityType GpuActivity<CUpti_ActivityMemcpy5>::type() const {
   return ActivityType::GPU_MEMCPY;
 }
 
 template <>
-inline const std::string GpuActivity<CUpti_ActivityMemcpy>::name() const {
+inline const std::string GpuActivity<CUpti_ActivityMemcpy5>::name() const {
   return memcpyName(raw().copyKind, raw().srcKind, raw().dstKind);
 }
 
@@ -79,16 +79,27 @@ inline std::string bandwidth(uint64_t bytes, uint64_t duration) {
 
 template <>
 inline const std::string
-GpuActivity<CUpti_ActivityMemcpy>::metadataJson() const {
-  const CUpti_ActivityMemcpy &memcpy = raw();
+GpuActivity<CUpti_ActivityMemcpy5>::metadataJson() const {
+  const CUpti_ActivityMemcpy5 &memcpy = raw();
   // clang-format off
   return fmt::format(R"JSON(
       "device": {}, "context": {},
       "stream": {}, "correlation": {},
-      "bytes": {}, "memory bandwidth (GB/s)": {})JSON",
+      "bytes": {}, "memory bandwidth (GB/s)": {},
+      "channelID": {}, "channelType": {},
+      "copyKind": {}, "deviceId": {},
+      "srcKind": {}, "dstKind": {},
+      "graphId": {}, "graphNodeId": {},
+      "start": {}, "end": {}
+      )JSON",
       memcpy.deviceId, memcpy.contextId,
       memcpy.streamId, memcpy.correlationId,
-      memcpy.bytes, bandwidth(memcpy.bytes, memcpy.end - memcpy.start));
+      memcpy.bytes, bandwidth(memcpy.bytes, memcpy.end - memcpy.start),
+      memcpy.channelID, memcpy.channelType,
+      memcpy.copyKind, memcpy.deviceId,
+      memcpy.srcKind, memcpy.dstKind, 
+      memcpy.graphId, memcpy.graphNodeId,
+      memcpy.start, memcpy.end);
   // clang-format on
 }
 
