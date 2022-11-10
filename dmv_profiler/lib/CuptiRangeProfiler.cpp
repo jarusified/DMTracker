@@ -263,6 +263,7 @@ CuptiRangeProfiler::configure(int64_t /*ts_ms*/, int64_t /*duration_ms*/,
 CuptiRangeProfilerInit::CuptiRangeProfilerInit() {
   // register config
   CuptiRangeProfilerConfig::registerFactory();
+  LOG (INFO) << "Registering CuptiRangeProfiler";
 
 #ifdef HAS_CUPTI
   success = CuptiRBProfilerSession::staticInit();

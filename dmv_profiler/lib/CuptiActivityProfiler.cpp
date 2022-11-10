@@ -150,7 +150,7 @@ void CuptiActivityProfiler::logCudaVersions() {
 
 void CuptiActivityProfiler::processTraceInternal(ActivityLogger &logger) {
   LOG(INFO) << "Processing " << traceBuffers_->cpu.size() << " CPU buffers";
-  VLOG(0) << "Profile time range: " << captureWindowStartTime_ << " - "
+  LOG(INFO) << "Profile time range: " << captureWindowStartTime_ << " - "
           << captureWindowEndTime_;
   logger.handleTraceStart(metadata_);
   for (auto &cpu_trace : traceBuffers_->cpu) {
@@ -166,7 +166,7 @@ void CuptiActivityProfiler::processTraceInternal(ActivityLogger &logger) {
 
 #ifdef HAS_CUPTI
   if (!cpuOnly_) {
-    VLOG(0) << "Retrieving GPU activity buffers";
+    LOG(INFO) << "Processing GPU activity buffers";
     traceBuffers_->gpu = cupti_.activityBuffers();
     if (VLOG_IS_ON(1)) {
       addOverheadSample(flushOverhead_, cupti_.flushOverhead);
@@ -532,6 +532,7 @@ void CuptiActivityProfiler::configureChildProfilers() {
       sessions_.push_back(std::move(session));
     }
   }
+  LOG (INFO) << "Sessions count: " << sessions_.size();
 }
 
 void CuptiActivityProfiler::configure(const Config &config,
@@ -596,8 +597,10 @@ void CuptiActivityProfiler::configure(const Config &config,
       timestamp = system_clock::now();
     }
 #ifdef HAS_CUPTI
+    LOG (INFO) << "here";
     cupti_.enableCuptiActivities(config_->selectedActivityTypes());
 #else
+    LOG (INFO) << "there";
     cupti_.enableActivities(config_->selectedActivityTypes());
 #endif
     if (VLOG_IS_ON(1)) {
@@ -608,6 +611,7 @@ void CuptiActivityProfiler::configure(const Config &config,
   }
 #endif // HAS_CUPTI || HAS_ROCTRACER
 
+  LOG (INFO) << "Number of profilers: " << profilers_.size();
   if (profilers_.size() > 0) {
     configureChildProfilers();
   }

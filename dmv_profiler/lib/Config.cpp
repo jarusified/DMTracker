@@ -256,13 +256,15 @@ static time_point<system_clock> handleProfileStartTime(int64_t start_time_ms) {
 }
 
 void Config::setActivityTypes(
-    const std::vector<std::string> &selected_activities) {
+  const std::vector<std::string> &selected_activities) {
+  LOG (INFO) << selected_activities.size();
   selectedActivityTypes_.clear();
   if (selected_activities.size() > 0) {
     for (const auto &activity : selected_activities) {
       if (activity == "") {
         continue;
       }
+      LOG (INFO) << activity;
       selectedActivityTypes_.insert(toActivityType(activity));
     }
   }
@@ -440,7 +442,7 @@ void Config::validate(
 void Config::setReportPeriod(milliseconds msecs) { reportPeriod_ = msecs; }
 
 void Config::printActivityProfilerConfig(std::ostream &s) const {
-  s << "Log file: " << activitiesLogFile() << std::endl;
+  s << "Temporary Log file: " << activitiesLogFile() << std::endl;
   if (hasProfileStartIteration()) {
     s << "Trace start Iteration: " << profileStartIteration() << std::endl;
     s << "Trace warmup Iterations: " << activitiesWarmupIterations()

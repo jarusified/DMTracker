@@ -116,7 +116,7 @@ std::unique_ptr<CuptiActivityBufferMap> CuptiActivityApi::activityBuffers() {
   }
 
 #ifdef HAS_CUPTI
-  VLOG(1) << "Flushing GPU activity buffers";
+  LOG(INFO) << "Flushing GPU activity buffers";
   time_point<system_clock> t1;
   if (VLOG_IS_ON(1)) {
     t1 = system_clock::now();
@@ -146,6 +146,7 @@ int CuptiActivityApi::processActivitiesForBuffer(
       ++count;
     }
   }
+  LOG(INFO) << "Count: " << count;
   return count;
 }
 #endif
@@ -258,6 +259,12 @@ void CuptiActivityApi::enableCuptiActivities(
     if (activity == ActivityType::OVERHEAD) {
       CUPTI_CALL(cuptiActivityEnable(CUPTI_ACTIVITY_KIND_OVERHEAD));
     }
+    if (activity == ActivityType::DEVICE) {
+      CUPTI_CALL(cuptiActivityEnable(CUPTI_ACTIVITY_KIND_DEVICE));
+    }
+    if (activity == ActivityType::DRIVER) {
+      CUPTI_CALL(cuptiActivityEnable(CUPTI_ACTIVITY_KIND_DRIVER));
+    }
   }
 #endif
 
@@ -287,6 +294,12 @@ void CuptiActivityApi::disableCuptiActivities(
     }
     if (activity == ActivityType::OVERHEAD) {
       CUPTI_CALL(cuptiActivityDisable(CUPTI_ACTIVITY_KIND_OVERHEAD));
+    }
+    if (activity == ActivityType::DEVICE) {
+      CUPTI_CALL(cuptiActivityDisable(CUPTI_ACTIVITY_KIND_DEVICE));
+    }
+    if (activity == ActivityType::DRIVER) {
+      CUPTI_CALL(cuptiActivityDisable(CUPTI_ACTIVITY_KIND_DRIVER));
     }
   }
   externalCorrelationEnabled_ = false;

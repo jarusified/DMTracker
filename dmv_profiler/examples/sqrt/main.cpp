@@ -17,12 +17,15 @@ int main() {
       libdmv::ActivityType::GPU_MEMSET,
       libdmv::ActivityType::CUDA_RUNTIME,
       libdmv::ActivityType::EXTERNAL_CORRELATION,
+      libdmv::ActivityType::CPU_OP,
+      libdmv::ActivityType::DEVICE,
+      libdmv::ActivityType::DRIVER
   };
 
-  std::string profiler_config = "ACTIVITIES_WARMUP_PERIOD_SECS=5\n "
-                                "CUPTI_PROFILER_METRICS=flop_count_dp\n "
-                                "CUPTI_PROFILER_ENABLE_PER_KERNEL=true\n "
-                                "ACTIVITIES_DURATION_SECS=5";
+  std::string profiler_config = "EVENTS=active_cycles\n "
+                                "METRICS=ipc\n "
+                                "CUPTI_PROFILER_METRICS=l1tex__data_bank_conflicts_pipe_lsu,sm__inst_executed\n "
+                                "CUPTI_PROFILER_ENABLE_PER_KERNEL=true\n ";
 
   auto &profiler = libdmv::api().activityProfiler();
   libdmv::api().initProfilerIfRegistered();
