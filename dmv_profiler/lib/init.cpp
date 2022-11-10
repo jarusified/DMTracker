@@ -94,7 +94,7 @@ void libdmv_init(bool cpuOnly, bool logOnError) {
     if (cbapi.initSuccess()) {
       const CUpti_CallbackDomain domain = CUPTI_CB_DOMAIN_RESOURCE;
       status = cbapi.registerCallback(
-          domain, CuptiCallbackApi::CUDA_LAUNCH_KERNEL, initProfilers);
+          domain, CuptiCallbackApi::RESOURCE_CONTEXT_CREATED, initProfilers);
       status =
           status && cbapi.registerCallback(
                         domain, CuptiCallbackApi::RESOURCE_CONTEXT_DESTROYED,
