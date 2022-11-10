@@ -48,14 +48,23 @@ createDevicePropertiesJson(size_t id, const cudaDeviceProp &props) {
       "maxThreadsPerBlock": {}, "maxThreadsPerMultiprocessor": {},
       "regsPerBlock": {}, "regsPerMultiprocessor": {}, "warpSize": {},
       "sharedMemPerBlock": {}, "sharedMemPerMultiprocessor": {},
-      "numSms": {}, "sharedMemPerBlockOptin": {}
+      "numSms": {}, "sharedMemPerBlockOptin": {}, "accessPolicyMaxWindowSize": {},
+      "canMapHostMemory": {}, "concurrentManagedAccess": {}, "asyncEngineCount": {},
+      "cooperativeLaunch": {}, "globalL1CacheSupported": {}, "l2CacheSize": {},
+      "managedMemory": {},
+      "multiProcessorCount": {}, "totalConstMem": {}, "unifiedAddressing": {}
     }})JSON",
-                     id, props.name, props.totalGlobalMem, props.major,
-                     props.minor, props.maxThreadsPerBlock,
-                     props.maxThreadsPerMultiProcessor, props.regsPerBlock,
-                     props.regsPerMultiprocessor, props.warpSize,
-                     props.sharedMemPerBlock, props.sharedMemPerMultiprocessor,
-                     props.multiProcessorCount, props.sharedMemPerBlockOptin);
+    id, props.name, props.totalGlobalMem, 
+    props.major, props.minor, 
+    props.maxThreadsPerBlock, props.maxThreadsPerMultiProcessor, 
+    props.regsPerBlock, props.regsPerMultiprocessor, props.warpSize,
+    props.sharedMemPerBlock, props.sharedMemPerMultiprocessor,
+    props.multiProcessorCount, props.sharedMemPerBlockOptin, props.accessPolicyMaxWindowSize, 
+    props.canMapHostMemory, props.concurrentManagedAccess, props.asyncEngineCount,
+    props.cooperativeLaunch, props.globalL1CacheSupported, props.l2CacheSize, 
+    props.managedMemory,
+    props.multiProcessorCount, props.totalConstMem, props.unifiedAddressing 
+    );
 }
 
 static const std::string createDevicePropertiesJson() {
