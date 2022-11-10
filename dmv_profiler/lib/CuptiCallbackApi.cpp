@@ -35,7 +35,7 @@ static ReaderWriterLock callbackLock_;
  *   <callback domain1> |
  *                    ...
  *  CallbackTable is the finaly table type above
- *  See type declrartions in header file.
+ *  See type declarations in header file.
  */
 
 /* callback_switchboard : is the global callback handler we register
@@ -63,7 +63,7 @@ static void callback_switchboard(
 void CuptiCallbackApi::__callback_switchboard(
     CUpti_CallbackDomain domain, CUpti_CallbackId cbid,
     const CUpti_CallbackData *cbInfo) {
-  VLOG(0) << "Callback: domain = " << domain << ", cbid = " << cbid;
+  LOG (INFO) << "Callback: domain = " << domain << ", cbid = " << cbid;
   CallbackList *cblist = nullptr;
 
   switch (domain) {

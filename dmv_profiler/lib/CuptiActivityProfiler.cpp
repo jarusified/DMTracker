@@ -597,15 +597,13 @@ void CuptiActivityProfiler::configure(const Config &config,
       timestamp = system_clock::now();
     }
 #ifdef HAS_CUPTI
-    LOG (INFO) << "here";
     cupti_.enableCuptiActivities(config_->selectedActivityTypes());
 #else
-    LOG (INFO) << "there";
     cupti_.enableActivities(config_->selectedActivityTypes());
 #endif
     if (VLOG_IS_ON(1)) {
       auto t2 = system_clock::now();
-      addOverheadSample(setupOverhead_,
+      addOverheadSample (setupOverhead_,
                         duration_cast<microseconds>(t2 - timestamp).count());
     }
   }
@@ -818,27 +816,29 @@ void CuptiActivityProfiler::finalizeTrace(const Config &config,
     iterationCountMap_.clear();
   }
 
-  // Process names
-  int32_t pid = processId();
-  string process_name = processName(pid);
-  if (!process_name.empty()) {
-    logger.handleDeviceInfo({pid, process_name, "CPU"},
-                            captureWindowStartTime_);
-    if (!cpuOnly_) {
-      // GPU events use device id as pid (0-7).
-      constexpr int kMaxGpuCount = 8;
-      for (int gpu = 0; gpu < kMaxGpuCount; gpu++) {
-        logger.handleDeviceInfo({gpu, process_name, fmt::format("GPU {}", gpu)},
-                                captureWindowStartTime_);
-      }
-    }
-  }
+  // NOTE (surajk): Commenting this information from the trace outputs.
+  // Does not seem to make a lot of sense to have this information.
+  // // Process names
+  // int32_t pid = processId();
+  // string process_name = processName(pid);
+  // if (!process_name.empty()) {
+  //   logger.handleDeviceInfo({pid, process_name, "CPU"},
+  //                           captureWindowStartTime_);
+  //   if (!cpuOnly_) {
+  //     // GPU events use device id as pid (0-7).
+  //     constexpr int kMaxGpuCount = 8;
+  //     for (int gpu = 0; gpu < kMaxGpuCount; gpu++) {
+  //       logger.handleDeviceInfo({gpu, process_name, fmt::format("GPU {}", gpu)},
+  //                               captureWindowStartTime_);
+  //     }
+  //   }
+  // }
 
-  // Thread & stream info
-  for (auto pair : resourceInfo_) {
-    const auto &resource = pair.second;
-    logger.handleResourceInfo(resource, captureWindowStartTime_);
-  }
+  // // Thread & stream info
+  // for (auto pair : resourceInfo_) {
+  //   const auto &resource = pair.second;
+  //   logger.handleResourceInfo(resource, captureWindowStartTime_);
+  // }
 
   for (const auto &iterations : traceSpans_) {
     for (const auto &span_pair : iterations.second) {
