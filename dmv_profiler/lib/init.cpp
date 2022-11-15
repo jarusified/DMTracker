@@ -93,19 +93,12 @@ void libdmv_init(bool cpuOnly, bool logOnError) {
 
     if (cbapi.initSuccess()) {
       const CUpti_CallbackDomain domain = CUPTI_CB_DOMAIN_RESOURCE;
-      status = cbapi.registerCallback(
-          domain, CuptiCallbackApi::RESOURCE_CONTEXT_CREATED, initProfilers);
-      status =
-          status && cbapi.registerCallback(
-                        domain, CuptiCallbackApi::RESOURCE_CONTEXT_DESTROYED,
-                        stopProfiler);
+      status = cbapi.registerCallback(domain, CuptiCallbackApi::RESOURCE_CONTEXT_CREATED, initProfilers);
+      status = status && cbapi.registerCallback(domain, CuptiCallbackApi::RESOURCE_CONTEXT_DESTROYED, stopProfiler);
 
       if (status) {
-        status = cbapi.enableCallback(
-            domain, CuptiCallbackApi::RESOURCE_CONTEXT_CREATED);
-        status =
-            status && cbapi.enableCallback(
-                          domain, CuptiCallbackApi::RESOURCE_CONTEXT_DESTROYED);
+        status = cbapi.enableCallback(domain, CuptiCallbackApi::RESOURCE_CONTEXT_CREATED);
+        status = status && cbapi.enableCallback(domain, CuptiCallbackApi::RESOURCE_CONTEXT_DESTROYED);
       }
     }
 
@@ -125,22 +118,23 @@ void libdmv_init(bool cpuOnly, bool logOnError) {
 
     // initialize CUPTI Range Profiler API
     if (initRangeProfiler) {
+      LOG (INFO) << "CUPTI Range Profiler enabled.";
       rangeProfilerInit = std::make_unique<CuptiRangeProfilerInit>();
     }
 
-    // if (initGpuUtilization) {
-      // int dev {};
+    if (initGpuUtilization) {
       // cudaGetDevice(&dev);
       // cudaSetDevice(dev);
 
-      // std::string const filename = { "data/gpuStats.csv" };
+      std::string const filename = { "data/gpuStats.csv" };
 
       // Create NVML class to retrieve GPU stats
-      // CuptiNvmlGpuUtilization nvml(0, filename);
+      CuptiNvmlGpuUtilization nvml(0, filename);
 
       // Create thread to gather GPU stats
+      // std::thread nvmlTracerThread = std::make_unique<std::thread>(&CuptiNvmlGpuUtilization::getStats_temp, &nvml);
       // std::thread threadStart(&CuptiNvmlGpuUtilization::getStats_temp, &nvml);
-    // }
+    }
   }
 
   if (shouldPreloadCuptiInstrumentation()) {

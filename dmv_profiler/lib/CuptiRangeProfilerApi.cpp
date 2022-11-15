@@ -195,12 +195,11 @@ void __trackCudaKernelLaunch(CUcontext ctx, const char *kernelName) {
     profiler->logKernelName(kernelName ? kernelName : "__missing__");
   }
 
-  /* TODO add per kernel time logging
+  // TODO add per kernel time logging
   if (measure_per_kernel) {
     profiler->kernelStartTs_.push_back(
         std::chrono::high_resolution_clock::now());
   }
-  */
 
   // periodically flush profiler data from GPU
   if (profiler->numCallbacks_ % kCallbacksCountToFlush == 0) {
@@ -313,6 +312,8 @@ CuptiRBProfilerSession::CuptiRBProfilerSession(
     profiler_map[deviceId_] = this;
     return;
   }
+
+  LOG (INFO) << "Metric names: " << metricNames_;
 
   chipName_ = getChipName(opts.deviceId);
 

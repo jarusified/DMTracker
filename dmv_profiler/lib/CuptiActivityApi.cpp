@@ -265,6 +265,9 @@ void CuptiActivityApi::enableCuptiActivities(
     if (activity == ActivityType::DRIVER) {
       CUPTI_CALL(cuptiActivityEnable(CUPTI_ACTIVITY_KIND_DRIVER));
     }
+    // if (activity == ActivityType::UVM) {
+    //   CUPTI_CALL(cuptiActivityEnable(CUPTI_ACTIVITY_KIND_UNIFIED_MEMORY_COUNTER));
+    // }
   }
 #endif
 

@@ -122,11 +122,13 @@ GpuActivity<CUpti_ActivityMemcpy2>::metadataJson() const {
       "fromDevice": {}, "inDevice": {}, "toDevice": {},
       "fromContext": {}, "inContext": {}, "toContext": {},
       "stream": {}, "correlation": {},
-      "bytes": {}, "memory bandwidth (GB/s)": {})JSON",
+      "bytes": {}, "memory bandwidth (GB/s)": {}, "copyKind": {}
+      )JSON",
       memcpy.srcDeviceId, memcpy.deviceId, memcpy.dstDeviceId,
       memcpy.srcContextId, memcpy.contextId, memcpy.dstContextId,
       memcpy.streamId, memcpy.correlationId,
-      memcpy.bytes, bandwidth(memcpy.bytes, memcpy.end - memcpy.start));
+      memcpy.bytes, bandwidth(memcpy.bytes, memcpy.end - memcpy.start)
+      );
   // clang-format on
 }
 
