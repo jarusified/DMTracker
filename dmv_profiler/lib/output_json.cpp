@@ -42,7 +42,7 @@ void ChromeTraceLogger::metadataToJSON(
   for (const auto &kv : metadata) {
     traceOf_ << fmt::format(R"JSON(
   "{}": {},)JSON",
-                            kv.first, kv.second);
+  kv.first, kv.second);
   }
 }
 

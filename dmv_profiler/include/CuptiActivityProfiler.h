@@ -31,7 +31,6 @@ namespace libdmv {
 
 class Config;
 class CuptiActivityApi;
-class RoctracerActivityApi;
 
 // This struct is a derived snapshot of the Config. And should not
 // be mutable after construction.
@@ -90,7 +89,6 @@ private:
 class CuptiActivityProfiler {
 public:
   CuptiActivityProfiler(CuptiActivityApi &cupti, bool cpuOnly);
-  CuptiActivityProfiler(RoctracerActivityApi &rai, bool cpuOnly);
   CuptiActivityProfiler(const CuptiActivityProfiler &) = delete;
   CuptiActivityProfiler &operator=(const CuptiActivityProfiler &) = delete;
 
@@ -312,12 +310,8 @@ private:
   // Logger used during trace processing
   ActivityLogger *logger_;
 
-  // Calls to CUPTI is encapsulated behind this interface
-#ifdef HAS_ROCTRACER
-  RoctracerActivityApi &cupti_; // Design failure here
-#else
+  // CuptiActivityApi interface
   CuptiActivityApi &cupti_;
-#endif
 
   enum class RunloopState {
     WaitForRequest,
