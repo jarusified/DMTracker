@@ -48,11 +48,10 @@ createDevicePropertiesJson(size_t id, const cudaDeviceProp &props) {
       "maxThreadsPerBlock": {}, "maxThreadsPerMultiprocessor": {},
       "regsPerBlock": {}, "regsPerMultiprocessor": {}, "warpSize": {},
       "sharedMemPerBlock": {}, "sharedMemPerMultiprocessor": {},
-      "numSms": {}, "sharedMemPerBlockOptin": {}, "accessPolicyMaxWindowSize": {},
+      "multiProcessCount": {}, "sharedMemPerBlockOptin": {}, "accessPolicyMaxWindowSize": {},
       "canMapHostMemory": {}, "concurrentManagedAccess": {}, "asyncEngineCount": {},
       "cooperativeLaunch": {}, "globalL1CacheSupported": {}, "l2CacheSize": {},
-      "managedMemory": {},
-      "multiProcessorCount": {}, "totalConstMem": {}, "unifiedAddressing": {}
+      "managedMemory": {}, "totalConstMem": {}, "unifiedAddressing": {} 
     }})JSON",
     id, props.name, props.totalGlobalMem, 
     props.major, props.minor, 
@@ -62,8 +61,7 @@ createDevicePropertiesJson(size_t id, const cudaDeviceProp &props) {
     props.multiProcessorCount, props.sharedMemPerBlockOptin, props.accessPolicyMaxWindowSize, 
     props.canMapHostMemory, props.concurrentManagedAccess, props.asyncEngineCount,
     props.cooperativeLaunch, props.globalL1CacheSupported, props.l2CacheSize, 
-    props.managedMemory,
-    props.multiProcessorCount, props.totalConstMem, props.unifiedAddressing 
+    props.managedMemory, props.totalConstMem, props.unifiedAddressing
     );
 }
 
@@ -110,11 +108,13 @@ float kernelOccupancy(const CUpti_ActivityKernel4 &kernel) {
                          blocks_per_sm);
 }
 
+/* 
+Calculate occupancy of a kernel.
+*/
 float kernelOccupancy(uint32_t deviceId, uint16_t registersPerThread,
                       int32_t staticSharedMemory, int32_t dynamicSharedMemory,
                       int32_t blockX, int32_t blockY, int32_t blockZ,
                       float blocksPerSm) {
-  // Calculate occupancy
   float occupancy = -1.0;
   const std::vector<cudaDeviceProp> &props = deviceProps();
   if (deviceId < props.size()) {

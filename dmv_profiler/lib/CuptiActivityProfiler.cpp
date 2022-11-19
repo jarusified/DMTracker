@@ -115,22 +115,12 @@ void CuptiActivityProfiler::transferCpuTrace(
   traceBuffers_->cpu.push_back(std::move(cpuTrace));
 }
 
-#ifdef HAS_ROCTRACER
-CuptiActivityProfiler::CuptiActivityProfiler(RoctracerActivityApi &cupti,
-                                             bool cpuOnly)
-#else
+#ifdef HAS_CUPTI
 CuptiActivityProfiler::CuptiActivityProfiler(CuptiActivityApi &cupti,
                                              bool cpuOnly)
 #endif
     : cupti_(cupti), flushOverhead_{0, 0}, setupOverhead_{0, 0},
       cpuOnly_{cpuOnly}, currentRunloopState_{RunloopState::WaitForRequest} {
-
-#ifdef HAS_CUPTI
-  // TODO (SURAJ) Fix the linking issue with isGpuAvailable.
-  // if (libdmv::isGpuAvailable()) {
-  logCudaVersions();
-  // }
-#endif
 }
 
 #ifdef HAS_CUPTI
@@ -190,14 +180,7 @@ void CuptiActivityProfiler::processTraceInternal(ActivityLogger &logger) {
     }
   }
 #endif // HAS_CUPTI
-#ifdef HAS_ROCTRACER
-  if (!cpuOnly_) {
-    VLOG(0) << "Retrieving GPU activity buffers";
-    const int count = cupti_.processActivities(logger);
-    LOG(INFO) << "Processed " << count << " GPU records";
-    LOGGER_OBSERVER_ADD_EVENT_COUNT(count);
-  }
-#endif // HAS_ROCTRACER
+
 
   for (const auto &session : sessions_) {
     LOG(INFO) << "Processing child profiler trace";
@@ -583,7 +566,7 @@ void CuptiActivityProfiler::configure(const Config &config,
   }
   LOGGER_OBSERVER_ADD_DESTINATION(config_->activitiesLogUrl());
 
-#if defined(HAS_CUPTI) || defined(HAS_ROCTRACER)
+#if defined(HAS_CUPTI)
   if (!cpuOnly_) {
     // Enabling CUPTI activity tracing incurs a larger perf hit at first,
     // presumably because structures are allocated and initialized, callbacks
@@ -607,7 +590,7 @@ void CuptiActivityProfiler::configure(const Config &config,
                         duration_cast<microseconds>(t2 - timestamp).count());
     }
   }
-#endif // HAS_CUPTI || HAS_ROCTRACER
+#endif // HAS_CUPTI
 
   LOG (INFO) << "Number of profilers: " << profilers_.size();
   if (profilers_.size() > 0) {
@@ -640,8 +623,7 @@ void CuptiActivityProfiler::configure(const Config &config,
   currentRunloopState_ = RunloopState::Warmup;
 }
 
-void CuptiActivityProfiler::startTraceInternal(
-    const time_point<system_clock> &now) {
+void CuptiActivityProfiler::startTraceInternal(const time_point<system_clock> &now) {
   captureWindowStartTime_ = libdmv::timeSinceEpoch(now);
   VLOG(0) << "Warmup -> CollectTrace";
   for (auto &session : sessions_) {
@@ -654,7 +636,7 @@ void CuptiActivityProfiler::startTraceInternal(
 void CuptiActivityProfiler::stopTraceInternal(
     const time_point<system_clock> &now) {
   captureWindowEndTime_ = libdmv::timeSinceEpoch(now);
-#if defined(HAS_CUPTI) || defined(HAS_ROCTRACER)
+#if defined(HAS_CUPTI)
   if (!cpuOnly_) {
     time_point<system_clock> timestamp;
     if (VLOG_IS_ON(1)) {
@@ -671,7 +653,7 @@ void CuptiActivityProfiler::stopTraceInternal(
                         duration_cast<microseconds>(t2 - timestamp).count());
     }
   }
-#endif // HAS_CUPTI || HAS_ROCTRACER
+#endif // HAS_CUPTI 
 
   if (currentRunloopState_ == RunloopState::CollectTrace) {
     VLOG(0) << "CollectTrace -> ProcessTrace";
@@ -710,7 +692,7 @@ const time_point<system_clock> CuptiActivityProfiler::performRunLoopStep(
   case RunloopState::Warmup:
     VLOG(1) << "State: Warmup";
     warmup_done = derivedConfig_->isWarmupDone(now, currentIter);
-#if defined(HAS_CUPTI) || defined(HAS_ROCTRACER)
+#if defined(HAS_CUPTI)
     // Flushing can take a while so avoid doing it close to the start time
     if (!cpuOnly_ && currentIter < 0 &&
         (derivedConfig_->isProfilingByIteration() ||
@@ -726,7 +708,7 @@ const time_point<system_clock> CuptiActivityProfiler::performRunLoopStep(
       VLOG(0) << "Warmup -> WaitForRequest";
       break;
     }
-#endif // HAS_CUPTI || HAS_ROCTRACER
+#endif // HAS_CUPTI
 
     if (warmup_done) {
       UST_LOGGER_MARK_COMPLETED(kWarmUpStage);
@@ -758,9 +740,9 @@ const time_point<system_clock> CuptiActivityProfiler::performRunLoopStep(
     collection_done = derivedConfig_->isCollectionDone(now, currentIter);
 
     if (collection_done
-#if defined(HAS_CUPTI) || defined(HAS_ROCTRACER)
+#if defined(HAS_CUPTI) 
         || cupti_.stopCollection
-#endif // HAS_CUPTI || HAS_ROCTRACER
+#endif // HAS_CUPTI
     ) {
       // Update runloop state first to prevent further updates to shared state
       LOG(INFO) << "Tracing complete.";
@@ -874,11 +856,11 @@ void CuptiActivityProfiler::finalizeTrace(const Config &config,
 }
 
 void CuptiActivityProfiler::resetTraceData() {
-#if defined(HAS_CUPTI) || defined(HAS_ROCTRACER)
+#if defined(HAS_CUPTI)
   if (!cpuOnly_) {
     cupti_.clearActivities();
   }
-#endif // HAS_CUPTI || HAS_ROCTRACER
+#endif // HAS_CUPTI
   activityMap_.clear();
   cpuCorrelationMap_.clear();
   correlatedCudaActivities_.clear();

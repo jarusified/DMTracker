@@ -12,6 +12,7 @@ namespace libdmv {
 
 CUpti_MetricID CuptiMetricApi::idFromName(const std::string &name) {
   CUpti_MetricID metric_id{~0u};
+  VLOG(INFO) << name.c_str(); 
   CUptiResult res =
       CUPTI_CALL(cuptiMetricGetIdFromName(device_, name.c_str(), &metric_id));
   if (res == CUPTI_ERROR_INVALID_METRIC_NAME) {
