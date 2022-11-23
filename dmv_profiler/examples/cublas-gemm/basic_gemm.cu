@@ -12,6 +12,12 @@
 #include <sstream>
 #include <string>
 #include <chrono>
+#include <cstdio>
+#include <cstdlib>
+#include <fmt/format.h>
+
+/* Includes, custom */
+#include "nvmlClass.h"
 
 #define SEED 7
 
@@ -109,6 +115,17 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
   int N = kib * 1024;
 
   cout<<"Dimensions of matrix: "<< N << ", "<< kib<< "\n";
+
+  int dev {};
+  cudaGetDevice(&dev);
+  cudaSetDevice(dev);
+
+  std::string const gpuFilename = { fmt::format("gpuStats-{}.csv", kernel_version) };
+  nvmlClass nvml(dev, gpuFilename);
+
+  /* Create thread to gather GPU stats */
+  std::thread threadStart(&nvmlClass::getStats, &nvml);  // threadStart starts running
+
 
   // Allocate GPU memory
   T *dA, *dB, *dC;
@@ -252,6 +269,12 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
 
   checkCudaErrors(cudaEventDestroy(start));
   checkCudaErrors(cudaEventDestroy(stop));
+
+	/* Create thread to kill GPU stats */
+    /* Join both threads to main */
+    std::thread threadKill( &nvmlClass::killThread, &nvml );
+    threadStart.join();
+    threadKill.join();
 }
 
 
