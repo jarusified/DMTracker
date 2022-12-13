@@ -21,7 +21,7 @@ export PATH=/g/g91/kesavan/spack/bin:$PATH
 
 # Install fmt and googletest -> dependencies.
 # TODO (surajk): Do not install if already installed.
-spack install fmt@9.0.0 googletest@1.8.1 py-pybind11
+# spack install fmt@9.0.0 googletest@1.8.1 py-pybind11
 spack load fmt googletest/gdlwgea py-pybind11/lwmygkz
 
 # Find CUDA source path

@@ -5,17 +5,17 @@ include(GNUInstallDirs)
 
 project(use-case VERSION 0.1 LANGUAGES CXX C CUDA)
 
-# include(FetchContent)
+include(FetchContent)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
-#FetchContent_Declare(fmt
-#  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-#  GIT_TAG master
-#)
-# FetchContent_MakeAvailable(fmt)
+FetchContent_Declare(fmt
+ GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+ GIT_TAG master
+)
+FetchContent_MakeAvailable(fmt)
 
 set(exe_files
     ${CMAKE_CURRENT_LIST_DIR}/common/benchmark.cu
@@ -44,7 +44,9 @@ message(STATUS "DMV source dir: ${DMV_SOURCE_DIR}")
 message(STATUS "DMV include dir: ${DMV_INCLUDE_DIR}")
 message(STATUS "DMV lib path: ${DMV_LIB_PATH}")
 
+
 add_library(DMV_LIBRARY STATIC IMPORTED)
+target_include_directories(DMV_LIBRARY INTERFACE ${FMT_INCLUDE_DIR})  
 set_target_properties(DMV_LIBRARY PROPERTIES 
   IMPORTED_LOCATION "${DMV_LIB_PATH}")
 
@@ -58,4 +60,5 @@ add_subdirectory(common)
 add_subdirectory(sqrt)
 # add_subdirectory(cutlass-gemm)
 # add_subdirectory(marbl-matprops-miniapp)
-# add_subdirectory(cublas-gemm)
+add_subdirectory(cublas-gemm) 
+
