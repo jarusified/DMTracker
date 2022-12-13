@@ -16,6 +16,9 @@
 #include <string>
 #include <chrono>
 
+/* Includes, custom */
+#include "nvmlClass.h"
+
 #define SEED 7
 /// <summary>	Length of the object field. </summary>
 // static const int FIELD_LENGTH = 8;
@@ -82,7 +85,8 @@ template <class T> void fill(T *A, int m, int n, int maxi) {
 #define IDX2F(i,j,ld) ((((j)-1)*(ld))+((i)-1))
 #define IDX2C(i,j,ld) (((j)*(ld))+(i))
 
-template <class T> void fill_1_index(T *A, int m, int n, int maxi) {
+template <class T> 
+void fill_1_index(T *A, int m, int n, int maxi) {
   for (int j = 1; j <= n; j++) {        
     for (int i = 1; i <= m; i++) {            
       std::cout<<i <<" "<<j <<" "<<IDX2F(i, j, m)<<IDX2C(i, j, m)<<std::endl;
@@ -91,7 +95,8 @@ template <class T> void fill_1_index(T *A, int m, int n, int maxi) {
   }
 }
 
-template <class T> void fill_0_index(T *A, int m, int n, int maxi) {
+template <class T> 
+void fill_0_index(T *A, int m, int n, int maxi) {
   for (int j = 0; j < n; j++) {        
     for (int i = 0; i < m; i++) {            
       A[IDX2C(i, j, m)] = (float)(i * m + j + 1);        

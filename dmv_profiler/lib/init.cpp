@@ -89,7 +89,7 @@ void libdmv_init(bool cpuOnly, bool logOnError) {
     auto &cbapi = CuptiCallbackApi::singleton();
     bool status = false;
     bool initRangeProfiler = true;
-    bool initGpuUtilization = true;
+    bool initGpuUtilization = false;
 
     if (cbapi.initSuccess()) {
       const CUpti_CallbackDomain domain = CUPTI_CB_DOMAIN_RESOURCE;
@@ -128,19 +128,19 @@ void libdmv_init(bool cpuOnly, bool logOnError) {
       rangeProfilerInit = std::make_unique<CuptiRangeProfilerInit>();
     }
 
-    // if (initGpuUtilization) {
-      // int dev {};
-      // cudaGetDevice(&dev);
-      // cudaSetDevice(dev);
+    if (initGpuUtilization) {
+      int dev {};
+      cudaGetDevice(&dev);
+      cudaSetDevice(dev);
 
-      // std::string const filename = { "data/gpuStats.csv" };
+      std::string const filename = { "data/gpuStats.csv" };
 
       // Create NVML class to retrieve GPU stats
-      // CuptiNvmlGpuUtilization nvml(0, filename);
+      CuptiNvmlGpuUtilization nvml(dev, filename);
 
       // Create thread to gather GPU stats
-      // std::thread threadStart(&CuptiNvmlGpuUtilization::getStats_temp, &nvml);
-    // }
+      std::thread threadStart(&CuptiNvmlGpuUtilization::getStats_temp, &nvml);
+    }
   }
 
   if (shouldPreloadCuptiInstrumentation()) {

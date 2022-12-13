@@ -12,6 +12,12 @@
 #include <sstream>
 #include <string>
 #include <chrono>
+#include <cstdio>
+#include <cstdlib>
+#include <fmt/format.h>
+
+/* Includes, custom */
+#include "nvmlClass.h"
 
 #define SEED 7
 
@@ -40,7 +46,7 @@ template <class T>
 void fill_1_index(T *A, int m, int n) {
   for (int j = 1; j <= n; j++) {
 	for (int i = 1; i <= m; i++) {
-	  A[IDX2F(i, j, m)] = (float)((i - 1) * m + j);
+	//   A[IDX2F(i, j, m)] = (float)((i - 1) * m + j);
 	}
   }
 }
@@ -90,6 +96,7 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
   const bool uvm_prefetch = op.getOptionBool("uvm-prefetch");
   const bool uvm_advise = op.getOptionBool("uvm-advise");
   const bool uvm_prefetch_advise = op.getOptionBool("uvm-prefetch-advise");
+  string metricsFile = op.getOptionString("metricsFile");
   int kib;
 
   std::cout<<"Field length: " <<field_length<<std::endl;
@@ -109,6 +116,17 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
   int N = kib * 1024;
 
   cout<<"Dimensions of matrix: "<< N << ", "<< kib<< "\n";
+
+  int dev {};
+  cudaGetDevice(&dev);
+  cudaSetDevice(dev);
+
+  std::string const gpuFilename = { metricsFile };
+  nvmlClass nvml(dev, gpuFilename);
+
+  /* Create thread to gather GPU stats */
+  std::thread threadStart(&nvmlClass::getStats, &nvml);  // threadStart starts running
+
 
   // Allocate GPU memory
   T *dA, *dB, *dC;
@@ -134,6 +152,8 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
 	  checkCudaErrors(cudaMallocHost(&B, N * N * sizeof(T)));
 	  checkCudaErrors(cudaMallocHost(&C, N * N * sizeof(T)));
   }
+
+  std::cout<<fill_strategy<<std::endl;
   // Fill matrix or read from input file
   if (fill_strategy == "column-format") {
     fill_1_index<T>(A, N, N);
@@ -252,6 +272,12 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
 
   checkCudaErrors(cudaEventDestroy(start));
   checkCudaErrors(cudaEventDestroy(stop));
+
+	/* Create thread to kill GPU stats */
+    /* Join both threads to main */
+    std::thread threadKill( &nvmlClass::killThread, &nvml );
+    threadStart.join();
+    threadKill.join();
 }
 
 
