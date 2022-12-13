@@ -1,0 +1,569 @@
+#include "OptionParser.h"
+#include "ResultDatabase.h"
+#include "Utility.h"
+#include "cudacommon.h"
+
+// #include "cublas.h"
+#include "cublas_v2.h"
+#include "cuda.h"
+#include "cuda_runtime.h"
+#include "cuda_fp16.h"
+
+// #include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <chrono>
+
+/* Includes, custom */
+#include "nvmlClass.h"
+
+#define SEED 7
+/// <summary>	Length of the object field. </summary>
+// static const int FIELD_LENGTH = 8;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// <summary>	Executes the test operation. </summary>
+///
+/// <typeparam name="T">	Generic type parameter. </typeparam>
+/// <param name="testName">	Name of the test. </param>
+/// <param name="resultDB">	[in,out] The result database. </param>
+/// <param name="op">	   	[in,out] The operation. </param>
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <class T>
+void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op);
+
+// origianlly don't need handle in v1 cublas
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// <summary>	Gemm operation wrapper. </summary>
+///
+/// <typeparam name="T">	Generic type parameter. </typeparam>
+/// <param name="transa">	The transa. </param>
+/// <param name="transb">	The transb. </param>
+/// <param name="m">	 	An int to process. </param>
+/// <param name="n">	 	An int to process. </param>
+/// <param name="k">	 	An int to process. </param>
+/// <param name="alpha"> 	The alpha. </param>
+/// <param name="A">	 	A T to process. </param>
+/// <param name="lda">   	The lda. </param>
+/// <param name="B">	 	A T to process. </param>
+/// <param name="ldb">   	The ldb. </param>
+/// <param name="beta">  	The beta. </param>
+/// <param name="C">	 	[in,out] If non-null, a T to process. </param>
+/// <param name="ldc">   	The ldc. </param>
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline void devGEMM(cublasHandle_t handle,
+                    cublasOperation_t transa, cublasOperation_t transb,
+                    int m, int n, int k,
+                    const T *alpha,
+                    const T *A, int lda,
+                    const T *B, int ldb,
+                    const T *beta,
+                    T *C, int ldc);
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// <summary>	Filling memory. </summary>
+///
+/// <typeparam name="T">	Generic type parameter. </typeparam>
+/// <param name="A">   	[in,out] If non-null,  pointer to the array to initialize. </param>
+/// <param name="n">   number of elements in the array. </param>
+/// <param name="maxi">	The maxi. </param>
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <class T> void fill(T *A, int m, int n, int maxi) {
+  for (int j = 0; j < m * n; j++) {
+      A[j] = rand();
+  }
+}
+
+#define IDX2F(i,j,ld) ((((j)-1)*(ld))+((i)-1))
+#define IDX2C(i,j,ld) (((j)*(ld))+(i))
+
+template <class T> 
+void fill_1_index(T *A, int m, int n, int maxi) {
+  for (int j = 1; j <= n; j++) {        
+    for (int i = 1; i <= m; i++) {            
+      std::cout<<i <<" "<<j <<" "<<IDX2F(i, j, m)<<IDX2C(i, j, m)<<std::endl;
+      A[IDX2F(i, j, m)] = (float)((i - 1) * m + j);        
+    }    
+  }
+}
+
+template <class T> 
+void fill_0_index(T *A, int m, int n, int maxi) {
+  for (int j = 0; j < n; j++) {        
+    for (int i = 0; i < m; i++) {            
+      A[IDX2C(i, j, m)] = (float)(i * m + j + 1);        
+    }    
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// <summary>	Reads a matrix. </summary>
+///
+/// <typeparam name="T">	Generic type parameter. </typeparam>
+/// <param name="A">	   	[in,out] If non-null, pointer to matrix A. </param>
+/// <param name="B">	   	[in,out] If non-null, pointer to matrix B. </param>
+/// <param name="C">	   	[in,out] If non-null, pointer to matrix C. </param>
+/// <param name="n">	   	An int to process. </param>
+/// <param name="filename">	Filename of the file. </param>
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <class T> void readMatrix(T *A, T *B, T *C, int n, string filename) {
+  std::ifstream mfs(filename.c_str());
+  string line;
+  // Ignore header line because it was already checked
+  getline(mfs, line);
+  float a, b, c;
+  for (int j = 0; j < n; j++) {
+    sscanf(line.c_str(), "%f %f %f", &a, &b, &c);
+    A[j] = T(a);
+    B[j] = T(b);
+    C[j] = T(c);
+  }
+}
+
+// ****************************************************************************
+// Function: addBenchmarkSpecOptions
+//
+// Purpose:
+//   Add benchmark specific options parsing.  The user is allowed to specify
+//   the size of the input data in kiB.
+//
+// Arguments:
+//   op: the options parser / parameter database
+//
+// Programmer: Anthony Danalis
+// Creation: September 08, 2009
+// Returns:  nothing
+//
+// ****************************************************************************
+void addBenchmarkSpecOptions(OptionParser &op) {}
+
+// ****************************************************************************
+// Function: runBenchmark
+//
+// Purpose:
+//   This benchmark measures the performance of the single precision general
+//   matrix multiplication (SGEMM) operation in GFLOPS.  Data transfer time
+//   over the PCIe bus is not included in this measurement.
+//
+// Arguments:
+//  resultDB: the benchmark stores its results in this ResultDatabase
+//  op: the options parser / parameter database
+//
+// Returns:  nothing
+//
+// Programmer: Anthony Danalis
+// Creation: September 08, 2009
+//
+// Modifications:
+//
+// ****************************************************************************
+void RunBenchmark(ResultDatabase &resultDB, OptionParser &op) {
+  std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
+  
+  cout << "Running GEMM" << endl;
+  int device;
+  
+  cudaGetDevice(&device);
+  cudaDeviceProp deviceProp;
+  cudaGetDeviceProperties(&deviceProp, device);
+  
+  srand(SEED);
+
+  bool quiet = op.getOptionBool("quiet");
+
+  if(!quiet) {
+    cout << "Running single precision test" << endl;
+  }
+  RunTest<float>("SGEMM", resultDB, op);
+
+
+  // Test to see if this device supports double precision
+  // if ((deviceProp.major == 1 && deviceProp.minor >= 3) ||
+  //     (deviceProp.major >= 2)) {
+  //   if(!quiet) {
+  //       cout << "Running double precision test" << endl;
+  //   }
+  //   RunTest<double>("DGEMM", resultDB, op);
+  // }
+
+  // if ((deviceProp.major >= 6)) {
+  //   if (!quiet) {
+  //       cout << "Running half preicsion test" << endl;
+  //   }
+  //   RunTest<half>("HGEMM", resultDB, op);
+  // }
+
+  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+  resultDB.AddResult("TotalTime", "", "microsec", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// <summary>	Executes the test operation. </summary>
+///
+/// <typeparam name="T">	Generic type parameter. </typeparam>
+/// <param name="testName">	Name of the test. </param>
+/// <param name="resultDB">	[in,out] The result database. </param>
+/// <param name="op">	   	[in,out] The operation. </param>
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <class T>
+void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
+  int passes = op.getOptionInt("passes");
+  int device = op.getOptionInt("device");
+  int field_length = op.getOptionInt("field-length");
+  const bool uvm = op.getOptionBool("uvm");
+  const bool uvm_prefetch = op.getOptionBool("uvm-prefetch");
+  const bool uvm_advise = op.getOptionBool("uvm-advise");
+  const bool uvm_prefetch_advise = op.getOptionBool("uvm-prefetch-advise");
+  int kib;
+
+  std::cout<<"Field length: " <<field_length<<std::endl;
+
+  // #ifdef USE_CALIPER
+  //   CALI_MARK_BEGIN("Initialize Matrix data");
+  // #endif
+  // Use preset problem size or read data from input file
+  string filename = op.getOptionString("inputFile");
+  if (filename == "") {
+    int probSizes[10] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512};
+    kib = probSizes[op.getOptionInt("size") - 1];
+  } else {
+    std::ifstream mfs(filename.c_str());
+    std::string line;
+    char object[field_length];
+    sscanf(line.c_str(), "%s %d", object, &kib);
+  }
+
+  // Dimensions of matrix
+  int N = kib * 10;
+
+  cout<<"Dimensions of matrix: "<< N << ", "<< kib<< "\n";
+
+  // size_t freeMem = 0;
+  // size_t totalMem = 0;
+  // size_t allocMem = 0;
+  // checkCudaErrors(cudaFree(0));
+  // gpuMemReport(&freeMem, &totalMem);
+
+  // Initialize the cublas library
+  cublasHandle_t handle; // CUBLAS context
+  cublasStatus_t stat = cublasCreate(&handle);
+  // if (stat != CUBLAS_STATUS_SUCCESS) {
+  //       std::cerr << "CUBLAS initialization failed" << std::endl;
+  //       safe_exit(-1);
+  // }
+
+  // Allocate GPU memory
+  T *dA, *dB, *dC;
+  T *A;
+  T *B;
+  T *C;
+  if (uvm || uvm_prefetch || uvm_advise || uvm_prefetch_advise) {
+      checkCudaErrors(cudaMallocManaged(&dA, N * N* sizeof(T)));
+      checkCudaErrors(cudaMallocManaged(&dB, N * N* sizeof(T)));
+      checkCudaErrors(cudaMallocManaged(&dC, N * N* sizeof(T)));
+
+      #ifdef USE_CALIPER
+        CALI_DATATRACKER_TRACK(dA, sizeof(T)* N * N);
+        CALI_DATATRACKER_TRACK(dA, sizeof(T)* N * N);
+      #endif
+
+      if (filename == "") {
+          #ifdef USE_CALIPER
+            CALI_MARK_BEGIN("Fill matrix (file)");
+          #endif
+          fill_1_index<T>(dA, N, N, 31);
+          fill_1_index<T>(dB, N, N, 31);
+          fill_1_index<T>(dC, N, N, 31);
+          #ifdef USE_CALIPER
+            CALI_MARK_END("Fill matrix (file)");
+          #endif
+      } else {
+          #ifdef USE_CALIPER
+            CALI_MARK_BEGIN("Read matrix (file)");
+          #endif
+          readMatrix(dA, dB, dC, N * N, filename);
+          #ifdef USE_CALIPER
+            CALI_MARK_END("Read matrix (file)");
+          #endif
+      }
+  }
+  else {
+      checkCudaErrors(cudaMalloc(&dA, N * N * sizeof(T)));
+      checkCudaErrors(cudaMalloc(&dB, N * N * sizeof(T)));
+      checkCudaErrors(cudaMalloc(&dC, N * N * sizeof(T)));
+
+      checkCudaErrors(cudaMallocHost(&A, N * N * sizeof(T)));
+      checkCudaErrors(cudaMallocHost(&B, N * N * sizeof(T)));
+      checkCudaErrors(cudaMallocHost(&C, N * N * sizeof(T)));
+
+      // Fill matrix or read from input file
+      if (filename == "") {
+          fill_1_index<T>(A, N, N, 31);
+          fill_1_index<T>(B, N, N, 31);
+          fill_1_index<T>(C, N, N, 31);
+      } else {
+        readMatrix(A, B, C, N * N, filename);
+      }
+  }
+
+  // Copy input to GPU
+  cudaEvent_t start, stop;
+  checkCudaErrors(cudaEventCreate(&start));
+  checkCudaErrors(cudaEventCreate(&stop));
+  float elapsedTime;
+
+  // Copy inputs to GPU
+
+  double transferTime = 0;
+  checkCudaErrors(cudaEventRecord(start, 0));
+
+  if (uvm) {
+      // Do nothing
+  } else if (uvm_prefetch) {
+      // could ignore this to test demand paging performance affect
+      checkCudaErrors(cudaMemPrefetchAsync(dA, N * N * sizeof(T), device));
+      cudaStream_t s1;
+      checkCudaErrors(cudaStreamCreate(&s1));
+      checkCudaErrors(cudaMemPrefetchAsync(dB, N * N * sizeof(T), device, s1));
+      checkCudaErrors(cudaStreamDestroy(s1));
+      // checkCudaErrors(cudaStreamSynchronize(0));
+      // checkCudaErrors(cudaStreamSynchronize((cudaStream_t)1));
+  } else if (uvm_advise) {
+      // Do nothing for demand paging
+      checkCudaErrors(cudaMemAdvise(dA, N * N * sizeof(T), cudaMemAdviseSetPreferredLocation, device));
+      checkCudaErrors(cudaMemAdvise(dB, N * N * sizeof(T), cudaMemAdviseSetPreferredLocation, device));
+  } else if (uvm_prefetch_advise) {
+      checkCudaErrors(cudaMemAdvise(dA, N * N * sizeof(T), cudaMemAdviseSetPreferredLocation, device));
+      checkCudaErrors(cudaMemAdvise(dB, N * N * sizeof(T), cudaMemAdviseSetPreferredLocation, device));
+      checkCudaErrors(cudaMemPrefetchAsync(dA, N * N * sizeof(T), device));
+      cudaStream_t s1;
+      checkCudaErrors(cudaStreamCreate(&s1));
+      checkCudaErrors(cudaMemPrefetchAsync(dB, N * N * sizeof(T), device, s1));
+      checkCudaErrors(cudaStreamDestroy(s1));
+  } else {
+      checkCudaErrors(cudaMemcpy(dA, A, N * N * sizeof(T), cudaMemcpyHostToDevice));
+      checkCudaErrors(cudaMemcpy(dB, B, N * N * sizeof(T), cudaMemcpyHostToDevice));
+  }
+
+  checkCudaErrors(cudaEventRecord(stop, 0));
+  checkCudaErrors(cudaEventSynchronize(stop));
+  cudaEventElapsedTime(&elapsedTime, start, stop);
+  transferTime += elapsedTime * 1.e-3;
+
+  bool first = true;
+/// <summary>	. </summary>
+  #ifdef USE_CALIPER
+    CALI_CXX_MARK_LOOP_BEGIN(passesloop, "passes.loop");
+  #endif
+  for (int j = 0; j < 1; j++) {
+    #ifdef USE_CALIPER
+      CALI_CXX_MARK_LOOP_BEGIN(cublas_n_loop, "cublas_t.loop");
+    #endif
+    #ifdef USE_CALIPER
+      CALI_CXX_MARK_LOOP_BEGIN(cublas_t_loop, "cublas_n.loop");
+    #endif
+    for (int i = 0; i < 2; i++) {
+      
+      if(i == 0) {
+        #ifdef USE_CALIPER
+          CALI_CXX_MARK_LOOP_ITERATION(cublas_t_loop, j);
+        #endif
+      } else {
+        #ifdef USE_CALIPER
+          CALI_CXX_MARK_LOOP_ITERATION(cublas_n_loop, j);
+        #endif
+      }
+      const cublasOperation_t transa = CUBLAS_OP_N;
+      const cublasOperation_t transb = i ? CUBLAS_OP_T : CUBLAS_OP_N;
+      const int nb = field_length;
+      const int idim = N / nb;
+
+      int dim = idim * nb;
+
+      const int m = dim;
+      const int n = dim;
+      const int k = dim;
+      const int lda = dim;
+      const int ldb = dim;
+      const int ldc = dim;
+      const T alpha = 1;
+      const T beta = 0; //-1;
+
+      // Warm Up
+      devGEMM<T>(handle, transa, transb, m, n, k, &alpha, dA, lda, dB, ldb, &beta, dC,
+                    ldc);
+      cudaDeviceSynchronize();
+      CHECK_CUDA_ERROR();
+
+      double cublasTime;
+      float kernelTime = 0.0f;
+      for (int ii = 0; ii < 4; ++ii) {
+          checkCudaErrors(cudaEventRecord(start, 0));
+          devGEMM<T>(handle, transa, transb, m, n, k, &alpha, dA, lda, dB, ldb, &beta, dC,
+                    ldc);
+          checkCudaErrors(cudaEventRecord(stop, 0));
+          checkCudaErrors(cudaEventSynchronize(stop));
+          CHECK_CUDA_ERROR();
+          float currTime = 0.0f;
+          checkCudaErrors(cudaEventElapsedTime(&currTime, start, stop));
+          kernelTime += currTime;
+      }
+      cublasTime = (kernelTime / 4.0) * 1.e-3;
+
+      checkCudaErrors(cudaEventRecord(start, 0));    // timing may be affected by async
+
+      if (uvm) {
+        // Do nothing
+      } else if (uvm_prefetch) {
+          checkCudaErrors(cudaMemPrefetchAsync(dC, N * N * sizeof(T), cudaCpuDeviceId));
+          // checkCudaErrors(cudaStreamSynchronize(0));
+      } else if (uvm_advise) {
+          checkCudaErrors(cudaMemAdvise(dC, N * N * sizeof(T), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
+          checkCudaErrors(cudaMemAdvise(dC, N * N * sizeof(T), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
+      } else if (uvm_prefetch_advise) {
+          checkCudaErrors(cudaMemAdvise(dC, N * N * sizeof(T), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
+          checkCudaErrors(cudaMemAdvise(dC, N * N * sizeof(T), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
+          checkCudaErrors(cudaMemPrefetchAsync(dC, N * N * sizeof(T), cudaCpuDeviceId));
+      } else {
+          checkCudaErrors(cudaMemcpy(C, dC, N * N * sizeof(T), cudaMemcpyDeviceToHost));
+      }
+
+      checkCudaErrors(cudaEventRecord(stop, 0));
+      checkCudaErrors(cudaEventSynchronize(stop));
+      float oTransferTime = 0.0f;
+      checkCudaErrors(cudaEventElapsedTime(&oTransferTime, start, stop));
+      oTransferTime *= 1.e-3;
+
+      // Add the PCIe transfer time to total transfer time only once
+      if (first) {
+        transferTime += oTransferTime;
+        first = false;
+      }
+
+      double cublasGflops = 2. * m * n * k / cublasTime / 1e9;
+      double pcieGflops = 2. * m * n * k / (cublasTime + transferTime) / 1e9;
+      std::string transb_string = (transb == CUBLAS_OP_T)? "T" : "N";
+      string atts = "dim:" + toString(dim);
+      resultDB.AddResult(testName + "-" + transb_string + "-TransferTime", atts, "sec", transferTime);
+      resultDB.AddResult(testName + "-" + transb_string + "-KernelTime", atts, "sec", cublasTime);
+      resultDB.AddResult(testName + "-" + transb_string + "-TotalTime", atts, "sec", transferTime + cublasTime);
+      resultDB.AddResult(testName + "-" + transb_string, atts, "GFlops", cublasGflops);
+      resultDB.AddResult(testName + "-" + transb_string + "_PCIe", atts, "GFlops", pcieGflops);
+      resultDB.AddResult(testName + "-" + transb_string + "_Parity", atts, "N", transferTime / cublasTime);
+      resultDB.AddOverall("GFlops", "", cublasGflops);
+      if(i == 0) {
+        #ifdef USE_CALIPER
+          CALI_CXX_MARK_LOOP_END(cublas_t_loop);
+        #endif
+      } else {
+        #ifdef USE_CALIPER
+          CALI_CXX_MARK_LOOP_END(cublas_n_loop);
+        #endif
+      }
+    } 
+  }
+  #ifdef USE_CALIPER
+    CALI_CXX_MARK_LOOP_END(passesloop);
+  #endif
+
+  checkCudaErrors(cudaFree(dA));
+  checkCudaErrors(cudaFree(dB));
+  checkCudaErrors(cudaFree(dC));
+  
+  if (!uvm && !uvm_prefetch && !uvm_advise && !uvm_prefetch_advise) {
+    checkCudaErrors(cudaFreeHost(A));
+    checkCudaErrors(cudaFreeHost(B));
+    checkCudaErrors(cudaFreeHost(C));
+  }
+
+  checkCudaErrors(cudaEventDestroy(start));
+  checkCudaErrors(cudaEventDestroy(stop));
+  cublasDestroy(handle);
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// <summary>   gemm kernel (double). </summary>
+///
+/// <typeparam name="double">	Type of the double. </typeparam>
+/// <param name="transa">	The transa. </param>
+/// <param name="transb">	The transb. </param>
+/// <param name="m">	 	An int to process. </param>
+/// <param name="n">	 	An int to process. </param>
+/// <param name="k">	 	An int to process. </param>
+/// <param name="alpha"> 	The alpha. </param>
+/// <param name="A">	 	A double to process. </param>
+/// <param name="lda">   	The lda. </param>
+/// <param name="B">	 	A double to process. </param>
+/// <param name="ldb">   	The ldb. </param>
+/// <param name="beta">  	The beta. </param>
+/// <param name="C">	 	[in,out] If non-null, a double to process. </param>
+/// <param name="ldc">   	The ldc. </param>
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <>
+inline void devGEMM<double>(cublasHandle_t handle,
+                            cublasOperation_t transa, cublasOperation_t transb,
+                            int m, int n, int k,
+                            const double *alpha,
+                            const double *A, int lda,
+                            const double *B, int ldb,
+                            const double *beta,
+                            double *C, int ldc) {
+  cublasDgemm(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// <summary>	gemm kernel (float). </summary>
+///
+/// <typeparam name="float">	Type of the float. </typeparam>
+/// <param name="transa">	The transa. </param>
+/// <param name="transb">	The transb. </param>
+/// <param name="m">	 	An int to process. </param>
+/// <param name="n">	 	An int to process. </param>
+/// <param name="k">	 	An int to process. </param>
+/// <param name="alpha"> 	The alpha. </param>
+/// <param name="A">	 	A float to process. </param>
+/// <param name="lda">   	The lda. </param>
+/// <param name="B">	 	A float to process. </param>
+/// <param name="ldb">   	The ldb. </param>
+/// <param name="beta">  	The beta. </param>
+/// <param name="C">	 	[in,out] If non-null, a float to process. </param>
+/// <param name="ldc">   	The ldc. </param>
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <>
+inline void devGEMM<float>(cublasHandle_t handle,
+                           cublasOperation_t transa, cublasOperation_t transb,
+                           int m, int n, int k,
+                           const float *alpha,
+                           const float *A, int lda,
+                           const float *B, int ldb,
+                           const float *beta,
+                           float *C, int ldc) {
+  cublasSgemm(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
+}
+
+template <>
+inline void devGEMM<half>(cublasHandle_t handle,
+                          cublasOperation_t transa, cublasOperation_t transb,
+                          int m, int n, int k,
+                          const half *alpha,
+                          const half *A, int lda,
+                          const half *B, int ldb,
+                          const half *beta,
+                          half *C, int ldc) {
+  cublasHgemm(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
+}
