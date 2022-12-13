@@ -57,7 +57,7 @@ endif()
 
 add_subdirectory(common)
 add_subdirectory(sqrt)
-add_subdirectory(distributed-volume-path-tracing)
+# add_subdirectory(distributed-volume-path-tracing)
 # add_subdirectory(Kripke)
 # add_subdirectory(cutlass-gemm)
 # add_subdirectory(marbl-matprops-miniapp)
