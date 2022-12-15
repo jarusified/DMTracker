@@ -76,8 +76,8 @@ set(FMT_INCLUDE_DIR "${FMT_SOURCE_DIR}/include")
 message(STATUS "DMV: FMT_SOURCE_DIR = ${FMT_SOURCE_DIR}")
 message(STATUS "DMV: FMT_INCLUDE_DIR = ${FMT_INCLUDE_DIR}")
 
-set(TARGET_NAME "ppc64le-linux")
-# set(TARGET_NAME "x86_64-linux")
+# set(TARGET_NAME "ppc64le-linux")
+set(TARGET_NAME "x86_64-linux")
 
 if (NOT CUPTI_INCLUDE_DIR)
     set(CUPTI_INCLUDE_DIR "${CUDA_SOURCE_DIR}/targets/${TARGET_NAME}/include")

@@ -62,6 +62,21 @@ void fill_0_index(T *A, int m, int n) {
 
 void addBenchmarkSpecOptions(OptionParser &op) {}
 
+template <class T> 
+void fillByStrategy(std::string strategy, T *A, T *B, T *C, int N) {
+	std::cout<<strategy<<std::endl;
+	// Fill matrix or read from input file
+	if (strategy == "column-format") {
+		fill_1_index<T>(A, N, N);
+		fill_1_index<T>(B, N, N);
+		fill_1_index<T>(C, N, N);
+	} else if (strategy == "default") {
+		fill<T>(A, N, N);
+		fill<T>(B, N, N);
+		fill<T>(C, N, N);
+	}
+}
+
 void RunBenchmark(ResultDatabase &resultDB, OptionParser &op) {
   std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
@@ -134,6 +149,7 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
   T *B;
   T *C;
   if (uvm || uvm_prefetch || uvm_advise || uvm_prefetch_advise) {
+	  std::cout<<"here"<<std::endl;
 	  checkCudaErrors(cudaMallocManaged(&dA, N * N* sizeof(T)));
 	  checkCudaErrors(cudaMallocManaged(&dB, N * N* sizeof(T)));
 	  checkCudaErrors(cudaMallocManaged(&dC, N * N* sizeof(T)));
@@ -142,6 +158,8 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
 		CALI_DATATRACKER_TRACK(dA, sizeof(T)* N * N);
 		CALI_DATATRACKER_TRACK(dA, sizeof(T)* N * N);
 	  #endif
+	  fillByStrategy(fill_strategy, dA, dB, dC, N);
+
   }
   else {
 	  checkCudaErrors(cudaMalloc(&dA, N * N * sizeof(T)));
@@ -151,19 +169,10 @@ void RunTest(string testName, ResultDatabase &resultDB, OptionParser &op) {
 	  checkCudaErrors(cudaMallocHost(&A, N * N * sizeof(T)));
 	  checkCudaErrors(cudaMallocHost(&B, N * N * sizeof(T)));
 	  checkCudaErrors(cudaMallocHost(&C, N * N * sizeof(T)));
+
+	  fillByStrategy(fill_strategy, A, B, C, N);
   }
 
-  std::cout<<fill_strategy<<std::endl;
-  // Fill matrix or read from input file
-  if (fill_strategy == "column-format") {
-    fill_1_index<T>(A, N, N);
-    fill_1_index<T>(B, N, N);
-    fill_1_index<T>(C, N, N);
-  } else if (fill_strategy == "default") {
-    fill<T>(A, N, N);
-    fill<T>(B, N, N);
-    fill<T>(C, N, N);
-  }
  
 
   // Copy input to GPU

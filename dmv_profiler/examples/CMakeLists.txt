@@ -26,11 +26,11 @@ set(FMT_INCLUDE_DIR "${FMT_SOURCE_DIR}/include")
 message(STATUS "FMT include dir: ${FMT_INCLUDE_DIR}")
 
 # TODO: Need to generalize the directory path for all os.
-set(TARGET_NAME "ppc64le-linux")
-# set(TARGET_NAME "x86_64-linux")
+# set(TARGET_NAME "ppc64le-linux")
+set(TARGET_NAME "x86_64-linux")
 
-set(CUDA_TARGETS_INCLUDE_DIR "${CUDA_SOURCE_DIR}targets/${TARGET_NAME}/include")
-set(CUDA_TARGETS_LIB_DIR "${CUDA_SOURCE_DIR}targets/${TARGET_NAME}/lib")
+set(CUDA_TARGETS_INCLUDE_DIR "${CUDA_SOURCE_DIR}/targets/${TARGET_NAME}/include")
+set(CUDA_TARGETS_LIB_DIR "${CUDA_SOURCE_DIR}/targets/${TARGET_NAME}/lib")
 message(STATUS "CUPTI include dir: ${CUDA_TARGETS_INCLUDE_DIR}")
 
 find_library(CUPTI_LIBRARY cupti HINTS "${CUDA_TARGETS_LIB_DIR}")

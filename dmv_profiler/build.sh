@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# TODO (surajk): Use this for python installation.
-
 # Clean up old build, if it exists.
 rm -rf CMakeFiles CMakeCache.txt compile_commands.json cmake_install.cmake Makefile libdmv.a
 
