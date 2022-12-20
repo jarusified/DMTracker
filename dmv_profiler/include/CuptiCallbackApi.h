@@ -12,9 +12,10 @@
 
 #include "CuptiCallbackApiMock.h"
 
-// using namespace libdmv;
 
 namespace libdmv {
+
+using namespace libdmv;
 
 /* CuptiCallbackApi : Provides an abstraction over CUPTI callback
  *  interface. This enables various callback functions to be registered
@@ -46,14 +47,16 @@ public:
 
     __RUNTIME_CB_DOMAIN_END = RESOURCE_CONTEXT_CREATED,
     __RESOURCE_CB_DOMAIN_START = RESOURCE_CONTEXT_CREATED,
-
     __RESOURCE_CB_DOMAIN_END = RESOURCE_CONTEXT_DESTROYED + 1,
   };
 
+  CuptiCallbackApi() = default;
   CuptiCallbackApi(const CuptiCallbackApi &) = delete;
   CuptiCallbackApi &operator=(const CuptiCallbackApi &) = delete;
 
-  static CuptiCallbackApi &singleton();
+  static std::shared_ptr<CuptiCallbackApi> singleton();
+
+  void initCallbackApi();
 
   bool initSuccess() const { return initSuccess_; }
 
@@ -70,15 +73,20 @@ public:
 
   bool enableCallback(CUpti_CallbackDomain domain, CUpti_CallbackId cbid);
   bool disableCallback(CUpti_CallbackDomain domain, CUpti_CallbackId cbid);
+  bool enableCallbackDomain(CUpti_CallbackDomain domain);
+  bool disableCallbackDomain(CUpti_CallbackDomain domain);
+  // Provide this API for when cuptiFinalize is executed, to allow the process
+  // to re-enabled all previously running callback subscriptions.
+  bool reenableCallbacks();
 
   // Please do not use this method. This has to be exposed as public
   // so it is accessible from the callback handler
   void __callback_switchboard(CUpti_CallbackDomain domain,
                               CUpti_CallbackId cbid,
-                              const CUpti_CallbackData *cbInfo);
+                              const CUpti_CallbackData* cbInfo);
 
 private:
-  explicit CuptiCallbackApi();
+  friend class std::shared_ptr<CuptiCallbackApi>;
 
   // For callback table design overview see the .cpp file
   using CallbackList = std::list<CuptiCallbackFn>;
@@ -100,6 +108,11 @@ private:
 
   CallbackTable callbacks_;
   bool initSuccess_ = false;
+
+  // Record a list of enabled callbacks, so that after teardown, we can re-enable
+  // the callbacks that were turned off to clean cupti context.
+  // As an implementation detail, cbid == 0xffffffff means enable the domain.
+  std::set<std::pair<CUpti_CallbackDomain, CUpti_CallbackId>> enabledCallbacks_;
 
 #ifdef HAS_CUPTI
   CUptiResult lastCuptiStatus_;

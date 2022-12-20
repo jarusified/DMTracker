@@ -49,7 +49,6 @@ add_library(DMV_LIBRARY STATIC IMPORTED)
 set_target_properties(DMV_LIBRARY PROPERTIES 
   IMPORTED_LOCATION "${DMV_LIB_PATH}")
 
-message(STATUS ${DMV_LIBRARY})
 if(NOT ${DMV_LIBRARY})
   message(FATAL_ERROR "DMV library not found")
 endif()

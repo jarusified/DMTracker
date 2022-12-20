@@ -21,13 +21,14 @@ namespace libdmv {
 #ifdef HAS_CUPTI
 static bool initialized = false;
 static std::mutex initMutex;
+
 static void initProfilers(CUpti_CallbackDomain /*domain*/,
                           CUpti_CallbackId /*cbid*/,
                           const CUpti_CallbackData *cbInfo) {
   CUpti_ResourceData *d = (CUpti_ResourceData *)cbInfo;
   CUcontext ctx = d->context;
 
-  VLOG(0) << "CUDA Context created";
+  LOG(INFO) << "CUDA Context created";
   std::lock_guard<std::mutex> lock(initMutex);
 
   if (!initialized) {
@@ -86,34 +87,36 @@ void libdmv_init(bool cpuOnly, bool logOnError) {
     // libcupti will be lazily loaded on this call.
     // If it is not available (e.g. CUDA is not installed),
     // then this call will return an error and we just abort init.
-    auto &cbapi = CuptiCallbackApi::singleton();
+    auto cbapi = CuptiCallbackApi::singleton();
+    cbapi->initCallbackApi();
     bool status = false;
     bool initRangeProfiler = true;
     bool initGpuUtilization = false;
 
-    if (cbapi.initSuccess()) {
+    if (cbapi->initSuccess()) {
+      LOG(INFO) <<"CallbackAPI triggered"<< std::endl;
       const CUpti_CallbackDomain domain = CUPTI_CB_DOMAIN_RESOURCE;
-      status = cbapi.registerCallback(
+      status = cbapi->registerCallback(
           domain, CuptiCallbackApi::RESOURCE_CONTEXT_CREATED, initProfilers);
       status =
-          status && cbapi.registerCallback(
+          status && cbapi->registerCallback(
                         domain, CuptiCallbackApi::RESOURCE_CONTEXT_DESTROYED,
                         stopProfiler);
 
       if (status) {
-        status = cbapi.enableCallback(
+        status = cbapi->enableCallback(
             domain, CuptiCallbackApi::RESOURCE_CONTEXT_CREATED);
         status =
-            status && cbapi.enableCallback(
+            status && cbapi->enableCallback(
                           domain, CuptiCallbackApi::RESOURCE_CONTEXT_DESTROYED);
       }
     }
 
-    if (!cbapi.initSuccess() || !status) {
+    if (!cbapi->initSuccess() || !status) {
       initRangeProfiler = false;
       cpuOnly = true;
       if (logOnError) {
-        CUPTI_CALL(cbapi.getCuptiStatus());
+        CUPTI_CALL(cbapi->getCuptiStatus());
         LOG(WARNING) << "CUPTI initialization failed - "
                      << "CUDA profiler activities will be missing";
         LOG(INFO)
@@ -143,10 +146,11 @@ void libdmv_init(bool cpuOnly, bool logOnError) {
     }
   }
 
+  CuptiActivityApi::preConfigureCUPTI();
+
   if (shouldPreloadCuptiInstrumentation()) {
     CuptiActivityApi::forceLoadCupti();
   }
-
 #endif // HAS_CUPTI
 
   ConfigLoader &config_loader = libdmv::api().configLoader();

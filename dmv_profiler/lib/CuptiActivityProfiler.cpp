@@ -12,7 +12,6 @@
 
 #ifdef HAS_CUPTI
 #include <cupti.h>
-#include "CudaUtil.h"
 #include "cuda_call.h"
 #include "cupti_call.h"
 #include "CuptiActivity.h"

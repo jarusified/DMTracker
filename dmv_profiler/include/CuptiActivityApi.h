@@ -1,6 +1,7 @@
 #pragma once
 
 #include <atomic>
+#include <condition_variable>
 #include <functional>
 #include <list>
 #include <memory>
@@ -13,8 +14,11 @@
 
 #include "ActivityType.h"
 #include "CuptiActivityBuffer.h"
+#include "CuptiCallbackApi.h"
 
 namespace libdmv {
+
+using namespace libdmv;
 
 #ifndef HAS_CUPTI
 using CUpti_Activity = void;
@@ -23,6 +27,11 @@ using CUpti_Activity = void;
 class CuptiActivityApi {
 public:
   enum CorrelationFlowType { Default, User };
+
+  // Control Variables shared with CuptiCallbackApi for teardown
+  std::atomic<uint32_t> teardownCupti_{0};
+  std::mutex finalizeMutex_;
+  std::condition_variable finalizeCond_;
 
   CuptiActivityApi() = default;
   CuptiActivityApi(const CuptiActivityApi &) = delete;
@@ -36,9 +45,9 @@ public:
   static void popCorrelationID(CorrelationFlowType type);
 
   void enableCuptiActivities(const std::set<ActivityType> &selected_activities);
-  void
-  disableCuptiActivities(const std::set<ActivityType> &selected_activities);
+  void disableCuptiActivities(const std::set<ActivityType> &selected_activities);
   void clearActivities();
+  void teardownContext();
 
   virtual std::unique_ptr<CuptiActivityBufferMap> activityBuffers();
 
@@ -47,13 +56,26 @@ public:
                     std::function<void(const CUpti_Activity *)> handler);
 
   void setMaxBufferSize(int size);
+  void setDeviceBufferSize(size_t size);
+  void setDeviceBufferPoolLimit(size_t limit);
 
   std::atomic_bool stopCollection{false};
   int64_t flushOverhead{0};
 
   static void forceLoadCupti();
+  static bool isGpuAvailable();
+
+  // CUPTI configuraiton that needs to be set before CUDA context creation
+  static void preConfigureCUPTI();
 
 private:
+  int maxGpuBufferCount_{0};
+  CuptiActivityBufferMap allocatedGpuTraceBuffers_;
+  std::unique_ptr<CuptiActivityBufferMap> readyGpuTraceBuffers_;
+  std::mutex mutex_;
+  std::atomic<uint32_t> tracingEnabled_{0};
+  bool externalCorrelationEnabled_{false};
+
 #ifdef HAS_CUPTI
   int processActivitiesForBuffer(
       uint8_t *buf, size_t validSize,
@@ -66,12 +88,6 @@ private:
                                                  size_t /* unused */,
                                                  size_t validSize);
 #endif // HAS_CUPTI
-
-  int maxGpuBufferCount_{0};
-  CuptiActivityBufferMap allocatedGpuTraceBuffers_;
-  std::unique_ptr<CuptiActivityBufferMap> readyGpuTraceBuffers_;
-  std::mutex mutex_;
-  bool externalCorrelationEnabled_{false};
 
 protected:
 #ifdef HAS_CUPTI

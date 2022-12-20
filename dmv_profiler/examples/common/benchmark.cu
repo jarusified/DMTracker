@@ -245,11 +245,17 @@ int main(int argc, char *argv[])
         // Add Profiler 
         // Kineto config
         std::set<libdmv::ActivityType> types = {
+            libdmv::ActivityType::CPU_OP,
+            libdmv::ActivityType::USER_ANNOTATION,
+            libdmv::ActivityType::GPU_USER_ANNOTATION,
             libdmv::ActivityType::CONCURRENT_KERNEL,
             libdmv::ActivityType::GPU_MEMCPY,
             libdmv::ActivityType::GPU_MEMSET,
             libdmv::ActivityType::CUDA_RUNTIME,
             libdmv::ActivityType::EXTERNAL_CORRELATION,
+            libdmv::ActivityType::CPU_INSTANT_EVENT,
+            libdmv::ActivityType::OVERHEAD,
+            libdmv::ActivityType::CUDA_PROFILER_RANGE,
         };
 
         std::vector<std::string> metrics = {

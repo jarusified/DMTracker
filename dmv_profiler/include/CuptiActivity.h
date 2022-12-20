@@ -1,5 +1,13 @@
 #pragma once
 
+#include <atomic>
+#include <condition_variable>
+#include <functional>
+#include <list>
+#include <memory>
+#include <mutex>
+#include <set>
+
 #include <cupti.h>
 
 #include "CuptiActivityPlatform.h"
